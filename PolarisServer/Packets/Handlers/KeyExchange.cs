@@ -13,7 +13,7 @@ namespace PolarisServer.Packets.Handlers
 			
 		public override void handlePacket(Client context, byte[] data,  uint position, uint size)
 		{
-			if (context._inputARC4 = !null)
+			if (context._inputARC4 != null)
 				return;
 			if (size < 0x80)
 				return;
