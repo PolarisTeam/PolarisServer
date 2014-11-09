@@ -8,21 +8,21 @@ namespace PolarisServer.Models
         [StructLayout(LayoutKind.Sequential)]
         public struct HSVColor
         {
-            ushort hue, saturation, value;
+            public ushort hue, saturation, value;
         }
 
         [StructLayout(LayoutKind.Sequential)]
         public struct JobEntry
         {
-            ushort level;
-            ushort unknown_2;
-            uint exp;
+            public ushort level;
+            public ushort unknown_2;
+            public uint exp;
         }
 
         [StructLayout(LayoutKind.Sequential)]
         public struct Entries
         {
-            JobEntry entry0, entry1, entry2, entry3, entry4, entry5, entry6, entry7;
+            public JobEntry entry0, entry1, entry2, entry3, entry4, entry5, entry6, entry7;
         }
 
         [StructLayout(LayoutKind.Sequential)]

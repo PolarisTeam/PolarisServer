@@ -1,5 +1,6 @@
 ﻿using PolarisServer.Packets.Handlers;
 using PolarisServer.Models;
+using PolarisServer.Packets;
 using NUnit.Framework;
 using System;
 using System.Runtime.InteropServices;
@@ -55,6 +56,30 @@ namespace PolarisTests
 			}
 		}
 
+	}
+
+	[TestFixture]
+	public class WriterTests
+	{
+		private PolarisServer.Packets.Writer writer;
+
+		[SetUp]
+		public void Setup()
+		{
+			writer = new PolarisServer.Packets.Writer();
+		}
+
+        [Test]
+        public unsafe void TestStructureWrite()
+        {
+            var structureSize = sizeof(Character.JobParam);
+            Character.JobParam jp = new Character.JobParam();
+            jp.entries.entry0.level = 7;
+            writer.WriteStruct(jp, structureSize);
+            byte[] structArray = writer.ToArray();
+            Assert.AreEqual(structureSize, structArray.Length);
+            Assert.AreEqual(7, structArray[8]);
+        }
 	}
 }
 

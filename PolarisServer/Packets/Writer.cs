@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Text;
+using System.Runtime.InteropServices;
 
 namespace PolarisServer.Packets
 {
@@ -84,6 +85,21 @@ namespace PolarisServer.Packets
                 for (int i = 0; i < paddingAmount; i++)
                     Write((ushort)0);
             }
+        }
+
+        public void WriteStruct<T>(T structure, int size) where T : struct
+        {
+            byte[] strArr = new byte[size];
+            unsafe
+            {
+                IntPtr structPtr = Marshal.AllocHGlobal(size);
+
+                Marshal.StructureToPtr(structure, structPtr, true);
+                Marshal.Copy(structPtr, strArr, 0, size);
+                Marshal.FreeHGlobal(structPtr);
+            }
+            Write(strArr);
+
         }
 
         public byte[] ToArray()
