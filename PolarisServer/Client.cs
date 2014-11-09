@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Security.Cryptography;
 
 namespace PolarisServer
@@ -124,6 +125,10 @@ namespace PolarisServer
             packet[7] = 0;
 
             Array.Copy(data, 0, packet, 8, data.Length);
+
+            // Check for and create packets directory if it doesn't exist
+            if (!Directory.Exists("packets"))
+                Directory.CreateDirectory("packets");
 
             var filename = string.Format("packets/{0}.{1:X}.{2:X}.S.bin", _packetID++, typeA, typeB);
             System.IO.File.WriteAllBytes(filename, packet);
