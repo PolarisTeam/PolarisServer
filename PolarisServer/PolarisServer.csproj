@@ -32,6 +32,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="Mono.Security" />
+    <Reference Include="System.Data.Linq" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Program.cs" />
@@ -41,10 +42,13 @@
     <Compile Include="Network\SocketServer.cs" />
     <Compile Include="Server.cs" />
     <Compile Include="Packets\Writer.cs" />
+    <Compile Include="Packets\Handlers\PacketHandler.cs" />
+    <Compile Include="Packets\Handlers\KeyExchange.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Folder Include="Network\" />
     <Folder Include="Packets\" />
+    <Folder Include="Packets\Handlers\" />
   </ItemGroup>
 </Project>
