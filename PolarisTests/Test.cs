@@ -76,7 +76,7 @@ namespace PolarisTests
             var structureSize = sizeof(Character.JobParam);
             Character.JobParam jp = new Character.JobParam();
             jp.entries.entry0.level = 7;
-            writer.WriteStruct(jp, structureSize);
+            writer.WriteStruct(jp);
             byte[] structArray = writer.ToArray();
             Assert.AreEqual(structureSize, structArray.Length);
             Assert.AreEqual(7, structArray[8]);

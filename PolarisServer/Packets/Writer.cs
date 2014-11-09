@@ -87,8 +87,9 @@ namespace PolarisServer.Packets
             }
         }
 
-        public void WriteStruct<T>(T structure, int size) where T : struct
+        public void WriteStruct<T>(T structure) where T : struct
         {
+            var size = Marshal.SizeOf(structure);
             byte[] strArr = new byte[size];
             unsafe
             {
