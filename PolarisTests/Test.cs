@@ -1,11 +1,13 @@
 ﻿using PolarisServer.Packets.Handlers;
+using PolarisServer.Models;
 using NUnit.Framework;
 using System;
+using System.Runtime.InteropServices;
 
 namespace PolarisTests
 {
 	[TestFixture]
-	public class Test
+	public class ReflectionTests
 	{
 		[SetUp]
 		public void Setup()
@@ -26,6 +28,33 @@ namespace PolarisTests
 				Assert.IsInstanceOf(typeof(PacketHandler), p, "Loaded PacketHandler is not a Packet Handler!");
 			}
 		}
+	}
+
+	[TestFixture]
+	public class UnsafeTests
+	{
+		Character.JobParam jp;
+
+		[Test]
+		public void checkJobParam()
+		{
+			unsafe {
+				Assert.IsNotNull(jp);
+				byte[] jpArr = new byte[sizeof(Character.JobParam)];
+				IntPtr ptr = Marshal.AllocHGlobal(sizeof(Character.JobParam));
+
+				Marshal.StructureToPtr(jp, ptr, true);
+				Marshal.Copy(ptr, jpArr, 0, sizeof(Character.JobParam));
+				Marshal.FreeHGlobal(ptr);
+
+				foreach (byte b in jpArr) 
+				{
+					Assert.AreEqual (0, b);
+				}
+				Assert.AreEqual(sizeof(Character.JobParam), jpArr.Length);
+			}
+		}
+
 	}
 }
 
