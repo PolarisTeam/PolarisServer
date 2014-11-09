@@ -62,12 +62,12 @@ namespace PolarisTests
     [TestFixture]
     public class WriterTests
     {
-        private PolarisServer.Packets.Writer writer;
+        private PolarisServer.Packets.PacketWriter writer;
 
         [SetUp]
         public void Setup()
         {
-            writer = new PolarisServer.Packets.Writer();
+            writer = new PolarisServer.Packets.PacketWriter();
         }
 
         [Test]

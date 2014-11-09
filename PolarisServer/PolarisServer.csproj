@@ -43,11 +43,13 @@
     <Compile Include="Network\SocketClient.cs" />
     <Compile Include="Network\SocketServer.cs" />
     <Compile Include="Server.cs" />
-    <Compile Include="Packets\Writer.cs" />
     <Compile Include="Packets\Handlers\PacketHandler.cs" />
     <Compile Include="Packets\Handlers\KeyExchange.cs" />
     <Compile Include="Packets\Handlers\Login.cs" />
     <Compile Include="Models\Character.cs" />
+    <Compile Include="Packets\Handlers\SimplePackets.cs" />
+    <Compile Include="Packets\PacketWriter.cs" />
+    <Compile Include="Models\FixedPackets.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

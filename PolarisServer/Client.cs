@@ -34,7 +34,7 @@ namespace PolarisServer
             _inputARC4 = null;
             _outputARC4 = null;
 
-            var welcome = new Packets.Writer();
+            var welcome = new Packets.PacketWriter();
             welcome.Write((ushort)3);
             welcome.Write((ushort)201);
             welcome.Write((ushort)0);
