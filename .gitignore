@@ -1,4 +1,6 @@
+Packages/*
 PolarisServer/bin
 PolarisServer/obj
+PolarisTests/bin
+PolarisTests/obj
 *.userprefs
-
