@@ -10,6 +10,7 @@ namespace PolarisServer
 		public static void Main (string[] args)
 		{
 			Console.WriteLine ("Arf");
+			Packets.Handlers.PacketHandlers.loadPacketHandlers ();
 			new Server ().Run ();
 		}
 	}
