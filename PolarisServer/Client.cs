@@ -151,7 +151,7 @@ namespace PolarisServer
 			// FIXME
 			if (_rsaCsp == null) {
 				_rsaCsp = new RSACryptoServiceProvider ();
-				var rsaBlob = System.IO.File.ReadAllBytes ("/data/repos/RSATest/RSATest/privateKey.blob");
+				var rsaBlob = System.IO.File.ReadAllBytes ("privateKey.blob");
 				_rsaCsp.ImportCspBlob (rsaBlob);
 			}
 
