@@ -5,7 +5,7 @@ namespace PolarisServer
 {
 	public class Client
 	{
-		private static RSACryptoServiceProvider _rsaCsp = null;
+		internal static RSACryptoServiceProvider _rsaCsp = null;
 
 		private Server _server;
 		private Network.SocketClient _socket;
@@ -14,7 +14,7 @@ namespace PolarisServer
 		private byte[] _readBuffer;
 		private uint _readBufferSize;
 
-		private ICryptoTransform _inputARC4, _outputARC4;
+		internal ICryptoTransform _inputARC4, _outputARC4; //TODO Adjust visibility better.
 
 		private int _packetID = 0;
 
@@ -100,7 +100,7 @@ namespace PolarisServer
 		}
 
 
-		void SendPacket(byte typeA, byte typeB, byte flags, byte[] data)
+		public void SendPacket(byte typeA, byte typeB, byte flags, byte[] data)
 		{
 			var packet = new byte[8 + data.Length];
 
@@ -131,10 +131,7 @@ namespace PolarisServer
 			Console.WriteLine ("[-->] Packet {0:X}-{1:X} ({2} bytes)", typeA, typeB, size);
 
 
-			if (typeA == 0x11 && typeB == 0xB) {
-				if (_inputARC4 == null)
-					HandleKeyExchange (data, position, size);
-			} else if (typeA == 0x11 && typeB == 0) {
+			if (typeA == 0x11 && typeB == 0) {
 				HandleLogin (data, position, size);
 			} else {
 				Packets.Handlers.PacketHandler handler = Packets.Handlers.PacketHandlers.getHandlerFor (typeA, typeB);
@@ -148,6 +145,7 @@ namespace PolarisServer
 
 
 		// PSO2 encryption junk, just because
+		/*
 		void HandleKeyExchange (byte[] data, uint position, uint size)
 		{
 			if (size < 0x80)
@@ -204,6 +202,7 @@ namespace PolarisServer
 
 			SendPacket (0x11, 0xC, 0, decryptedToken);
 		}
+		*/
 
 
 

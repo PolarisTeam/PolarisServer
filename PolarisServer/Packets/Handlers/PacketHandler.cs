@@ -24,6 +24,14 @@ namespace PolarisServer.Packets.Handlers
 
 	public static class PacketHandlers
 	{
+		/// <summary>
+		/// Gets and creates a PacketHandler for a given packet type and subtype.
+		/// TODO: Creating new instances all the time can't be a good thing. Move this over to some big list or something.
+		/// </summary>
+		/// <returns>An instance of a PacketHandler or null</returns>
+		/// <param name="typeA">Type a.</param>
+		/// <param name="typeB">Type b.</param>
+		/// 
 		public static PacketHandler getHandlerFor(uint typeA, uint typeB)
 		{
 			var classes = from t in Assembly.GetExecutingAssembly ().GetTypes ()
