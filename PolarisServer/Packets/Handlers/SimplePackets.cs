@@ -21,5 +21,32 @@ namespace PolarisServer.Packets.Handlers
             context.SendPacket(0x11, 0x3, 0x0, writer.ToArray());
         }
     }
+
+    [PacketHandlerAttr(0x11, 0x41)]
+    public class CreateCharacterOne : PacketHandler
+    {
+        public override void handlePacket(Client context, byte[] data, uint position, uint size)
+        {
+            PacketWriter writer = new PacketWriter();
+            writer.Write((uint)0);
+            writer.Write((uint)0);
+            writer.Write((uint)0);
+            writer.Write((uint)0);
+
+            context.SendPacket(0x11, 0x42, 0x0, writer.ToArray());
+        }
+    }
+
+    [PacketHandlerAttr(0x11, 0x54)]
+    public class CreateCharacterTwo : PacketHandler
+    {
+        public override void handlePacket(Client context, byte[] data, uint position, uint size)
+        {
+            PacketWriter writer = new PacketWriter();
+            writer.Write((uint)0);
+
+            context.SendPacket(0x11, 0x55, 0x0, writer.ToArray());
+        }
+    }
 }
 

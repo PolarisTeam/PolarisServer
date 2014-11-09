@@ -44,7 +44,7 @@ namespace PolarisServer
 
         void HandleDataReceived(byte[] data, int size)
         {
-            Console.WriteLine("[Received {0}]", size);
+            Console.WriteLine("[<---] Received {0} bytes", size);
             if ((_readBufferSize + size) > _readBuffer.Length)
             {
                 // Buffer overrun
@@ -127,6 +127,7 @@ namespace PolarisServer
 
             var filename = string.Format("packets/{0}.{1:X}.{2:X}.S.bin", _packetID++, typeA, typeB);
             System.IO.File.WriteAllBytes(filename, packet);
+            Console.WriteLine("[<--] Packet {0:X}-{1:X} ({2} bytes)", typeA, typeB, packet.Length);
 
             if (_outputARC4 != null)
                 _outputARC4.TransformBlock(packet, 0, packet.Length, packet, 0);
