@@ -44,7 +44,7 @@ namespace PolarisServer
 
         void HandleDataReceived(byte[] data, int size)
         {
-            Logger.Write("[<--] Recieved " + size + " bytes");
+            Logger.Write(string.Format("[<--] Recieved {0} bytes", size));
             if ((_readBufferSize + size) > _readBuffer.Length)
             {
                 // Buffer overrun
