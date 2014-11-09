@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PolarisServer", "PolarisServer\PolarisServer.csproj", "{E54FC88C-B212-4F47-B2F1-927D39EE3DBA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E54FC88C-B212-4F47-B2F1-927D39EE3DBA}.Debug|x86.ActiveCfg = Debug|x86
+		{E54FC88C-B212-4F47-B2F1-927D39EE3DBA}.Debug|x86.Build.0 = Debug|x86
+		{E54FC88C-B212-4F47-B2F1-927D39EE3DBA}.Release|x86.ActiveCfg = Release|x86
+		{E54FC88C-B212-4F47-B2F1-927D39EE3DBA}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		StartupItem = PolarisServer\PolarisServer.csproj
+	EndGlobalSection
+EndGlobal
