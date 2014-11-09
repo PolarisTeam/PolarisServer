@@ -16,6 +16,8 @@ namespace PolarisServer
 
 		private ICryptoTransform _inputARC4, _outputARC4;
 
+		private int _packetID = 0;
+
 		public Client (Server server, Network.SocketClient socket)
 		{
 			_server = server;
@@ -30,12 +32,12 @@ namespace PolarisServer
 			_inputARC4 = null;
 			_outputARC4 = null;
 
-			var welcomePacket = new byte[8];
-			for (int i = 0; i < 8; i++)
-				welcomePacket [i] = 0;
-			welcomePacket [0] = 3;
-			welcomePacket [2] = 201;
-			SendPacket (3, 8, 0, welcomePacket);
+			var welcome = new Packets.Writer ();
+			welcome.Write ((ushort)3);
+			welcome.Write ((ushort)201);
+			welcome.Write ((ushort)0);
+			welcome.Write ((ushort)0);
+			SendPacket (3, 8, 0, welcome.ToArray());
 		}
 
 		void HandleDataReceived (byte[] data, int size)
@@ -70,7 +72,7 @@ namespace PolarisServer
 					packetSize = 8;
 
 				// If we don't have enough data for this one...
-				if (packetSize > 0x1000000 || (packetSize + position) < _readBufferSize)
+				if (packetSize > 0x1000000 || (packetSize + position) > _readBufferSize)
 					break;
 
 				// Now handle this one
@@ -115,6 +117,9 @@ namespace PolarisServer
 
 			Array.Copy (data, 0, packet, 8, data.Length);
 
+			var filename = string.Format ("packets/{0}.{1:X}.{2:X}.S.bin", _packetID++, typeA, typeB);
+			System.IO.File.WriteAllBytes (filename, packet);
+
 			if (_outputARC4 != null)
 				_outputARC4.TransformBlock (packet, 0, packet.Length, packet, 0);
 			_socket.Socket.Client.Send (packet);
@@ -129,7 +134,7 @@ namespace PolarisServer
 				if (_inputARC4 == null)
 					HandleKeyExchange (data, position, size);
 			} else if (typeA == 0x11 && typeB == 0) {
-
+				HandleLogin (data, position, size);
 			} else {
 				Console.WriteLine ("[!!!] UNIMPLEMENTED PACKET");
 				//throw new NotImplementedException ();
@@ -193,6 +198,35 @@ namespace PolarisServer
 			tempDecryptor.TransformBlock (decryptedBlob, 0, 0x10, decryptedToken, 0);
 
 			SendPacket (0x11, 0xC, 0, decryptedToken);
+		}
+
+
+
+		void HandleLogin(byte[] data, uint position, uint size)
+		{
+			// Mystery packet
+			var mystery = new Packets.Writer ();
+			mystery.Write ((uint)100);
+			//SendPacket (0x11, 0x49, 0, mystery.ToArray ());
+
+			// Login response packet
+			var resp = new Packets.Writer ();
+			resp.Write ((uint)0); // Status flag: 0=success, 1=error
+			resp.WriteUTF16 ("This is an error", 0x8BA4, 0xB6);
+			resp.Write ((uint)200); // Player ID
+			resp.Write ((uint)0); // Unknown
+			resp.Write ((uint)0); // Unknown
+			resp.WriteFixedLengthUTF16 ("B001-DarkFox", 0x20);
+			for (int i = 0; i < 0xBC; i++)
+				resp.Write ((byte)0);
+			SendPacket (0x11, 1, 4, resp.ToArray ());
+
+			// Settings packet
+			var settings = new Packets.Writer ();
+			settings.WriteASCII (
+				System.IO.File.ReadAllText ("settings.txt"),
+				0x54AF, 0x100);
+			SendPacket (0x2B, 2, 4, settings.ToArray ());
 		}
 	}
 }

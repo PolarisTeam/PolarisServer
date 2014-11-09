@@ -40,9 +40,11 @@
     <Compile Include="Network\SocketClient.cs" />
     <Compile Include="Network\SocketServer.cs" />
     <Compile Include="Server.cs" />
+    <Compile Include="Packets\Writer.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Folder Include="Network\" />
+    <Folder Include="Packets\" />
   </ItemGroup>
 </Project>
