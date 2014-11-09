@@ -3,39 +3,45 @@ using System.Net.Sockets;
 
 namespace PolarisServer.Network
 {
-	public class SocketClient
-	{
-		private SocketServer _server;
-		private TcpClient _socket;
-		public TcpClient Socket { get { return _socket; } }
+    public class SocketClient
+    {
+        private SocketServer _server;
+        private TcpClient _socket;
 
-		private byte[] _readBuffer;
+        public TcpClient Socket { get { return _socket; } }
 
-		public delegate void DataReceivedDelegate(byte[] data, int size);
-		public event DataReceivedDelegate DataReceived;
+        private byte[] _readBuffer;
 
-		public delegate void ConnectionLostDelegate ();
-		public event ConnectionLostDelegate ConnectionLost;
+        public delegate void DataReceivedDelegate(byte[] data,int size);
 
-		public SocketClient(SocketServer server, TcpClient socket) {
-			_server = server;
-			_socket = socket;
+        public event DataReceivedDelegate DataReceived;
 
-			_readBuffer = new byte[1024 * 16];
-		}
+        public delegate void ConnectionLostDelegate();
 
-		public bool OnReadable() {
-			int read = _socket.Client.Receive (_readBuffer);
-			if (read == 0) {
-				// Connection failed, presumably
-				ConnectionLost ();
-				return false;
-			}
+        public event ConnectionLostDelegate ConnectionLost;
 
-			DataReceived (_readBuffer, read);
+        public SocketClient(SocketServer server, TcpClient socket)
+        {
+            _server = server;
+            _socket = socket;
 
-			return true;
-		}
-	}
+            _readBuffer = new byte[1024 * 16];
+        }
+
+        public bool OnReadable()
+        {
+            int read = _socket.Client.Receive(_readBuffer);
+            if (read == 0)
+            {
+                // Connection failed, presumably
+                ConnectionLost();
+                return false;
+            }
+
+            DataReceived(_readBuffer, read);
+
+            return true;
+        }
+    }
 }
 

@@ -5,63 +5,71 @@ using System.Net.Sockets;
 
 namespace PolarisServer.Network
 {
-	public class SocketServer
-	{
-		private int _port;
-		private List<SocketClient> _clients = new List<SocketClient> ();
-		private Dictionary<Socket, SocketClient> _socketMap = new Dictionary<Socket, SocketClient> ();
+    public class SocketServer
+    {
+        private int _port;
+        private List<SocketClient> _clients = new List<SocketClient>();
+        private Dictionary<Socket, SocketClient> _socketMap = new Dictionary<Socket, SocketClient>();
 
-		public IList<SocketClient> Clients { get { return _clients.AsReadOnly(); } }
+        public IList<SocketClient> Clients { get { return _clients.AsReadOnly(); } }
 
-		public delegate void NewClientDelegate(SocketClient client);
-		public event NewClientDelegate NewClient;
+        public delegate void NewClientDelegate(SocketClient client);
 
-		public SocketServer (int port)
-		{
-			_port = port;
-		}
+        public event NewClientDelegate NewClient;
 
-		public void Run() {
-			TcpListener listener = new TcpListener (IPAddress.Any, _port);
-			listener.Start ();
+        public SocketServer(int port)
+        {
+            _port = port;
+        }
 
-			List<Socket> readableSockets = new List<Socket> ();
+        public void Run()
+        {
+            TcpListener listener = new TcpListener(IPAddress.Any, _port);
+            listener.Start();
 
-			while (true) {
-				// Compile a list of possibly-readable sockets
-				readableSockets.Clear ();
-				readableSockets.Add (listener.Server);
-				foreach (SocketClient client in _clients)
-					readableSockets.Add (client.Socket.Client);
+            List<Socket> readableSockets = new List<Socket>();
 
-				Socket.Select (readableSockets, null, null, 1000000);
+            while (true)
+            {
+                // Compile a list of possibly-readable sockets
+                readableSockets.Clear();
+                readableSockets.Add(listener.Server);
+                foreach (SocketClient client in _clients)
+                    readableSockets.Add(client.Socket.Client);
 
-				foreach (Socket socket in readableSockets) {
-					if (socket == listener.Server) {
-						// New connection
-						Console.WriteLine ("New connection!");
+                Socket.Select(readableSockets, null, null, 1000000);
 
-						SocketClient c = new SocketClient (this, listener.AcceptTcpClient ());
+                foreach (Socket socket in readableSockets)
+                {
+                    if (socket == listener.Server)
+                    {
+                        // New connection
+                        Console.WriteLine("New connection!");
 
-						_clients.Add (c);
-						_socketMap.Add (c.Socket.Client, c);
+                        SocketClient c = new SocketClient(this, listener.AcceptTcpClient());
 
-						NewClient (c);
-					} else {
-						// Readable data
-						SocketClient c = _socketMap [socket];
+                        _clients.Add(c);
+                        _socketMap.Add(c.Socket.Client, c);
 
-						if (!c.OnReadable ()) {
-							// Connection failed, remove it from here
-							Console.WriteLine ("Connection closed");
+                        NewClient(c);
+                    }
+                    else
+                    {
+                        // Readable data
+                        SocketClient c = _socketMap[socket];
 
-							_clients.Remove (c);
-							_socketMap.Remove (socket);
-						}
-					}
-				}
-			}
-		}
-	}
+                        if (!c.OnReadable())
+                        {
+                            // Connection failed, remove it from here
+                            Console.WriteLine("Connection closed");
+
+                            _clients.Remove(c);
+                            _socketMap.Remove(socket);
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
