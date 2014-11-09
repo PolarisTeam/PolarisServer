@@ -37,8 +37,8 @@ namespace PolarisServer.Packets.Handlers
 				Attribute[] attrs = (Attribute[])t.GetCustomAttributes (typeof(PacketHandlerAttr), false);
 				if (attrs.Length > 0) {
 					PacketHandlerAttr attr = (PacketHandlerAttr)attrs[0];
-					Console.Write ("[PKT] Loaded PacketHandler {0} for packet {1:X}-{2:X}.", t.Name, attr.type, attr.subtype);
-					loadedHandlers.Add ((attr.type << 8) | attr.subtype, Activator.CreateInstance (t));
+					Console.WriteLine ("[PKT] Loaded PacketHandler {0} for packet {1:X}-{2:X}.", t.Name, attr.type, attr.subtype);
+					loadedHandlers.Add ((ushort)((attr.type << 8) | attr.subtype), (PacketHandler)Activator.CreateInstance (t));
 				}
 			}
 		}
@@ -50,10 +50,10 @@ namespace PolarisServer.Packets.Handlers
 		/// <param name="typeB">Type b.</param>
 		public static PacketHandler getHandlerFor(uint typeA, uint typeB)
 		{
-			ushort packetCode = (typeA << 8) | typeB;  // Bitshifing is fun!
+			ushort packetCode = (ushort)((typeA << 8) | typeB);  // Bitshifting is fun!
 			PacketHandler handler = null;
 			if (loadedHandlers.ContainsKey (packetCode))
-				loadedHandlers.TryGetValue (packetCode, handler);
+				loadedHandlers.TryGetValue (packetCode, out handler);
 			return handler; //TODO Test me!
 
 		}
