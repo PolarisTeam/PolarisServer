@@ -45,7 +45,7 @@ namespace PolarisServer
 
         void HandleDataReceived(byte[] data, int size)
         {
-            Console.WriteLine("[<---] Received {0} bytes", size);
+            Logger.Write("[<--] Recieved " + size + " bytes");
             if ((_readBufferSize + size) > _readBuffer.Length)
             {
                 // Buffer overrun
@@ -105,9 +105,8 @@ namespace PolarisServer
         void HandleConnectionLost()
         {
             // :(
-            Console.WriteLine("[:( ] :(");
+            Logger.Write("[:( ] :(");
         }
-
 
         public void SendPacket(byte typeA, byte typeB, byte flags, byte[] data)
         {
@@ -131,8 +130,8 @@ namespace PolarisServer
                 Directory.CreateDirectory("packets");
 
             var filename = string.Format("packets/{0}.{1:X}.{2:X}.S.bin", _packetID++, typeA, typeB);
-            System.IO.File.WriteAllBytes(filename, packet);
-            Console.WriteLine("[<--] Packet {0:X}-{1:X} ({2} bytes)", typeA, typeB, packet.Length);
+            Logger.Write(string.Format("[<--] Packet {0:X}-{1:X} ({2} bytes)", typeA, typeB, packet.Length));
+            File.WriteAllBytes(filename, packet);
 
             if (_outputARC4 != null)
                 _outputARC4.TransformBlock(packet, 0, packet.Length, packet, 0);
@@ -142,16 +141,16 @@ namespace PolarisServer
 
         void HandlePacket(byte typeA, byte typeB, byte[] data, uint position, uint size)
         {
-            Console.WriteLine("[-->] Packet {0:X}-{1:X} ({2} bytes)", typeA, typeB, size);
-
-
+            Logger.Write(string.Format("[-->] Packet {0:X}-{1:X} ({2} bytes)", typeA, typeB, size));
 
             Packets.Handlers.PacketHandler handler = Packets.Handlers.PacketHandlers.getHandlerFor(typeA, typeB);
             if (handler != null)
                 handler.handlePacket(this, data, position, size);
             else
-                Console.WriteLine("[!!!] UNIMPLEMENTED PACKET");
-            //throw new NotImplementedException ();
+            {
+                Logger.Write("[!!!] UNIMPLEMENTED PACKET", LogType.Warning);
+            }
+            // throw new NotImplementedException();
         }
     }
 }

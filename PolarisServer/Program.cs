@@ -10,6 +10,7 @@ namespace PolarisServer
         public static void Main(string[] args)
         {
             Console.WriteLine("Arf");
+            Logger.Write(string.Format("Server started at {0}", DateTime.Now.ToString()), LogType.Internal);
             Packets.Handlers.PacketHandlers.loadPacketHandlers();
             new Server().Run();
         }
