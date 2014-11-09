@@ -147,7 +147,5 @@ namespace PolarisServer
                 Console.WriteLine("[!!!] UNIMPLEMENTED PACKET");
             //throw new NotImplementedException ();
         }
-						
     }
 }
-

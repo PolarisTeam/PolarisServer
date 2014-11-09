@@ -87,7 +87,6 @@ namespace PolarisServer.Models
         public LooksParam Looks;
         public JobParam Job;
 
-
         public Character()
         {
         }

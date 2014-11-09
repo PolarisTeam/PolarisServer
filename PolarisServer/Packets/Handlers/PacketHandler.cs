@@ -14,8 +14,6 @@ namespace PolarisServer.Packets.Handlers
             this.type = type;
             this.subtype = subtype;
         }
-
-
     }
 
 
@@ -41,8 +39,8 @@ namespace PolarisServer.Packets.Handlers
                 {
                     PacketHandlerAttr attr = (PacketHandlerAttr)attrs[0];
                     Console.WriteLine("[PKT] Loaded PacketHandler {0} for packet {1:X}-{2:X}.", t.Name, attr.type, attr.subtype);
-					if(!loadedHandlers.ContainsKey((ushort)((attr.type << 8) | attr.subtype)))
-                    	loadedHandlers.Add((ushort)((attr.type << 8) | attr.subtype), (PacketHandler)Activator.CreateInstance(t));
+                    if (!loadedHandlers.ContainsKey((ushort)((attr.type << 8) | attr.subtype)))
+                        loadedHandlers.Add((ushort)((attr.type << 8) | attr.subtype), (PacketHandler)Activator.CreateInstance(t));
                 }
             }
         }
@@ -63,10 +61,10 @@ namespace PolarisServer.Packets.Handlers
 
         }
 
-		public static PacketHandler[] getLoadedHandlers()
-		{
-			return loadedHandlers.Values.ToArray();
-		}
+        public static PacketHandler[] getLoadedHandlers()
+        {
+            return loadedHandlers.Values.ToArray();
+        }
     }
 }
 

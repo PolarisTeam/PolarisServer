@@ -12,7 +12,7 @@ namespace PolarisServer.Network
 
         private byte[] _readBuffer;
 
-        public delegate void DataReceivedDelegate(byte[] data,int size);
+        public delegate void DataReceivedDelegate(byte[] data, int size);
 
         public event DataReceivedDelegate DataReceived;
 
