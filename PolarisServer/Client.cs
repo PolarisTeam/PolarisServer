@@ -130,13 +130,18 @@ namespace PolarisServer
 		{
 			Console.WriteLine ("[-->] Packet {0:X}-{1:X} ({2} bytes)", typeA, typeB, size);
 
+
 			if (typeA == 0x11 && typeB == 0xB) {
 				if (_inputARC4 == null)
 					HandleKeyExchange (data, position, size);
 			} else if (typeA == 0x11 && typeB == 0) {
 				HandleLogin (data, position, size);
 			} else {
-				Console.WriteLine ("[!!!] UNIMPLEMENTED PACKET");
+				Packets.Handlers.PacketHandler handler = Packets.Handlers.PacketHandlers.getHandlerFor (typeA, typeB);
+				if (handler != null)
+					handler.handlePacket (this, data, position, size);
+				else
+					Console.WriteLine ("[!!!] UNIMPLEMENTED PACKET");
 				//throw new NotImplementedException ();
 			}
 		}
