@@ -45,12 +45,14 @@
     <Compile Include="Packets\Handlers\PacketHandler.cs" />
     <Compile Include="Packets\Handlers\KeyExchange.cs" />
     <Compile Include="Packets\Handlers\Login.cs" />
+    <Compile Include="Models\Character.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Folder Include="Network\" />
     <Folder Include="Packets\" />
     <Folder Include="Packets\Handlers\" />
+    <Folder Include="Models\" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
