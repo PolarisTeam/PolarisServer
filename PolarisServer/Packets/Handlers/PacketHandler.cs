@@ -57,7 +57,7 @@ namespace PolarisServer.Packets.Handlers
             PacketHandler handler = null;
             if (loadedHandlers.ContainsKey(packetCode))
                 loadedHandlers.TryGetValue(packetCode, out handler);
-            return handler; //TODO Test me!
+            return handler;
 
         }
 

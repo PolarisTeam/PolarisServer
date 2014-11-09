@@ -17,7 +17,6 @@ namespace PolarisServer
         private uint _readBufferSize;
 
         internal ICryptoTransform _inputARC4, _outputARC4;
-        //TODO Adjust visibility better.
 
         private int _packetID = 0;
 
