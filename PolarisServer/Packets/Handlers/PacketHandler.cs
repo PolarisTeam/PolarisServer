@@ -56,7 +56,7 @@ namespace PolarisServer.Packets.Handlers
 			foreach(PacketHandler h in loadedHandlers)
 			{
 				Type t = h.GetType ();
-				Attribute[] attrs = t.GetCustomAttributes (typeof(PacketHandlerAttr), false);
+				Attribute[] attrs = (Attribute[])t.GetCustomAttributes (typeof(PacketHandlerAttr), false);
 				foreach(Attribute attr in attrs)
 				{
 					if (attr is PacketHandlerAttr) { // Maybe redundant?
