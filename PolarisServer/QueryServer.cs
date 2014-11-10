@@ -30,7 +30,7 @@ namespace PolarisServer
             Thread queryThread = new Thread(new ThreadStart(Run));
             queryThread.Start();
             runningServers.Add(queryThread);
-            Logger.Write("[---] Started a new QueryServer on port " + port, LogType.Internal);
+            Logger.WriteInternal("[---] Started a new QueryServer on port " + port);
         }
 
         private delegate void OnConnection(Socket server);

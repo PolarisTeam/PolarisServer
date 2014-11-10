@@ -44,7 +44,7 @@ namespace PolarisServer
 
         void HandleDataReceived(byte[] data, int size)
         {
-            Logger.Write(string.Format("[<--] Recieved {0} bytes", size));
+            Logger.WriteLine("[<--] Recieved {0} bytes", size);
             if ((_readBufferSize + size) > _readBuffer.Length)
             {
                 // Buffer overrun
@@ -104,7 +104,7 @@ namespace PolarisServer
         void HandleConnectionLost()
         {
             // :(
-            Logger.Write("[:( ] :(");
+            Logger.WriteLine("[:( ] :(");
         }
 
         public void SendPacket(byte typeA, byte typeB, byte flags, byte[] data)
@@ -129,7 +129,7 @@ namespace PolarisServer
                 Directory.CreateDirectory("packets");
 
             var filename = string.Format("packets/{0}.{1:X}.{2:X}.S.bin", _packetID++, typeA, typeB);
-            Logger.Write(string.Format("[<--] Packet {0:X}-{1:X} ({2} bytes)", typeA, typeB, packet.Length));
+            Logger.WriteLine("[<--] Packet {0:X}-{1:X} ({2} bytes)", typeA, typeB, packet.Length);
             File.WriteAllBytes(filename, packet);
 
             if (_outputARC4 != null)
@@ -140,14 +140,14 @@ namespace PolarisServer
 
         void HandlePacket(byte typeA, byte typeB, byte[] data, uint position, uint size)
         {
-            Logger.Write(string.Format("[-->] Packet {0:X}-{1:X} ({2} bytes)", typeA, typeB, size));
+            Logger.WriteLine("[-->] Packet {0:X}-{1:X} ({2} bytes)", typeA, typeB, size);
 
             Packets.Handlers.PacketHandler handler = Packets.Handlers.PacketHandlers.getHandlerFor(typeA, typeB);
             if (handler != null)
                 handler.handlePacket(this, data, position, size);
             else
             {
-                Logger.Write("[!!!] UNIMPLEMENTED PACKET", LogType.Warning);
+                Logger.WriteWarning("[!!!] UNIMPLEMENTED PACKET");
             }
             // throw new NotImplementedException();
         }

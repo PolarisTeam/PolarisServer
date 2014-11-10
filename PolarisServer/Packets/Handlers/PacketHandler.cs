@@ -38,7 +38,7 @@ namespace PolarisServer.Packets.Handlers
                 if (attrs.Length > 0)
                 {
                     PacketHandlerAttr attr = (PacketHandlerAttr)attrs[0];
-                    Logger.Write(string.Format("[PKT] Loaded PacketHandler {0} for packet {1:X}-{2:X}.", t.Name, attr.type, attr.subtype), LogType.Internal);
+                    Logger.WriteInternal("[PKT] Loaded PacketHandler {0} for packet {1:X}-{2:X}.", t.Name, attr.type, attr.subtype);
                     if (!loadedHandlers.ContainsKey((ushort)((attr.type << 8) | attr.subtype)))
                         loadedHandlers.Add((ushort)((attr.type << 8) | attr.subtype), (PacketHandler)Activator.CreateInstance(t));
                 }
