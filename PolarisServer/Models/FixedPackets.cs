@@ -31,7 +31,6 @@ namespace PolarisServer.Models
         public UInt32 padding;
         public Character.LooksParam looks;
         public Character.JobParam jobs;
-
     }
 }
 

@@ -13,7 +13,7 @@ namespace PolarisServer
             _clients = new List<Client>();
             _server = new Network.SocketServer(12205);
             _server.NewClient += HandleNewClient;
-            new QueryServer(QueryMode.BLOCK_BALANCE, 12200);
+            new QueryServer(QueryMode.BlockBalance, 12200);
         }
 
         public void Run()

@@ -79,7 +79,6 @@ namespace PolarisServer.Models
             public fixed byte unknown_10[5];
         }
 
-
         // Probably more info than this
         public uint CharacterId;
         public uint PlayerId;

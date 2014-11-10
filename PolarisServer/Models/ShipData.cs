@@ -5,14 +5,14 @@ namespace PolarisServer.Models
 {
     public enum ShipStatus : ushort
     {
-        SHIP_UNKNOWN = 0,
-        SHIP_ONLINE,
-        SHIP_BUSY,
-        SHIP_FULL,
-        SHIP_OFFLINE
+        Unknown = 0,
+        Online,
+        Busy,
+        Full,
+        Offline
     }
 
-    [StructLayout(LayoutKind.Sequential, CharSet=CharSet.Auto)]
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
     public unsafe struct ShipEntry
     {
         public UInt32 number;

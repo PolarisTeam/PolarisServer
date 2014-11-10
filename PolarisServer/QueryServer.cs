@@ -12,8 +12,8 @@ namespace PolarisServer
 {
     public enum QueryMode
     {
-        SHIP_LIST,
-        BLOCK_BALANCE
+        ShipList,
+        BlockBalance
     }
 
     public class QueryServer
@@ -30,7 +30,7 @@ namespace PolarisServer
             Thread queryThread = new Thread(new ThreadStart(Run));
             queryThread.Start();
             runningServers.Add(queryThread);
-            Console.WriteLine("[---] Started a new QueryServer on port {0}", port);
+            Logger.Write("[---] Started a new QueryServer on port " + port, LogType.Internal);
         }
 
         private delegate void OnConnection(Socket server);
@@ -38,20 +38,20 @@ namespace PolarisServer
         private void Run()
         {
             OnConnection c;
-            switch(mode)
+            switch (mode)
             {
                 default:
-                    c = doShipList;
+                    c = DoShipList;
                     break;
-                case QueryMode.BLOCK_BALANCE:
-                    c = doBlockBalance;
+                case QueryMode.BlockBalance:
+                    c = DoBlockBalance;
                     break;
-                case QueryMode.SHIP_LIST:
-                    c = doShipList;
+                case QueryMode.ShipList:
+                    c = DoShipList;
                     break;
             }
 
-            Socket serverSocket = new Socket(AddressFamily.InterNetwork ,SocketType.Stream, ProtocolType.Tcp);
+            Socket serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             serverSocket.Blocking = true;
             IPEndPoint ep = new IPEndPoint(IPAddress.Any, this.port);
             serverSocket.Bind(ep); // TODO: Custom bind address.
@@ -63,7 +63,7 @@ namespace PolarisServer
             }
         }
 
-        private unsafe void doShipList(Socket s)
+        private unsafe void DoShipList(Socket s)
         {
             PacketWriter w = new PacketWriter();
             List<ShipEntry> entries = new List<ShipEntry>();
@@ -73,14 +73,14 @@ namespace PolarisServer
                 ShipEntry entry = new ShipEntry();
                 entry.order = (ushort)i;
                 entry.number = (uint)i;
-                entry.status = ShipStatus.SHIP_ONLINE;
+                entry.status = ShipStatus.Online;
                 entry.name = String.Format("Ship{0:0#}", i);
                 entry.ip = IPAddress.Loopback.GetAddressBytes();
                 entries.Add(entry);
             }
             w.WriteStruct(new PacketHeader(Marshal.SizeOf(typeof(ShipEntry)) * entries.Count + 12, 0x11, 0x3D, 0x4, 0x0));
-            w.WriteMagic((uint)entries.Count, 0xE418, 81); 
-            foreach(ShipEntry entry in entries)
+            w.WriteMagic((uint)entries.Count, 0xE418, 81);
+            foreach (ShipEntry entry in entries)
                 w.WriteStruct(entry);
 
             w.Write((Int32)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds);
@@ -91,7 +91,7 @@ namespace PolarisServer
 
         }
 
-        private void doBlockBalance(Socket s) 
+        private void DoBlockBalance(Socket s)
         {
             PacketWriter w = new PacketWriter();
             w.WriteStruct(new PacketHeader(0x90, 0x11, 0x2C, 0x0, 0x0));
@@ -105,4 +105,3 @@ namespace PolarisServer
         }
     }
 }
-
