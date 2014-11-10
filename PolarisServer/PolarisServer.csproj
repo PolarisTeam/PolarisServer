@@ -51,6 +51,8 @@
     <Compile Include="Packets\Handlers\SimplePackets.cs" />
     <Compile Include="Packets\PacketWriter.cs" />
     <Compile Include="Models\FixedPackets.cs" />
+    <Compile Include="QueryServer.cs" />
+    <Compile Include="Models\ShipData.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

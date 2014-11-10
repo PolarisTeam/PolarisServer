@@ -12,6 +12,7 @@ namespace PolarisServer
             Console.WriteLine("Arf");
             Logger.Write(string.Format("Server started at {0}", DateTime.Now.ToString()), LogType.Internal);
             Packets.Handlers.PacketHandlers.loadPacketHandlers();
+            new QueryServer(QueryMode.SHIP_LIST, 12100);
             new Server().Run();
         }
     }
