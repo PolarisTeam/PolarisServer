@@ -12,7 +12,7 @@ namespace PolarisServer.Models
         Offline
     }
 
-    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
     public unsafe struct ShipEntry
     {
         public UInt32 number;

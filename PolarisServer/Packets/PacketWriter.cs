@@ -87,20 +87,16 @@ namespace PolarisServer.Packets
             }
         }
 
-        public void WriteStruct<T>(T structure) where T : struct
+        public unsafe void WriteStruct<T>(T structure) where T : struct
         {
-            var size = Marshal.SizeOf(structure);
-            byte[] strArr = new byte[size];
-            unsafe
+            byte[] strArr = new byte[Marshal.SizeOf(structure)];
+
+            fixed (byte* ptr = strArr)
             {
-                IntPtr structPtr = Marshal.AllocHGlobal(size);
-
-                Marshal.StructureToPtr(structure, structPtr, true);
-                Marshal.Copy(structPtr, strArr, 0, size);
-                Marshal.FreeHGlobal(structPtr);
+                Marshal.StructureToPtr(structure, (IntPtr)ptr, false);
             }
-            Write(strArr);
 
+            Write(strArr);
         }
 
         public byte[] ToArray()
