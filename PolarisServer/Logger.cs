@@ -47,7 +47,7 @@ namespace PolarisServer
 
         public static void WriteFile(string text, params object[] args)
         {
-            writer.WriteLine(DateTime.Now.ToString() + " - " + text);
+            writer.WriteLine(DateTime.Now.ToString() + " - " + text, args);
 
             // Later we should probably only flush once every X amount of lines or on some other condition
             writer.Flush();
