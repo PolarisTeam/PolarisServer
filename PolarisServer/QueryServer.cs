@@ -30,6 +30,7 @@ namespace PolarisServer
             Thread queryThread = new Thread(new ThreadStart(Run));
             queryThread.Start();
             runningServers.Add(queryThread);
+            Console.WriteLine("[---] Started a new QueryServer on port {0}", port);
         }
 
         private delegate void OnConnection(Socket server);
@@ -65,21 +66,30 @@ namespace PolarisServer
         private unsafe void doShipList(Socket s)
         {
             PacketWriter w = new PacketWriter();
-            ShipEntry entry = new ShipEntry();
-            entry.number = 1;
-            entry.order = 1;
-            entry.status = (ushort)ShipStatus.SHIP_ONLINE;
+            List<ShipEntry> entries = new List<ShipEntry>();
 
-            IPAddress addr = IPAddress.Parse("127.0.0.1");
-            Marshal.Copy(addr.GetAddressBytes(), 0, (IntPtr)entry.ip, 4);
-            Marshal.Copy("Ship01".ToCharArray(), 0, (IntPtr)entry.name, 6);
+            for (int i = 1; i < 11; i++)
+            {
+                ShipEntry entry = new ShipEntry();
+                entry.order = (ushort)i;
+                entry.number = (uint)i;
+                entry.status = ShipStatus.SHIP_ONLINE;
+                entry.name = String.Format("Ship{0:0#}", i);
+                entry.ip = IPAddress.Loopback.GetAddressBytes();
+                entries.Add(entry);
+            }
 
-            w.Write((uint)Marshal.SizeOf(entry) + 8);
+            w.Write((uint)((Marshal.SizeOf(typeof(ShipEntry)) * entries.Count) + 12));
             w.Write((byte)0x11);
             w.Write((byte)0x3D);
             w.Write((byte)4);
             w.Write((byte)0);
-            w.WriteStruct(entry);
+            w.WriteMagic((uint)entries.Count, 0xE418, 81); 
+            foreach(ShipEntry entry in entries)
+                w.WriteStruct(entry);
+
+            w.Write((Int32)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds);
+            w.Write((Int32)1);
 
             s.Send(w.ToArray());
             s.Close();
