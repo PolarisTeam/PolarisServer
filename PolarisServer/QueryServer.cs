@@ -78,12 +78,7 @@ namespace PolarisServer
                 entry.ip = IPAddress.Loopback.GetAddressBytes();
                 entries.Add(entry);
             }
-
-            w.Write((uint)((Marshal.SizeOf(typeof(ShipEntry)) * entries.Count) + 12));
-            w.Write((byte)0x11);
-            w.Write((byte)0x3D);
-            w.Write((byte)4);
-            w.Write((byte)0);
+            w.WriteStruct(new PacketHeader(Marshal.SizeOf(typeof(ShipEntry)) * entries.Count + 12, 0x11, 0x3D, 0x4, 0x0));
             w.WriteMagic((uint)entries.Count, 0xE418, 81); 
             foreach(ShipEntry entry in entries)
                 w.WriteStruct(entry);
@@ -98,7 +93,15 @@ namespace PolarisServer
 
         private void doBlockBalance(Socket s) 
         {
+            PacketWriter w = new PacketWriter();
+            w.WriteStruct(new PacketHeader(0x90, 0x11, 0x2C, 0x0, 0x0));
+            w.Write(new byte[0x64]);
+            w.Write(IPAddress.Loopback.GetAddressBytes());
+            w.Write((UInt16)12205);
+            w.Write(new byte[0x90 - 0x6A]);
 
+            s.Send(w.ToArray());
+            s.Close();
         }
     }
 }
