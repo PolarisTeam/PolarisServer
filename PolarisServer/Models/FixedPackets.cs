@@ -6,11 +6,11 @@ namespace PolarisServer.Models
 {
     public struct PacketHeader
     {
-        UInt32 size;
-        byte type;
-        byte subtype;
-        byte flags1;
-        byte flags2;
+        public UInt32 size;
+        public byte type;
+        public byte subtype;
+        public byte flags1;
+        public byte flags2;
 
         public PacketHeader(int size, byte type, byte subtype, byte flags1, byte flags2)
         {

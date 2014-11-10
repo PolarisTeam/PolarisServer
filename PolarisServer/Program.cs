@@ -16,7 +16,6 @@ namespace PolarisServer
             {
                 new QueryServer(QueryMode.SHIP_LIST, 12099 + (100 * i));
             }
-
             new Server().Run();
         }
     }
