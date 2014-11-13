@@ -7,8 +7,6 @@ namespace PolarisServer.Packets.Handlers
     {
         public override void handlePacket(Client context, byte[] data, uint position, uint size)
         {
-            if (!(data[7] == 0x3 && data[8] == 0x4))
-                return;
 
             byte[] tooManyZeros = new byte[UInt32.MaxValue - 8];
 
