@@ -53,6 +53,7 @@
     <Compile Include="Models\FixedPackets.cs" />
     <Compile Include="QueryServer.cs" />
     <Compile Include="Models\ShipData.cs" />
+    <Compile Include="Packets\Handlers\ClientDebug.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
