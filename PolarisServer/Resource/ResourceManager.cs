@@ -6,8 +6,21 @@ namespace PolarisServer.Resource
 {
     public class ResourceManager
     {
-        private static ResourceManager instance = null;
+        private static ResourceManager _instance = null;
         private List<Resource> resources;
+
+        public static ResourceManager Instance
+        {
+            get
+            { 
+                if (_instance == null)
+                {
+                    _instance = new ResourceManager();
+                }
+
+                return _instance;
+            }
+        }
 
         private ResourceManager()
         {
@@ -28,25 +41,10 @@ namespace PolarisServer.Resource
 
         }
 
-
-        public static ResourceManager GetInstance()
-        {
-            if (instance == null)
-            {
-                instance = new ResourceManager();
-            }
-
-            return instance;
-        }
-
         public static void Init()
         {
-            instance = new ResourceManager();
+            _instance = new ResourceManager();
         }
-
-
-
-
     }
 }
 
