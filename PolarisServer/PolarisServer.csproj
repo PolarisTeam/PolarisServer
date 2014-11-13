@@ -54,6 +54,8 @@
     <Compile Include="QueryServer.cs" />
     <Compile Include="Models\ShipData.cs" />
     <Compile Include="Packets\Handlers\ClientDebug.cs" />
+    <Compile Include="Resource\Resource.cs" />
+    <Compile Include="Resource\ResourceManager.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -61,6 +63,7 @@
     <Folder Include="Packets\" />
     <Folder Include="Packets\Handlers\" />
     <Folder Include="Models\" />
+    <Folder Include="Resource\" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>

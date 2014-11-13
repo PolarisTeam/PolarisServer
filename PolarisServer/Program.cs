@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 
+using PolarisServer.Resource;
+
 namespace PolarisServer
 {
     class MainClass
@@ -11,6 +13,7 @@ namespace PolarisServer
         {
             Console.WriteLine("Arf");
             Logger.WriteInternal("Server started at " + DateTime.Now.ToString());
+            ResourceManager.Init();
             Packets.Handlers.PacketHandlers.loadPacketHandlers();
             for (int i = 0; i < 10; i++)
             {
