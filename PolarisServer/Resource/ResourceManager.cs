@@ -6,19 +6,14 @@ namespace PolarisServer.Resource
 {
     public class ResourceManager
     {
-        private static ResourceManager _instance = null;
+        private static readonly ResourceManager instance = new ResourceManager();
         private List<Resource> resources;
 
         public static ResourceManager Instance
         {
             get
-            { 
-                if (_instance == null)
-                {
-                    _instance = new ResourceManager();
-                }
-
-                return _instance;
+            {
+                return instance;
             }
         }
 
@@ -38,12 +33,6 @@ namespace PolarisServer.Resource
              */
 
             Logger.WriteInternal("[RES] Loaded {0} resources off disk.", resources.Count);
-
-        }
-
-        public static void Init()
-        {
-            _instance = new ResourceManager();
         }
     }
 }

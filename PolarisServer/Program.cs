@@ -13,7 +13,6 @@ namespace PolarisServer
         {
             Console.WriteLine("Arf");
             Logger.WriteInternal("Server started at " + DateTime.Now.ToString());
-            ResourceManager.Init();
             Packets.Handlers.PacketHandlers.loadPacketHandlers();
             for (int i = 0; i < 10; i++)
             {
