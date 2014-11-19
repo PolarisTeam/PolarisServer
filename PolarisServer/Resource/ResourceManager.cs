@@ -20,10 +20,10 @@ namespace PolarisServer.Resource
         private ResourceManager()
         {
             this.resources = new List<Resource>();
-            loadResources(Path.Combine(Directory.GetCurrentDirectory(), "resources"));
+            LoadResources(Path.Combine(Directory.GetCurrentDirectory(), "resources"));
         }
 
-        private void loadResources(String resourcedir)
+        private void LoadResources(String resourcedir)
         {
             Logger.WriteInternal("[RES] Loading resources from {0}", resourcedir);
             /* TODO:

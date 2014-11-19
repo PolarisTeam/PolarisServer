@@ -22,7 +22,7 @@ namespace PolarisServer.Resource
         /// <param name="name">Name of your resource bundle.</param>
         /// <param name="type">ResourceType of your resource bundle</param>
         /// <param name="classType">C# Class type of your resource bundle</param>
-        public Resource(String name, ResourceType type, Type classType) 
+        public Resource(String name, ResourceType type, Type classType)
         {
             this.Name = name;
             this.Type = type;
