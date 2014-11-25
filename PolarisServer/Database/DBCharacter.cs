@@ -18,7 +18,6 @@ namespace PolarisServer.Database
             new MySqlCommand("CREATE TABLE IF NOT EXISTS Characters(CharacterID INTEGER NOT NULL, PlayerID INTEGER NOT NULL, " +
                 "Name TEXT, JobParam BLOB, LooksParam BLOB, PRIMARY KEY(CharacterID), FOREIGN KEY (PlayerID) REFRENCES Players(PlayerID))", connection).ExecuteNonQuery();
         }
-
     }
 }
 

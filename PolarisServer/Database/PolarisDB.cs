@@ -30,7 +30,7 @@ namespace PolarisServer.Database
 
                 object revObj = GetServerInfo("Revision");
 
-                if(revObj == null)
+                if (revObj == null)
                 {
                     revObj = 0;
                     AddServerinfo("Revision", revObj);
@@ -39,22 +39,18 @@ namespace PolarisServer.Database
                 dbRevision = Convert.ToString(revObj);
 
                 PolarisServer.Logger.WriteInternal("[---] MySQL server has base data revision {0} loaded.", dbRevision);
-
             }
-            catch(MySqlException ex)
+            catch (MySqlException ex)
             {
                 PolarisServer.Logger.WriteError("[ERR] A MySQL Error has occured! {0}: {1}", ex.GetType(), ex.ToString());
             }
-
-
         }
 
         private void GenerateTables()
         {
             new MySqlCommand("CREATE TABLE IF NOT EXISTS ServerInfo(name TEXT NOT NULL PRIMARY KEY, data BLOB)", connection).ExecuteNonQuery();
-
         }
-                            
+
         public void AddServerinfo(string name, object value)
         {
             try
@@ -62,7 +58,7 @@ namespace PolarisServer.Database
                 MySqlCommand cmd = new MySqlCommand("REPLACE INTO ServerInfo(name, data) VALUES(@name, @data)", connection);
                 cmd.Parameters.AddWithValue("name", name);
                 cmd.Parameters.AddWithValue("data", value);
-                
+
                 cmd.ExecuteNonQuery();
             }
             catch (MySqlException ex)
@@ -77,7 +73,7 @@ namespace PolarisServer.Database
             {
                 MySqlCommand cmd = new MySqlCommand("SELECT data FROM ServerInfo WHERE name = @name", connection);
                 cmd.Parameters.AddWithValue("name", name);
-                
+
                 return cmd.ExecuteScalar();
             }
             catch (MySqlException ex)

@@ -30,7 +30,8 @@ namespace PolarisServer.Network
 
         public bool OnReadable()
         {
-            try {
+            try
+            {
                 int read = _socket.Client.Receive(_readBuffer);
                 if (read == 0)
                 {
@@ -42,7 +43,9 @@ namespace PolarisServer.Network
                 DataReceived(_readBuffer, read);
 
                 return true;
-            } catch (SocketException e) {
+            }
+            catch (SocketException e)
+            {
                 ConnectionLost();
                 return false;
             }
