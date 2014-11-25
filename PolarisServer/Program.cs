@@ -7,18 +7,18 @@ using PolarisServer.Database;
 
 namespace PolarisServer
 {
-    class PolarisServer
+    class PolarisApp
     {
 
-        private static PolarisServer _Instance;
-        public static PolarisServer Instance { get { return _Instance; } }
+        private static PolarisApp _Instance;
+        public static PolarisApp Instance { get { return _Instance; } }
         private PolarisDB _Database;
 
         public static void Main(string[] args)
         {
 
             Console.WriteLine("Arf");
-            _Instance = new PolarisServer();
+            _Instance = new PolarisApp();
             _Instance.Start();
 
         }
