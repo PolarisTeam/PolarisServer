@@ -17,7 +17,7 @@ namespace PolarisServer
         public static void Main(string[] args)
         {
 
-            Console.WriteLine("Arf");
+            Console.WriteLine("Arf. Polaris Server version GIT.\nCreated by PolarisTeam (http://github.com/PolarisTeam) and licenced under AGPL.");
             _Instance = new PolarisApp();
             _Instance.Start();
 
