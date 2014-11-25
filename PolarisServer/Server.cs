@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 
+using PolarisServer.Network;
+
 namespace PolarisServer
 {
     public class Server
@@ -21,7 +23,7 @@ namespace PolarisServer
             _server.Run();
         }
 
-        void HandleNewClient(PolarisServer.Network.SocketClient client)
+        void HandleNewClient(SocketClient client)
         {
             var c = new Client(this, client);
             _clients.Add(c);
