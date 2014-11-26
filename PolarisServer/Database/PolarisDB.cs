@@ -102,7 +102,7 @@ namespace PolarisServer.Database
             while (Reader.Read())
             {
                 var character = new Character();
-                character.CharacterId = Convert.ToUInt32(Reader["CharacterID"]);
+                character.CharacterID = (int)Convert.ToUInt32(Reader["CharacterID"]);
                 character.Name = Convert.ToString(Reader["Name"]);
 
                 //Character.Job = (Character.JobParam)["JobParam"];

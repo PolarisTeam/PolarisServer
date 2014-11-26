@@ -27,9 +27,9 @@ namespace PolarisServer
                     database.Database.CreateIfNotExists();
 
 
-                    if(database.Things.Find("Revision") != null)
-                        database.Things.Remove(database.Things.Find("Revision"));
-                    database.Things.Add(new Thing {key = "Revision", value = "0"});
+                    if(database.ServerInfos.Find("Revision") != null)
+                        database.ServerInfos.Remove(database.ServerInfos.Find("Revision"));
+                    database.ServerInfos.Add(new ServerInfo {key = "Revision", value = "0"});
 
                     database.SaveChanges();
                 }

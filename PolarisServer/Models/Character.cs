@@ -1,5 +1,11 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using System.ComponentModel.DataAnnotations;
+
+using PolarisServer.Packets;
+using PolarisServer.Database;
+
+
 
 namespace PolarisServer.Models
 {
@@ -80,11 +86,46 @@ namespace PolarisServer.Models
         }
 
         // Probably more info than this
-        public uint CharacterId;
-        public uint PlayerId;
-        public string Name;
-        public LooksParam Looks;
-        public JobParam Job;
+        [Key]
+        public int CharacterID { get; set; }
+
+        public virtual Player Player { get; set; }
+        public string Name { get; set; } 
+
+        public string LooksBinstring
+        {
+            get
+            {
+                PacketWriter w = new PacketWriter();
+                w.WriteStruct(Looks);
+                return Helper.ByteArrayToString(w.ToArray());
+            }
+
+            set
+            {
+                Looks = Helper.ByteArrayToStructure<LooksParam>(Helper.StringToByteArray(value));
+            }
+
+        }
+
+        public string JobsBinstring
+        {
+            get
+            {
+                PacketWriter w = new PacketWriter();
+                w.WriteStruct(Jobs);
+                return Helper.ByteArrayToString(w.ToArray());
+            }
+
+            set
+            {
+                Jobs = Helper.ByteArrayToStructure<JobParam>(Helper.StringToByteArray(value));
+            }
+
+        }
+            
+        public LooksParam Looks { get; set; }
+        public JobParam Jobs { get; set; }
 
         public Character()
         {
