@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Security.Cryptography;
-using Mono.Security.Cryptography;
+
+using PolarisServer.Crypto;
 
 namespace PolarisServer.Packets.Handlers
 {
@@ -55,15 +56,15 @@ namespace PolarisServer.Packets.Handlers
             Array.Copy(decryptedBlob, 0x10, arc4Key, 0, 0x10);
 
             // Create three RC4 mungers
-            var arc4 = new Mono.Security.Cryptography.ARC4Managed();
+            var arc4 = new ARC4Managed();
             arc4.Key = arc4Key;
             context._inputARC4 = arc4.CreateDecryptor();
 
-            arc4 = new Mono.Security.Cryptography.ARC4Managed();
+            arc4 = new ARC4Managed();
             arc4.Key = arc4Key;
             context._outputARC4 = arc4.CreateEncryptor();
 
-            arc4 = new Mono.Security.Cryptography.ARC4Managed();
+            arc4 = new ARC4Managed();
             arc4.Key = arc4Key;
             var tempDecryptor = arc4.CreateDecryptor();
 
