@@ -1,7 +1,8 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations;
 using System.Data.Entity;
+
 using MySql.Data.Entity;
+using System.ComponentModel.DataAnnotations;
 
 namespace PolarisServer.Database
 {
@@ -10,13 +11,13 @@ namespace PolarisServer.Database
     {
         [Key]
         public string key { get; set; }
-        public object value { get; set; }
+        public string value { get; set; }
     }
     [DbConfigurationType(typeof(MySqlEFConfiguration))]
     public class PolarisEF : DbContext
     {
         public DbSet<Thing> Things { get; set; }
-        public PolarisEF() : base("username=polaris;server=localhost;database=polaris;password=polaris")
+        public PolarisEF() : base("server=localhost;database=polaris;username=polaris;password=polaris")
         {
         }
     }
