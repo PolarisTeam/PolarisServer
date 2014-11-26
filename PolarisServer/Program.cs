@@ -19,11 +19,13 @@ namespace PolarisServer
         {
 
             Console.WriteLine("Arf. Polaris Server version GIT.\nCreated by PolarisTeam (http://github.com/PolarisTeam) and licenced under AGPL.");
+            System.Data.Entity.Database.SetInitializer(new DropCreateDatabaseIfModelChanges<PolarisEF>());
             using (var database = new PolarisEF())
             {
                 try
                 {
                     database.Database.CreateIfNotExists();
+
 
                     if(database.Things.Find("Revision") != null)
                         database.Things.Remove(database.Things.Find("Revision"));
