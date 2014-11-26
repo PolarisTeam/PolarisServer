@@ -44,7 +44,7 @@ namespace PolarisServer.Network
 
                 return true;
             }
-            catch (SocketException e)
+            catch (SocketException)
             {
                 ConnectionLost();
                 return false;

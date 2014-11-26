@@ -39,14 +39,16 @@ namespace PolarisServer.Database
         {
             try
             {
-                this.Database.CreateIfNotExists();
+                ServerInfo revision = this.ServerInfos.Find("Revision");
+                if(revision == null)
+                {
+                    revision = new ServerInfo { key = "Revision", value = "0" };
+                    this.ServerInfos.Add(revision);
 
-
-                if(this.ServerInfos.Find("Revision") != null)
-                    this.ServerInfos.Remove(this.ServerInfos.Find("Revision"));
-                this.ServerInfos.Add(new ServerInfo {key = "Revision", value = "5"});
-
+                }
                 this.SaveChanges();
+
+                Logger.WriteInternal("[DB ] Loaded database with dataset revsision {0}", revision.value);
             }
             catch (Exception ex)
             {
