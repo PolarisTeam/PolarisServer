@@ -5,14 +5,17 @@ using System.ComponentModel.DataAnnotations;
 using MySql.Data.Entity;
 
 using PolarisServer.Models;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Data.Entity.Infrastructure;
 
 namespace PolarisServer.Database
 {
 
     public class ServerInfo
     {
-        [Key]
+        [Key, MaxLength(255)]
         public string key { get; set; }
+
         public string value { get; set; }
     }
 
@@ -39,6 +42,7 @@ namespace PolarisServer.Database
         {
             try
             {
+                this.Database.CreateIfNotExists();
                 ServerInfo revision = this.ServerInfos.Find("Revision");
                 if(revision == null)
                 {
