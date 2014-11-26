@@ -92,34 +92,34 @@ namespace PolarisServer.Models
         public virtual Player Player { get; set; }
         public string Name { get; set; } 
 
-        public string LooksBinstring
+        public byte[] LooksBinary
         {
             get
             {
                 PacketWriter w = new PacketWriter();
                 w.WriteStruct(Looks);
-                return Helper.ByteArrayToString(w.ToArray());
+                return w.ToArray();
             }
 
             set
             {
-                Looks = Helper.ByteArrayToStructure<LooksParam>(Helper.StringToByteArray(value));
+                Looks = Helper.ByteArrayToStructure<LooksParam>(value);
             }
 
         }
 
-        public string JobsBinstring
+        public byte[] JobsBinary
         {
             get
             {
                 PacketWriter w = new PacketWriter();
                 w.WriteStruct(Jobs);
-                return Helper.ByteArrayToString(w.ToArray());
+                return w.ToArray();
             }
 
             set
             {
-                Jobs = Helper.ByteArrayToStructure<JobParam>(Helper.StringToByteArray(value));
+                Jobs = Helper.ByteArrayToStructure<JobParam>(value);
             }
 
         }
