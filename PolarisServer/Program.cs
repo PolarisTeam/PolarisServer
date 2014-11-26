@@ -18,6 +18,11 @@ namespace PolarisServer
         {
 
             Console.WriteLine("Arf. Polaris Server version GIT.\nCreated by PolarisTeam (http://github.com/PolarisTeam) and licenced under AGPL.");
+            using (var database = new PolarisEF())
+            {
+                database.Database.CreateIfNotExists();
+                database.Things.Add(new Thing {key = "Revision", value = 0});
+            }
             _Instance = new PolarisApp();
             _Instance.Start();
 
@@ -27,7 +32,7 @@ namespace PolarisServer
         {
             Logger.WriteInternal("Server starting at " + DateTime.Now.ToString());
             Packets.Handlers.PacketHandlers.loadPacketHandlers();
-            _Database = new PolarisDB();
+            //_Database = new PolarisDB();
             for (int i = 0; i < 10; i++)
             {
                 new QueryServer(QueryMode.ShipList, 12099 + (100 * i));
