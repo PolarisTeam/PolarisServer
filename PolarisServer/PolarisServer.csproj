@@ -47,7 +47,7 @@
       <HintPath>..\packages\EntityFramework.6.1.1\lib\net40\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
     <Reference Include="MySql.Data.Entity.EF6">
-      <HintPath>..\packages\MySql.Data.Entities.6.8.3.0\lib\net40\mysql.data.entity.EF6.dll</HintPath>
+      <HintPath>..\packages\MySql.Data.Entity.6.9.5\lib\net40\MySql.Data.Entity.EF6.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
