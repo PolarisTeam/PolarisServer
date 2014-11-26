@@ -51,11 +51,11 @@ namespace PolarisServer.Database
 
         private void GenerateTables()
         {
-            new MySqlCommand("CREATE TABLE IF NOT EXISTS ServerInfo(name TEXT NOT NULL PRIMARY KEY, data BLOB)", connection).ExecuteNonQuery();
+            new MySqlCommand("CREATE TABLE IF NOT EXISTS ServerInfo(name VARCHAR(128) NOT NULL PRIMARY KEY, data TEXT)", connection).ExecuteNonQuery();
             new MySqlCommand("CREATE TABLE IF NOT EXISTS Players(PlayerID INTEGER NOT NULL, LoginID TEXT NOT NULL, " +
                 "Password TEXT NOT NULL, Nickname TEXT NOT NULL, Prefrences BLOB, PRIMARY KEY(PlayerID))", connection).ExecuteNonQuery();
             new MySqlCommand("CREATE TABLE IF NOT EXISTS Characters(CharacterID INTEGER NOT NULL, PlayerID INTEGER NOT NULL, " +
-                "Name TEXT, JobParam BLOB, LooksParam BLOB, PRIMARY KEY(CharacterID), FOREIGN KEY (PlayerID) REFRENCES Players(PlayerID))", connection).ExecuteNonQuery();
+                "Name TEXT, JobParam BLOB, LooksParam BLOB, PRIMARY KEY(CharacterID), FOREIGN KEY (PlayerID) REFERENCES Players(PlayerID))", connection).ExecuteNonQuery();
         }
 
         public void AddServerinfo(string name, object value)
