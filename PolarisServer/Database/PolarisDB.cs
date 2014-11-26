@@ -1,5 +1,8 @@
 ﻿using System;
 using MySql.Data.MySqlClient;
+using System.Collections.Generic;
+
+using PolarisServer.Models;
 
 namespace PolarisServer.Database
 {
@@ -7,6 +10,7 @@ namespace PolarisServer.Database
     {
         private MySqlConnection connection;
         private string dbRevision;
+
 
         public PolarisDB()
         {
@@ -26,7 +30,6 @@ namespace PolarisServer.Database
                 GenerateTables();
 
                 PolarisServer.Logger.WriteInternal("[---] Connected to MySQL server with version {0}", connection.ServerVersion);
-                //dbRevision = Convert.ToString(new MySqlCommand("SELECT data FROM ServerInfo WHERE name = \"Revision\"", connection).ExecuteScalar());
 
                 object revObj = GetServerInfo("Revision");
 
@@ -49,6 +52,10 @@ namespace PolarisServer.Database
         private void GenerateTables()
         {
             new MySqlCommand("CREATE TABLE IF NOT EXISTS ServerInfo(name TEXT NOT NULL PRIMARY KEY, data BLOB)", connection).ExecuteNonQuery();
+            new MySqlCommand("CREATE TABLE IF NOT EXISTS Players(PlayerID INTEGER NOT NULL, LoginID TEXT NOT NULL, " +
+                "Password TEXT NOT NULL, Nickname TEXT NOT NULL, Prefrences BLOB, PRIMARY KEY(PlayerID))", connection).ExecuteNonQuery();
+            new MySqlCommand("CREATE TABLE IF NOT EXISTS Characters(CharacterID INTEGER NOT NULL, PlayerID INTEGER NOT NULL, " +
+                "Name TEXT, JobParam BLOB, LooksParam BLOB, PRIMARY KEY(CharacterID), FOREIGN KEY (PlayerID) REFRENCES Players(PlayerID))", connection).ExecuteNonQuery();
         }
 
         public void AddServerinfo(string name, object value)
@@ -82,6 +89,29 @@ namespace PolarisServer.Database
             }
 
             return null;
+        }
+
+        public Character[] GetCharacters(int PlayerID)
+        {
+            List<Character> characters = new List<Character>();
+            MySqlCommand cmd = new MySqlCommand("SELECT * FROM Characters WHERE PlayerID = @pid", connection);
+            cmd.Parameters.AddWithValue("pid", PlayerID);
+
+            var Reader = cmd.ExecuteReader();
+
+            while (Reader.Read())
+            {
+                var character = new Character();
+                character.CharacterId = Convert.ToUInt32(Reader["CharacterID"]);
+                character.Name = Convert.ToString(Reader["Name"]);
+
+                //Character.Job = (Character.JobParam)["JobParam"];
+                //Character.Looks = (Character.LooksParam)Reader["LooksParam"];
+
+                characters.Add(character);
+            }
+
+            return characters.ToArray();
         }
     }
 }
