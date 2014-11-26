@@ -67,7 +67,6 @@
     <Compile Include="QueryServer.cs" />
     <Compile Include="Models\ShipData.cs" />
     <Compile Include="Packets\Handlers\ClientDebug.cs" />
-    <Compile Include="Database\PolarisDB.cs" />
     <Compile Include="Database\PolarisEF.cs" />
     <Compile Include="Crypto\RC4.cs" />
     <Compile Include="Crypto\ARC4Managed.cs" />

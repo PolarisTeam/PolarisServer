@@ -37,6 +37,27 @@ namespace PolarisServer.Database
 
         public PolarisEF() : base("server=localhost;database=polaris;username=polaris;password=polaris")
         {
+            try
+            {
+                this.Database.CreateIfNotExists();
+
+
+                if(this.ServerInfos.Find("Revision") != null)
+                    this.ServerInfos.Remove(this.ServerInfos.Find("Revision"));
+                this.ServerInfos.Add(new ServerInfo {key = "Revision", value = "5"});
+
+                this.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteError("[ERR] DB Expection occured! {0}: {1}", ex.GetType(), ex.ToString());
+                if (ex.InnerException != null)
+                {
+                    Logger.WriteError("[ERR] Inner exception occured! {0}: {1}", ex.InnerException.GetType(), ex.InnerException.ToString());
+                }
+
+            }
+
         }
             
     }

@@ -13,36 +13,13 @@ namespace PolarisServer
 
         private static PolarisApp _Instance;
         public static PolarisApp Instance { get { return _Instance; } }
-        private PolarisDB _Database;
+        private PolarisEF _Database;
 
         public static void Main(string[] args)
         {
 
             Console.WriteLine("Arf. Polaris Server version GIT.\nCreated by PolarisTeam (http://github.com/PolarisTeam) and licenced under AGPL.");
             System.Data.Entity.Database.SetInitializer(new DropCreateDatabaseIfModelChanges<PolarisEF>());
-            using (var database = new PolarisEF())
-            {
-                try
-                {
-                    database.Database.CreateIfNotExists();
-
-
-                    if(database.ServerInfos.Find("Revision") != null)
-                        database.ServerInfos.Remove(database.ServerInfos.Find("Revision"));
-                    database.ServerInfos.Add(new ServerInfo {key = "Revision", value = "0"});
-
-                    database.SaveChanges();
-                }
-                catch (Exception ex)
-                {
-                    Logger.WriteError("[ERR] DB Expection occured! {0}: {1}", ex.GetType(), ex.ToString());
-                    if (ex.InnerException != null)
-                    {
-                        Logger.WriteError("[ERR] Inner exception occured! {0}: {1}", ex.InnerException.GetType(), ex.InnerException.ToString());
-                    }
-
-                }
-            }
             _Instance = new PolarisApp();
             _Instance.Start();
 
@@ -52,7 +29,8 @@ namespace PolarisServer
         {
             Logger.WriteInternal("Server starting at " + DateTime.Now.ToString());
             Packets.Handlers.PacketHandlers.loadPacketHandlers();
-            //_Database = new PolarisDB();
+            Logger.WriteInternal("[DB ] Loading database...");
+            _Database = new PolarisEF();
             for (int i = 0; i < 10; i++)
             {
                 new QueryServer(QueryMode.ShipList, 12099 + (100 * i));
@@ -60,7 +38,7 @@ namespace PolarisServer
             new Server().Run();
         }
 
-        public PolarisDB Database { get { return _Database; } }
+        public PolarisEF Database { get { return _Database; } }
 
     }
 }
