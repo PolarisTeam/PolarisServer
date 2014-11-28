@@ -56,19 +56,18 @@ namespace PolarisServer.Network
                     else
                     {
                         // Readable data
-                        SocketClient c = _socketMap[socket];
-
-                        if (!c.OnReadable())
-                        {
-                            // Connection failed, remove it from here
-                            Console.WriteLine("Connection closed");
-
-                            _clients.Remove(c);
-                            _socketMap.Remove(socket);
-                        }
+                        _socketMap[socket].OnReadable();
                     }
                 }
             }
+        }
+
+        internal void NotifyConnectionClosed(SocketClient client)
+        {
+            Console.WriteLine("Connection closed");
+
+            _socketMap.Remove(client.Socket.Client);
+            _clients.Remove(client);
         }
     }
 }

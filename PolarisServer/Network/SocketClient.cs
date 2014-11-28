@@ -37,6 +37,7 @@ namespace PolarisServer.Network
                 {
                     // Connection failed, presumably
                     ConnectionLost();
+                    _server.NotifyConnectionClosed(this);
                     return false;
                 }
 
@@ -47,8 +48,16 @@ namespace PolarisServer.Network
             catch (SocketException)
             {
                 ConnectionLost();
+                _server.NotifyConnectionClosed(this);
                 return false;
             }
+        }
+
+        public void Close()
+        {
+            ConnectionLost();
+            _server.NotifyConnectionClosed(this);
+            _socket.Close();
         }
     }
 }

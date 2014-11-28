@@ -8,6 +8,8 @@ namespace PolarisServer
     {
         internal static RSACryptoServiceProvider _rsaCsp = null;
 
+        private bool _isClosed = false;
+
         private Server _server;
         private Network.SocketClient _socket;
 
@@ -85,6 +87,10 @@ namespace PolarisServer
                     _readBuffer[position + 4], _readBuffer[position + 5],
                     _readBuffer, position + 8, packetSize - 8);
 
+                // If the connection was closed, we have no more business here
+                if (_isClosed)
+                    break;
+
                 position += packetSize;
             }
 
@@ -105,6 +111,7 @@ namespace PolarisServer
         {
             // :(
             Logger.WriteLine("[:( ] :(");
+            _isClosed = true;
         }
 
         public void SendPacket(byte typeA, byte typeB, byte flags, byte[] data)
