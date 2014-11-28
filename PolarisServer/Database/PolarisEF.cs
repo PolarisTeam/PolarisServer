@@ -21,7 +21,7 @@ namespace PolarisServer.Database
 
     public class Player
     {
-        [Key]
+        [Key, Range(10000000, UInt32.MaxValue)]
         public int PlayerID { get; set; }
 
         public string Username { get; set; }
