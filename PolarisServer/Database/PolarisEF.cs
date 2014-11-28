@@ -7,6 +7,7 @@ using MySql.Data.Entity;
 using PolarisServer.Models;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity.Infrastructure;
+using System.ComponentModel;
 
 namespace PolarisServer.Database
 {
@@ -21,7 +22,7 @@ namespace PolarisServer.Database
 
     public class Player
     {
-        [Key, Range(10000000, UInt32.MaxValue)]
+        [Key, DefaultValue(10000000)]
         public int PlayerID { get; set; }
 
         public string Username { get; set; }
