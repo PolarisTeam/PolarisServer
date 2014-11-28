@@ -22,6 +22,16 @@ namespace PolarisServer.Packets.Handlers
         }
     }
 
+    [PacketHandlerAttr(0x11, 0x2B)]
+    public class LogOutRequest : PacketHandler
+    {
+        public override void handlePacket(Client context, byte[] data, uint position, uint size)
+        {
+            // DOUBLE SOCKET UP IN HERE
+            context.Socket.Close();
+        }
+    }
+
     [PacketHandlerAttr(0x11, 0x41)]
     public class CreateCharacterOne : PacketHandler
     {
