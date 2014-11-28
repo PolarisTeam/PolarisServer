@@ -124,13 +124,8 @@ namespace PolarisServer
 
             Array.Copy(data, 0, packet, 8, data.Length);
 
-            // Check for and create packets directory if it doesn't exist
-            if (!Directory.Exists("packets"))
-                Directory.CreateDirectory("packets");
-
-            var filename = string.Format("packets/{0}.{1:X}.{2:X}.S.bin", _packetID++, typeA, typeB);
             Logger.WriteLine("[<--] Packet {0:X}-{1:X} ({2} bytes)", typeA, typeB, packet.Length);
-            File.WriteAllBytes(filename, packet);
+            LogPacket(false, typeA, typeB, packet);
 
             if (_outputARC4 != null)
                 _outputARC4.TransformBlock(packet, 0, packet.Length, packet, 0);
@@ -142,6 +137,10 @@ namespace PolarisServer
         {
             Logger.WriteLine("[-->] Packet {0:X}-{1:X} ({2} bytes)", typeA, typeB, size);
 
+            byte[] packet = new byte[size];
+            Array.Copy(data, position, packet, 0, size);
+            LogPacket(true, typeA, typeB, packet);
+
             Packets.Handlers.PacketHandler handler = Packets.Handlers.PacketHandlers.getHandlerFor(typeA, typeB);
             if (handler != null)
                 handler.handlePacket(this, data, position, size);
@@ -150,6 +149,17 @@ namespace PolarisServer
                 Logger.WriteWarning("[!!!] UNIMPLEMENTED PACKET");
             }
             // throw new NotImplementedException();
+        }
+
+
+        void LogPacket(bool fromClient, byte typeA, byte typeB, byte[] packet)
+        {
+            // Check for and create packets directory if it doesn't exist
+            if (!Directory.Exists("packets"))
+                Directory.CreateDirectory("packets");
+
+            var filename = string.Format("packets/{0}.{1:X}.{2:X}.{3}.bin", _packetID++, typeA, typeB, fromClient ? "C" : "S");
+            File.WriteAllBytes(filename, packet);
         }
     }
 }
