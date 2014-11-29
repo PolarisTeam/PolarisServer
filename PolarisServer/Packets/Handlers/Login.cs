@@ -108,6 +108,8 @@ namespace PolarisServer.Packets.Handlers
             var settings = new Packets.PacketWriter();
             settings.WriteASCII(user.SettingsINI, 0x54AF, 0x100);
             context.SendPacket(0x2B, 2, 4, settings.ToArray());
+
+            context.User = user;
         }
     }
 }

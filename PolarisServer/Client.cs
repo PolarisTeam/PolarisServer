@@ -2,6 +2,9 @@
 using System.IO;
 using System.Security.Cryptography;
 
+using PolarisServer.Database;
+using PolarisServer.Models;
+
 namespace PolarisServer
 {
     public class Client
@@ -14,6 +17,9 @@ namespace PolarisServer
         private Network.SocketClient _socket;
 
         public Network.SocketClient Socket { get { return _socket; } }
+
+        public Player User { get; set; }
+        public Character Charcter { get; set; }
 
         private byte[] _readBuffer;
         private uint _readBufferSize;
