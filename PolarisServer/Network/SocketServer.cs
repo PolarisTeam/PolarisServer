@@ -44,7 +44,7 @@ namespace PolarisServer.Network
                     if (socket == listener.Server)
                     {
                         // New connection
-                        Logger.WriteInternal("New connection!");
+                        Logger.WriteInternal("[NEW] New connection!");
 
                         SocketClient c = new SocketClient(this, listener.AcceptTcpClient());
 
