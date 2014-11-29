@@ -39,10 +39,10 @@ namespace PolarisServer.Packets.Handlers
             {
                 decryptedBlob = pkcs.DecryptKeyExchange(cryptedBlob);
             }
-            catch (CryptographicException)
+            catch (CryptographicException ex)
             {
-                // Failed. Should probably drop the connection here.
-                // TODO ?
+                Logger.WriteError("[ERR] Error occured when decrypting the key exchange, {0}: {1}", ex.GetType(), ex.ToString());
+                context.Socket.Close();
                 return;
             }
 
