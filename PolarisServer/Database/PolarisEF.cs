@@ -22,7 +22,7 @@ namespace PolarisServer.Database
 
     public class Player
     {
-        [Key, DefaultValue(10000000)]
+        [Key]
         public int PlayerID { get; set; }
 
         public string Username { get; set; }
