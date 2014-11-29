@@ -31,21 +31,38 @@ namespace PolarisServer.Packets.Handlers
             var users = from u in db.Players
                         where u.Username == username
                         select u;
-
+            
             string error = "";
             Database.Player user = null;
 
             if (users.Count() == 0)
             {
-                user = new Database.Player
+                // Check if there is an empty field
+                if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
                 {
-                            Nickname = username,
-                            Username = username,
-                            Password = BCrypt.Net.BCrypt.HashPassword(password),
-                            SettingsINI = System.IO.File.ReadAllText("settings.txt")
-                };
-                db.Players.Add(user);
-                db.SaveChanges();
+                    error = "Username and password fields must not be empty.";
+                    user = null;
+                }
+                // Check for special characters
+                else if (!System.Text.RegularExpressions.Regex.IsMatch(username, "^[a-zA-Z0-9 ]*$", System.Text.RegularExpressions.RegexOptions.IgnoreCase))
+                {
+                    error = "Username must not contain special characters.\nPlease use letters and numbers only.";
+                    user = null;
+                }
+                // We're all good!
+                else
+                {
+                    // Insert new player into database
+                    user = new Database.Player
+                    {
+                        Nickname = username,
+                        Username = username,
+                        Password = BCrypt.Net.BCrypt.HashPassword(password),
+                        SettingsINI = System.IO.File.ReadAllText("settings.txt")
+                    };
+                    db.Players.Add(user);
+                    db.SaveChanges();
+                }
             }
             else
             {
