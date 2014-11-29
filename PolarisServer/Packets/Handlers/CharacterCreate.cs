@@ -24,7 +24,7 @@ namespace PolarisServer.Packets.Handlers
             reader.ReadByte();      // VoiceType
             reader.ReadBytes(5);    // 5 unknown bytes
             reader.ReadUInt16();    // VoiceData
-            string name = Encoding.Unicode.GetString(reader.ReadBytes(32));
+            string name = reader.ReadFixedLengthUTF16(16);
 
             reader.BaseStream.Seek(0x4, System.IO.SeekOrigin.Current); // Padding
 
