@@ -40,6 +40,9 @@ namespace PolarisServer.Packets.Handlers
                     Looks = looks,
                     Player = context.User,
                 });
+            PolarisApp.Instance.Database.SaveChanges();
+
+            context.Socket.Close();
         }
     }
 }
