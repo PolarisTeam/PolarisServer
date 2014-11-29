@@ -116,7 +116,7 @@ namespace PolarisServer
         void HandleConnectionLost()
         {
             // :(
-            Logger.WriteLine("[DED] Connection lost. :(");
+            Logger.WriteLine("[BYE] Connection lost. :(");
             _isClosed = true;
         }
 
