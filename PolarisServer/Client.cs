@@ -145,6 +145,11 @@ namespace PolarisServer
             _socket.Socket.Client.Send(packet);
         }
 
+        public void SendPacket(byte typeA, byte typeB, byte flags, Packet data)
+        {
+            SendPacket(typeA, typeA, flags, data.Build());
+        }
+
 
         void HandlePacket(byte typeA, byte typeB, byte[] data, uint position, uint size)
         {
