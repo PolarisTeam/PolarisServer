@@ -75,7 +75,7 @@ namespace PolarisServer
                 entry.number = (uint)i;
                 entry.status = ShipStatus.Online;
                 entry.name = String.Format("Ship{0:0#}", i);
-                entry.ip = IPAddress.Parse("71.231.33.40").GetAddressBytes();
+				entry.ip = IPAddress.Parse("127.0.0.1").GetAddressBytes();
                 entries.Add(entry);
             }
             w.WriteStruct(new PacketHeader(Marshal.SizeOf(typeof(ShipEntry)) * entries.Count + 12, 0x11, 0x3D, 0x4, 0x0));
@@ -96,7 +96,7 @@ namespace PolarisServer
             PacketWriter w = new PacketWriter();
             w.WriteStruct(new PacketHeader(0x90, 0x11, 0x2C, 0x0, 0x0));
             w.Write(new byte[0x64 - 8]);
-            w.Write(IPAddress.Parse("71.231.33.40").GetAddressBytes());
+            w.Write(IPAddress.Parse("127.0.0.1").GetAddressBytes());
             w.Write((UInt16)12205);
             w.Write(new byte[0x90 - 0x6A]);
 
