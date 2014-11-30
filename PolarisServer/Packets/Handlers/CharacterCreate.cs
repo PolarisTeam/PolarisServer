@@ -32,17 +32,26 @@ namespace PolarisServer.Packets.Handlers
             Character.JobParam jobs = reader.ReadStruct<Character.JobParam>();
 
             Logger.WriteInternal("{0} is creating a new character named {1}.", context.User.Username, name);
-
-            PolarisApp.Instance.Database.Characters.Add(new Character
-                {
-                    Name = name,
-                    Jobs = jobs,
-                    Looks = looks,
-                    Player = context.User,
-                });
+            var newCharacter = new Character
+            {
+                Name = name,
+                Jobs = jobs,
+                Looks = looks,
+                Player = context.User,
+            };
+            PolarisApp.Instance.Database.Characters.Add(newCharacter);
             PolarisApp.Instance.Database.SaveChanges();
 
-            context.Socket.Close();
+            //context.Socket.Close();
+            //context.SendPacket(new NoPayloadPacket(0x3, 0x4));
+
+            context.Character = newCharacter;
+
+            PacketWriter writer = new PacketWriter();
+            writer.Write(0);
+            writer.Write((uint)context.User.PlayerID);
+
+            context.SendPacket(0x11, 0x7, 0, writer.ToArray());
         }
     }
 }

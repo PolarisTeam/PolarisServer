@@ -13,12 +13,15 @@ namespace PolarisServer.Packets.Handlers
             if (context.User == null)
                 return;
 
-            var character = PolarisApp.Instance.Database.Characters.Find((int)charID);
+            if (context.Character == null) // On character create, this is already set.
+            {
+                var character = PolarisApp.Instance.Database.Characters.Find((int)charID);
 
-            if (character == null || character.Player.PlayerID != context.User.PlayerID)
-                return;
+                if (character == null || character.Player.PlayerID != context.User.PlayerID)
+                    return;
 
-            context.Character = character;
+                context.Character = character;
+            }
 
             // Transition to the loading screen
             context.SendPacket(new NoPayloadPacket(0x3, 0x4));
