@@ -20,8 +20,6 @@ namespace PolarisServer
 		{
 			try
 			{
-                throw new Exception("Test");
-
 				for (int i = 0; i < args.Length; i++)
 				{
 					switch (args[i].ToLower())
