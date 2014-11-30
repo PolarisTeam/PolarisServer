@@ -135,6 +135,6 @@ namespace PolarisServer.Models
 
     public struct MysteryPositions
     {
-        public float a, b, c, d, e, f, g;
+        public float a, b, c, facingAngle, x, y, z;
     }
 }

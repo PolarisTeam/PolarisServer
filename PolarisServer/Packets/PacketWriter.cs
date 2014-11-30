@@ -115,10 +115,10 @@ namespace PolarisServer.Packets
             Write(Helper.FloatToHalfPrecision(s.a));
             Write(Helper.FloatToHalfPrecision(s.b));
             Write(Helper.FloatToHalfPrecision(s.c));
-            Write(Helper.FloatToHalfPrecision(s.d));
-            Write(Helper.FloatToHalfPrecision(s.e));
-            Write(Helper.FloatToHalfPrecision(s.f));
-            Write(Helper.FloatToHalfPrecision(s.g));
+            Write(Helper.FloatToHalfPrecision(s.facingAngle));
+            Write(Helper.FloatToHalfPrecision(s.x));
+            Write(Helper.FloatToHalfPrecision(s.y));
+            Write(Helper.FloatToHalfPrecision(s.z));
         }
 
         public void WritePlayerHeader(uint id)

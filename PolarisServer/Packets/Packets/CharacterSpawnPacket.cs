@@ -8,17 +8,19 @@ namespace PolarisServer.Packets
         {
             _character = character;
 
-            _position.a = 0.000031f;
-            _position.b = 1.0f;
-            _position.c = 0.000031f;
-            _position.d = -0.000031f;
-            _position.e = -0.417969f;
-            _position.f = 0.000031f;
-            _position.g = 134.375f;
+            Position.a = 0.000031f;
+            Position.b = 1.0f;
+            Position.c = 0.000031f;
+            Position.facingAngle = -0.000031f;
+
+            Position.x = -0.417969f;
+            Position.y = 0.000031f;
+            Position.z = 134.375f;
         }
 
         private Models.Character _character = null;
-        private Models.MysteryPositions _position;
+        public Models.MysteryPositions Position;
+        public bool IsItMe = true;
 
         #region implemented abstract members of Packet
         public override byte[] Build()
@@ -29,7 +31,7 @@ namespace PolarisServer.Packets
             writer.WritePlayerHeader((uint)_character.Player.PlayerID);
 
             // Spawn position
-            writer.Write(_position);
+            writer.Write(Position);
 
             writer.Write((ushort)0); // padding?
             writer.WriteFixedLengthASCII("Character", 32);
@@ -39,7 +41,7 @@ namespace PolarisServer.Packets
             writer.Write((uint)1); // 0x4C
             writer.Write((uint)53); // 0x50
             writer.Write((uint)0); // 0x54
-            writer.Write((uint)47); // 0x58
+            writer.Write((uint)(IsItMe ? 47 : 39)); // 0x58
             writer.Write((ushort)559); // 0x5C
             writer.Write((ushort)306); // 0x5E
             writer.Write((uint)_character.Player.PlayerID); // player ID copy
