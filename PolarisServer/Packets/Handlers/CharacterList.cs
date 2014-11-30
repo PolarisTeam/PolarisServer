@@ -38,6 +38,9 @@ namespace PolarisServer.Packets.Handlers
             // Ninji note: This packet may be followed by extra data,
             // after a fixed-length array of character data structures.
             // Needs more investigation at some point.
+            // --- 
+            // CK note: Extra data is likey current equipment, playtime, etc.
+            // All of that data is currently unaccounted for at the moment.
 
             context.SendPacket(0x11, 0x3, 0x0, writer.ToArray());
         }
