@@ -5,7 +5,7 @@ namespace PolarisServer.Packets.Handlers
     [PacketHandlerAttr(0x11, 0x4)]
     public class StartGame : PacketHandler
     {
-        public override void handlePacket(Client context, byte[] data, uint position, uint size)
+        public override void HandlePacket(Client context, byte[] data, uint position, uint size)
         {
             var reader = new PacketReader(data, position, size);
             var charID = reader.ReadUInt32();
@@ -38,7 +38,7 @@ namespace PolarisServer.Packets.Handlers
         // 3-3 only does anything at the points where the client is supposed
         // to be sending it, etc etc
 
-        public override void handlePacket(Client context, byte[] data, uint position, uint size)
+        public override void HandlePacket(Client context, byte[] data, uint position, uint size)
         {
             if (context.User == null || context.Character == null)
                 return;
@@ -107,7 +107,7 @@ namespace PolarisServer.Packets.Handlers
     [PacketHandlerAttr(3, 0x10)]
     public class DoItMaybe : PacketHandler
     {
-        public override void handlePacket(Client context, byte[] data, uint position, uint size)
+        public override void HandlePacket(Client context, byte[] data, uint position, uint size)
         {
             if (context.User == null || context.Character == null)
                 return;

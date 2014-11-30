@@ -13,7 +13,7 @@ namespace PolarisServer.Packets.Handlers
         }
             
 
-        public override void handlePacket(Client context, byte[] data, uint position, uint size)
+        public override void HandlePacket(Client context, byte[] data, uint position, uint size)
         {
             if (context.User == null)
                 return;

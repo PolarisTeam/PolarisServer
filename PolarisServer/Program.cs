@@ -49,7 +49,7 @@ namespace PolarisServer
         public void Start()
         {
             Logger.WriteInternal("Server starting at " + DateTime.Now.ToString());
-            Packets.Handlers.PacketHandlers.loadPacketHandlers();
+            Packets.Handlers.PacketHandlers.LoadPacketHandlers();
             Logger.WriteInternal("[DB ] Loading database...");
             _Database = new PolarisEF();
             for (int i = 0; i < 10; i++)
