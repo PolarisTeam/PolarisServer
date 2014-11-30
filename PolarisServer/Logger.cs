@@ -32,9 +32,6 @@ namespace PolarisServer
             // Return if we don't have a ConsoleSystem created yet
             if (PolarisApp.ConsoleSystem == null) return;
 
-            // Tell the console to refresh
-            PolarisApp.ConsoleSystem.refreshDraw = true;
-            
             // Split the lines and append it into new lines if it's too big
             if (line.text.Length >= Console.WindowWidth)
             {
@@ -45,9 +42,7 @@ namespace PolarisServer
                 {
                     LogLine splitLine = new LogLine();
                     int start = i * Console.WindowWidth;
-                    int length = (i + 1) * line.text.Length;
-                    if (length >= Console.WindowWidth)
-                        length = Console.WindowWidth;
+                    int length = Console.WindowWidth;
                     if (length >= line.text.Length - start)
                         length = line.text.Length - start;
 
@@ -61,11 +56,13 @@ namespace PolarisServer
                     lines.Add(newLine);
             }
             else // Add the line normally
-            lines.Add(line);
+                lines.Add(line);
 
-            // Push old lines off the list
             while (lines.Count > Console.WindowHeight - 4)
                 lines.RemoveAt(0);
+
+            // Tell the console to refresh
+            PolarisApp.ConsoleSystem.refreshDraw = true;
         }
 
         public static void Write(string text, params object[] args)
@@ -120,11 +117,22 @@ namespace PolarisServer
 
         public static void WriteException(string message, Exception ex)
         {
-            Logger.WriteError("[ERR] {0}: {1}", ex.GetType(), ex.ToString());
-            if (ex.StackTrace != null)
-                Logger.WriteError("[ERR] Stack Trace:\n{0}", ex.StackTrace.ToString());
+            LogLine line = new LogLine();
+            line.color = ConsoleColor.Red;
+            line.text = string.Empty;
+
+            line.text += string.Format("[ERR] {0} - {1}: {2}", message, ex.GetType(), ex.ToString());
             if (ex.InnerException != null)
-                Logger.WriteError("[ERR] Inner Exception:\n{0}", ex.InnerException.ToString());
+                line.text += string.Format("[ERR] Inner Exception: {0}", ex.InnerException.ToString());
+
+            WriteFile(line.text);
+            
+            // Strip the crap out of the exception so that the line splitting works properly on it
+            line.text = line.text.Replace('\r', ' ');
+            line.text = line.text.Replace('\n', ' ');
+            line.text = line.text.Replace("     ", " ");
+
+            AddLine(line);
         }
 
         public static void WriteFile(string text, params object[] args)
