@@ -20,6 +20,8 @@ namespace PolarisServer
 		{
 			try
 			{
+                throw new Exception("Test");
+
 				for (int i = 0; i < args.Length; i++)
 				{
 					switch (args[i].ToLower())
@@ -37,7 +39,7 @@ namespace PolarisServer
 			}
 			catch (Exception ex)
 			{
-				Logger.WriteError("[ERR] An error has occurred while parsing command-line parameters. {0}: {1}", ex.GetType(), ex.ToString());
+                Logger.WriteException("An error has occurred while parsing command line parameters", ex);
 			}
 
             Console.WriteLine("Arf. Polaris Server version GIT.\nCreated by PolarisTeam (http://github.com/PolarisTeam) and licenced under AGPL.");

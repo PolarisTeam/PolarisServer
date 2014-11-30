@@ -41,7 +41,7 @@ namespace PolarisServer.Packets.Handlers
             }
             catch (CryptographicException ex)
             {
-                Logger.WriteError("[ERR] Error occured when decrypting the key exchange, {0}: {1}", ex.GetType(), ex.ToString());
+                Logger.WriteException("Error occured when decrypting the key exchange", ex);
                 context.Socket.Close();
                 return;
             }

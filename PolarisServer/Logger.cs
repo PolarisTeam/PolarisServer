@@ -45,6 +45,16 @@ namespace PolarisServer
             WriteFile(text, args);
         }
 
+        public static void WriteException(string message, Exception ex)
+        {
+            Logger.WriteError("[ERR] {0}: {1}", ex.GetType(), ex.ToString());
+            if (ex.StackTrace != null)
+                Logger.WriteError("[ERR] Stack Trace:\n{0}", ex.StackTrace.ToString());
+            if (ex.InnerException != null)
+                Logger.WriteError("[ERR] Inner Exception:\n{0}", ex.InnerException.ToString());
+            Console.ResetColor();
+        }
+
         public static void WriteFile(string text, params object[] args)
         {
             writer.WriteLine(DateTime.Now.ToString() + " - " + text, args);

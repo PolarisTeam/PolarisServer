@@ -57,12 +57,7 @@ namespace PolarisServer.Database
             }
             catch (Exception ex)
             {
-                Logger.WriteError("[ERR] DB Expection occured! {0}: {1}", ex.GetType(), ex.ToString());
-                if (ex.InnerException != null)
-                {
-                    Logger.WriteError("[ERR] Inner exception occured! {0}: {1}", ex.InnerException.GetType(), ex.InnerException.ToString());
-                }
-
+                Logger.WriteException("A database exception has occured", ex);
             }
 
         }
