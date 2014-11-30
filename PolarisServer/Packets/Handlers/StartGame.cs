@@ -55,30 +55,31 @@ namespace PolarisServer.Packets.Handlers
             // Spawn Character
             context.SendPacket(new CharacterSpawnPacket(context.Character));
 
-            // Spawn more characters just because we can
-            // Don't do this, ever --Ninji
-            /*
+            /* Spawn more characters just because we can
+             * Don't do this, ever --Ninji
+             * Moved this into a testing command for the hell of it --Kyle
             for (int i = 0; i < 50; i++)
             {
                 var fakePlayer = new Database.Player();
                 fakePlayer.Username = string.Format("Fake Player {0}", i);
                 fakePlayer.Nickname = string.Format("Fake Name {0}", i);
                 fakePlayer.PlayerID = 12345678 + i;
+                
                 var fakeChar = new Models.Character();
                 fakeChar.CharacterID = 1234567 + i;
                 fakeChar.Player = fakePlayer;
                 fakeChar.Name = string.Format("Fake Char {0}", i);
                 fakeChar.Looks = context.Character.Looks;
                 fakeChar.Jobs = context.Character.Jobs;
+                
                 var fakePacket = new CharacterSpawnPacket(fakeChar);
                 fakePacket.Position.facingAngle = (0.2f * i);
-                fakePacket.Position.x += (1.5f * i);
-                fakePacket.Position.y += (1.5f * i);
-                //fakePacket.Position.z += (1.5f * i);
+                fakePacket.Position.x = -0.417969f + (float)(Math.Sin(i) * 8.0);
+                fakePacket.Position.y = 0.000031f;
+                fakePacket.Position.z = 134.375f + (float)(Math.Cos(i) * 8.0);
                 fakePacket.IsItMe = false;
                 context.SendPacket(fakePacket);
-            }
-            */
+            } */
 
             // Unlock Controls
             context.SendPacket(new NoPayloadPacket(3, 0x2B));

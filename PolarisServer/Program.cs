@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Net;
 using System.Net.Sockets;
-using System.Data.Entity;
+using System.Threading;
 
 using PolarisServer.Database;
 
@@ -10,37 +11,50 @@ namespace PolarisServer
 {
     class PolarisApp
     {
-
         private static PolarisApp _Instance;
         public static PolarisApp Instance { get { return _Instance; } }
+        public PolarisEF Database { get { return _Database; } }
         private PolarisEF _Database;
-		public static IPAddress BindAddress = IPAddress.Parse("127.0.0.1");
+        public static IPAddress BindAddress = IPAddress.Parse("127.0.0.1");
+        public List<QueryServer> queryServers = new List<QueryServer>();
+        public Server server;
 
-		public static void Main(string[] args)
-		{
-			try
-			{
-				for (int i = 0; i < args.Length; i++)
-				{
-					switch (args[i].ToLower())
-					{
-						default:
-							break;
+        // Console System
+        public static ConsoleSystem ConsoleSystem;
+        public static Thread ConsoleDrawThread;
+        public static Thread ConsoleInputThread;
 
-						case "-b":
-						case "--bind-address":
-							if (++i < args.Length)
-								BindAddress = IPAddress.Parse(args[i]);
-							break;
-					}
-				}
-			}
-			catch (Exception ex)
-			{
+        public static void Main(string[] args)
+        {
+            ConsoleSystem = new ConsoleSystem();
+            ConsoleDrawThread = new Thread(StartConsoleSystemDrawing);
+            ConsoleInputThread = new Thread(StartConsoleSystemInput);
+            ConsoleDrawThread.Start();
+            ConsoleInputThread.Start();
+            
+            try
+            {
+                for (int i = 0; i < args.Length; i++)
+                {
+                    switch (args[i].ToLower())
+                    {
+                        default:
+                            break;
+
+                        case "-b":
+                        case "--bind-address":
+                            if (++i < args.Length)
+                                BindAddress = IPAddress.Parse(args[i]);
+                            break;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
                 Logger.WriteException("An error has occurred while parsing command line parameters", ex);
-			}
+            }
 
-            Console.WriteLine("Arf. Polaris Server version GIT.\nCreated by PolarisTeam (http://github.com/PolarisTeam) and licenced under AGPL.");
+            Logger.Write("Arf. Polaris Server version GIT.\nCreated by PolarisTeam (http://github.com/PolarisTeam) and licenced under AGPL.");
             System.Data.Entity.Database.SetInitializer(new DropCreateDatabaseIfModelChanges<PolarisEF>());
             _Instance = new PolarisApp();
             _Instance.Start();
@@ -49,17 +63,29 @@ namespace PolarisServer
         public void Start()
         {
             Logger.WriteInternal("Server starting at " + DateTime.Now.ToString());
+            
             Packets.Handlers.PacketHandlers.LoadPacketHandlers();
+            
             Logger.WriteInternal("[DB ] Loading database...");
             _Database = new PolarisEF();
+            
             for (int i = 0; i < 10; i++)
-            {
-                new QueryServer(QueryMode.ShipList, 12099 + (100 * i));
-            }
-            new Server().Run();
+                queryServers.Add(new QueryServer(QueryMode.ShipList, 12099 + (100 * i)));
+
+            server = new Server();
+            server.Run();
         }
 
-        public PolarisEF Database { get { return _Database; } }
+        private static void StartConsoleSystemDrawing(object threadContext)
+        {
+            while (true)
+                ConsoleSystem.Draw();
+        }
 
+        private static void StartConsoleSystemInput(object threadContext)
+        {
+            while (true)
+                ConsoleSystem.CheckInput();
+        }
     }
 }

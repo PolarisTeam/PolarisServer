@@ -53,7 +53,7 @@ namespace PolarisServer
 
         void HandleDataReceived(byte[] data, int size)
         {
-            Logger.WriteLine("[<--] Recieved {0} bytes", size);
+            Logger.Write("[<--] Recieved {0} bytes", size);
             if ((_readBufferSize + size) > _readBuffer.Length)
             {
                 // Buffer overrun
@@ -118,7 +118,7 @@ namespace PolarisServer
         void HandleConnectionLost()
         {
             // :(
-            Logger.WriteLine("[BYE] Connection lost. :(");
+            Logger.Write("[BYE] Connection lost. :(");
             _isClosed = true;
         }
 
@@ -139,7 +139,7 @@ namespace PolarisServer
 
             Array.Copy(data, 0, packet, 8, data.Length);
 
-            Logger.WriteLine("[<--] Packet {0:X}-{1:X} ({2} bytes)", typeA, typeB, packet.Length);
+            Logger.Write("[<--] Packet {0:X}-{1:X} ({2} bytes)", typeA, typeB, packet.Length);
             LogPacket(false, typeA, typeB, flags, 0, packet);
 
             if (_outputARC4 != null)
@@ -156,7 +156,7 @@ namespace PolarisServer
 
         void HandlePacket(byte typeA, byte typeB, byte flags1, byte flags2, byte[] data, uint position, uint size)
         {
-            Logger.WriteLine("[-->] Packet {0:X}-{1:X} (flags {2}, {3}) ({4} bytes)", typeA, typeB, flags1, flags2, size);
+            Logger.Write("[-->] Packet {0:X}-{1:X} (flags {2}, {3}) ({4} bytes)", typeA, typeB, flags1, flags2, size);
 
             byte[] packet = new byte[size];
             Array.Copy(data, position, packet, 0, size);

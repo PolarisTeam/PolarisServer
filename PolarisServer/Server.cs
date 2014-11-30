@@ -21,6 +21,7 @@ namespace PolarisServer
             _server.NewClient += HandleNewClient;
             Instance = this;
             StartTime = DateTime.Now;
+
             new QueryServer(QueryMode.BlockBalance, 12200);
         }
 

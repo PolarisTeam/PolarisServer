@@ -39,13 +39,14 @@ namespace PolarisServer.Database
         public DbSet<Player> Players { get; set; }
         public DbSet<Character> Characters { get; set; }
 
-        public PolarisEF() : base("server=localhost;database=polaris;username=polaris;password=polaris")
+        public PolarisEF()
+            : base("server=localhost;database=polaris;username=polaris;password=polaris")
         {
             try
             {
                 this.Database.CreateIfNotExists();
                 ServerInfo revision = this.ServerInfos.Find("Revision");
-                if(revision == null)
+                if (revision == null)
                 {
                     revision = new ServerInfo { key = "Revision", value = "0" };
                     this.ServerInfos.Add(revision);
@@ -61,7 +62,7 @@ namespace PolarisServer.Database
             }
 
         }
-            
+
     }
 }
 
