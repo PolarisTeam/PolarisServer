@@ -29,6 +29,9 @@ namespace PolarisServer
 
         private static void AddLine(LogLine line)
         {
+            // Return if we don't have a ConsoleSystem created yet
+            if (PolarisApp.ConsoleSystem == null) return;
+
             // Tell the console to refresh
             PolarisApp.ConsoleSystem.refreshDraw = true;
             
