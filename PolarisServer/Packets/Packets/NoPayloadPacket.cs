@@ -8,6 +8,8 @@ namespace PolarisServer.Packets
 
         public NoPayloadPacket(byte type, byte subtype)
         {
+            this.type = type;
+            this.subtype = subtype;
         }
 
         #region implemented abstract members of Packet

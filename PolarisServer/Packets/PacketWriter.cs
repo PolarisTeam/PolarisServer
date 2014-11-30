@@ -64,6 +64,29 @@ namespace PolarisServer.Packets
             }
         }
 
+        public void WriteFixedLengthASCII(string str, int charCount)
+        {
+            int writeAmount = Math.Min(str.Length, charCount);
+            int paddingAmount = charCount - writeAmount;
+
+            if (writeAmount > 0)
+            {
+                string chopped;
+                if (writeAmount != str.Length)
+                    chopped = str.Substring(0, writeAmount);
+                else
+                    chopped = str;
+
+                Write(Encoding.GetEncoding("ASCII").GetBytes(chopped));
+            }
+
+            if (paddingAmount > 0)
+            {
+                for (int i = 0; i < paddingAmount; i++)
+                    Write((byte)0);
+            }
+        }
+
         public void WriteFixedLengthUTF16(string str, int charCount)
         {
             int writeAmount = Math.Min(str.Length, charCount);
@@ -85,6 +108,25 @@ namespace PolarisServer.Packets
                 for (int i = 0; i < paddingAmount; i++)
                     Write((ushort)0);
             }
+        }
+
+        public void Write(Models.MysteryPositions s)
+        {
+            Write(Helper.FloatToHalfPrecision(s.a));
+            Write(Helper.FloatToHalfPrecision(s.b));
+            Write(Helper.FloatToHalfPrecision(s.c));
+            Write(Helper.FloatToHalfPrecision(s.d));
+            Write(Helper.FloatToHalfPrecision(s.e));
+            Write(Helper.FloatToHalfPrecision(s.f));
+            Write(Helper.FloatToHalfPrecision(s.g));
+        }
+
+        public void WritePlayerHeader(uint id)
+        {
+            Write(id);
+            Write((uint)0);
+            Write((ushort)4);
+            Write((ushort)0);
         }
 
         public unsafe void WriteStruct<T>(T structure) where T : struct

@@ -92,6 +92,7 @@ namespace PolarisServer
                 // Now handle this one
                 HandlePacket(
                     _readBuffer[position + 4], _readBuffer[position + 5],
+                    _readBuffer[position + 6], _readBuffer[position + 7],
                     _readBuffer, position + 8, packetSize - 8);
 
                 // If the connection was closed, we have no more business here
@@ -139,7 +140,7 @@ namespace PolarisServer
             Array.Copy(data, 0, packet, 8, data.Length);
 
             Logger.WriteLine("[<--] Packet {0:X}-{1:X} ({2} bytes)", typeA, typeB, packet.Length);
-            LogPacket(false, typeA, typeB, packet);
+            LogPacket(false, typeA, typeB, flags, 0, packet);
 
             if (_outputARC4 != null)
                 _outputARC4.TransformBlock(packet, 0, packet.Length, packet, 0);
@@ -153,13 +154,13 @@ namespace PolarisServer
         }
 
 
-        void HandlePacket(byte typeA, byte typeB, byte[] data, uint position, uint size)
+        void HandlePacket(byte typeA, byte typeB, byte flags1, byte flags2, byte[] data, uint position, uint size)
         {
-            Logger.WriteLine("[-->] Packet {0:X}-{1:X} ({2} bytes)", typeA, typeB, size);
+            Logger.WriteLine("[-->] Packet {0:X}-{1:X} (flags {2}, {3}) ({4} bytes)", typeA, typeB, flags1, flags2, size);
 
             byte[] packet = new byte[size];
             Array.Copy(data, position, packet, 0, size);
-            LogPacket(true, typeA, typeB, packet);
+            LogPacket(true, typeA, typeB, flags1, flags2, packet);
 
             Packets.Handlers.PacketHandler handler = Packets.Handlers.PacketHandlers.getHandlerFor(typeA, typeB);
             if (handler != null)
@@ -172,14 +173,22 @@ namespace PolarisServer
         }
 
 
-        void LogPacket(bool fromClient, byte typeA, byte typeB, byte[] packet)
+        void LogPacket(bool fromClient, byte typeA, byte typeB, byte flags1, byte flags2, byte[] packet)
         {
             // Check for and create packets directory if it doesn't exist
             if (!Directory.Exists("packets"))
                 Directory.CreateDirectory("packets");
 
             var filename = string.Format("packets/{0}.{1:X}.{2:X}.{3}.bin", _packetID++, typeA, typeB, fromClient ? "C" : "S");
-            File.WriteAllBytes(filename, packet);
+
+            using (var stream = File.OpenWrite(filename))
+            {
+                stream.WriteByte(typeA);
+                stream.WriteByte(typeB);
+                stream.WriteByte(flags1);
+                stream.WriteByte(flags2);
+                stream.Write(packet, 0, packet.Length);
+            }
         }
     }
 }

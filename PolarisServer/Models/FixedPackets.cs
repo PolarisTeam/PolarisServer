@@ -20,6 +20,14 @@ namespace PolarisServer.Models
             this.flags1 = flags1;
             this.flags2 = flags2;
         }
+
+        public PacketHeader(byte type, byte subtype) : this(type, subtype, 0)
+        {
+        }
+
+        public PacketHeader(byte type, byte subtype, byte flags1) : this(0, type, subtype, flags1, 0)
+        {
+        }
     }
 }
 
