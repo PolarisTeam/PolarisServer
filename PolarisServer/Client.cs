@@ -20,7 +20,7 @@ namespace PolarisServer
         public Network.SocketClient Socket { get { return _socket; } }
 
         public Player User { get; set; }
-        public Character Charcter { get; set; }
+        public Character Character { get; set; }
 
         private byte[] _readBuffer;
         private uint _readBufferSize;

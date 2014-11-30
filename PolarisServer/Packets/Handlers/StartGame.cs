@@ -18,7 +18,7 @@ namespace PolarisServer.Packets.Handlers
             if (character == null || character.Player.PlayerID != context.User.PlayerID)
                 return;
 
-            context.Charcter = character;
+            context.Character = character;
 
             // Transition to the loading screen
             context.SendPacket(new NoPayloadPacket(0x3, 0x4));
