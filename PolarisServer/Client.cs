@@ -164,7 +164,7 @@ namespace PolarisServer
 
             Packets.Handlers.PacketHandler handler = Packets.Handlers.PacketHandlers.getHandlerFor(typeA, typeB);
             if (handler != null)
-                handler.handlePacket(this, data, position, size);
+                handler.handlePacket(this, packet, 0, size);
             else
             {
                 Logger.WriteWarning("[!!!] UNIMPLEMENTED PACKET");

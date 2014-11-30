@@ -10,11 +10,15 @@ namespace PolarisServer
         private List<Client> _clients;
         private Network.SocketServer _server;
 
+        public List<Client> Clients { get { return _clients; } }
+        public static Server Instance { get; private set; }
+
         public Server()
         {
             _clients = new List<Client>();
             _server = new Network.SocketServer(12205);
             _server.NewClient += HandleNewClient;
+            Instance = this;
             new QueryServer(QueryMode.BlockBalance, 12200);
         }
 

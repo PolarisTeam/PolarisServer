@@ -57,6 +57,7 @@ namespace PolarisServer.Packets.Handlers
 
             // Spawn more characters just because we can
             // Don't do this, ever --Ninji
+            /*
             for (int i = 0; i < 50; i++)
             {
                 var fakePlayer = new Database.Player();
@@ -77,9 +78,29 @@ namespace PolarisServer.Packets.Handlers
                 fakePacket.IsItMe = false;
                 context.SendPacket(fakePacket);
             }
+            */
 
             // Unlock Controls
             context.SendPacket(new NoPayloadPacket(3, 0x2B));
+
+            var spawnPacket = new CharacterSpawnPacket(context.Character);
+            spawnPacket.IsItMe = false;
+            foreach (Client c in Server.Instance.Clients)
+            {
+                if (c == context)
+                    continue;
+
+                if (c.Character == null)
+                    continue;
+                    
+                c.SendPacket(spawnPacket);
+
+                var remoteChar = new CharacterSpawnPacket(c.Character);
+                remoteChar.IsItMe = false;
+                context.SendPacket(remoteChar);
+
+            }
+
         }
     }
 
