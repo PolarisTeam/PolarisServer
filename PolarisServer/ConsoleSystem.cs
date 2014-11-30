@@ -202,8 +202,6 @@ namespace PolarisServer
                         Logger.WriteException("Tried to draw past the log buffer", ex);
                     }
                 }
-                
-                Console.Title = string.Format("Polaris: {0} Lines (X: {1}, Y: {2})", currentCount, Console.CursorLeft, Console.CursorTop);
             }
 
             refreshDraw = false;
