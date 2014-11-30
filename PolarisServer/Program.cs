@@ -14,15 +14,36 @@ namespace PolarisServer
         private static PolarisApp _Instance;
         public static PolarisApp Instance { get { return _Instance; } }
         private PolarisEF _Database;
+		public static IPAddress BindAddress = IPAddress.Parse("127.0.0.1");
 
-        public static void Main(string[] args)
-        {
+		public static void Main(string[] args)
+		{
+			try
+			{
+				for (int i = 0; i < args.Length; i++)
+				{
+					switch (args[i].ToLower())
+					{
+						default:
+							break;
+
+						case "-b":
+						case "--bind-address":
+							if (++i < args.Length)
+								BindAddress = IPAddress.Parse(args[i]);
+							break;
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				Logger.WriteError("[ERR] An error has occurred while parsing command-line parameters. {0}: {1}", ex.GetType(), ex.ToString());
+			}
 
             Console.WriteLine("Arf. Polaris Server version GIT.\nCreated by PolarisTeam (http://github.com/PolarisTeam) and licenced under AGPL.");
             System.Data.Entity.Database.SetInitializer(new DropCreateDatabaseIfModelChanges<PolarisEF>());
             _Instance = new PolarisApp();
             _Instance.Start();
-
         }
 
         public void Start()
