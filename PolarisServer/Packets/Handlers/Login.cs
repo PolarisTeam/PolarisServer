@@ -110,6 +110,8 @@ namespace PolarisServer.Packets.Handlers
             context.SendPacket(0x2B, 2, 4, settings.ToArray());
 
             context.User = user;
+
+            //context.SendPacket(new SystemMessagePacket("I looooooove my Raxxy <3", SystemMessagePacket.MessageType.AdminMessage));
         }
     }
 }

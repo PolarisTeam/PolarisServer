@@ -148,8 +148,8 @@ namespace PolarisServer
 
         public void SendPacket(Packet packet)
         {
-            PacketHeader h = data.GetHeader();
-            SendPacket(h.type, h.subtype, h.flags1, data.Build());
+            PacketHeader h = packet.GetHeader();
+            SendPacket(h.type, h.subtype, h.flags1, packet.Build());
         }
 
 
