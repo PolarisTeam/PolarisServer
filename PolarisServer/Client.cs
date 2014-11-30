@@ -4,6 +4,7 @@ using System.Security.Cryptography;
 
 using PolarisServer.Database;
 using PolarisServer.Models;
+using PolarisServer.Packets;
 
 namespace PolarisServer
 {
@@ -145,9 +146,10 @@ namespace PolarisServer
             _socket.Socket.Client.Send(packet);
         }
 
-        public void SendPacket(byte typeA, byte typeB, byte flags, Packet data)
+        public void SendPacket(Packet packet)
         {
-            SendPacket(typeA, typeA, flags, data.Build());
+            PacketHeader h = data.GetHeader();
+            SendPacket(h.type, h.subtype, h.flags1, data.Build());
         }
 
 
