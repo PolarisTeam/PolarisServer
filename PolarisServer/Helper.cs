@@ -32,8 +32,6 @@ namespace PolarisServer
             return stuff;
         }
 
-
-
         #region Float Manipulation
         public static unsafe float UIntToFloat(uint input)
         {
@@ -85,6 +83,15 @@ namespace PolarisServer
             }
         }
         #endregion
+
+        public int FindPlayerByUsername(string name)
+        {
+            for (int i = 0; i < PolarisApp.Instance.server.Clients.Count; i++)
+                if (name.ToLower() == PolarisApp.Instance.server.Clients[i].User.Username)
+                    return i;
+
+            return -1;
+        }
     }
 }
 

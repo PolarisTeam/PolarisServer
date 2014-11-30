@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace PolarisServer
 {
@@ -128,6 +129,24 @@ namespace PolarisServer
             spawnClone.Help = "Spawns a clone of your character";
             commands.Add(spawnClone);
 
+            // SendNoPayload
+            ConsoleCommand sendNoPayload = new ConsoleCommand(SendNoPayload, "sendnopayload", "sendnp");
+            sendNoPayload.Arguments.Add(new ConsoleCommandArgument("Username", false));
+            sendNoPayload.Arguments.Add(new ConsoleCommandArgument("Type", false));
+            sendNoPayload.Arguments.Add(new ConsoleCommandArgument("SubType", false));
+            sendNoPayload.Help = "Sends a packet with no payload";
+            commands.Add(sendNoPayload);
+
+            // SendPacketFile
+            ConsoleCommand sendPacketFile = new ConsoleCommand(SendPacketFile, "sendpacketfile", "sendpf");
+            sendPacketFile.Arguments.Add(new ConsoleCommandArgument("Username", false));
+            sendPacketFile.Arguments.Add(new ConsoleCommandArgument("Type", false));
+            sendPacketFile.Arguments.Add(new ConsoleCommandArgument("SubType", false));
+            sendPacketFile.Arguments.Add(new ConsoleCommandArgument("Flags", false));
+            sendPacketFile.Arguments.Add(new ConsoleCommandArgument("Filename", false));
+            sendPacketFile.Help = "Sends the specified files contents as a packet";
+            commands.Add(sendPacketFile);
+
             // Exit
             ConsoleCommand exit = new ConsoleCommand(Exit, "exit", "quit");
             exit.Help = "Close the Polaris Server";
@@ -243,7 +262,7 @@ namespace PolarisServer
 
         private void Help(string[] args, int length, string full)
         {
-            Logger.WriteCommand("[CON] List of Commands");
+            Logger.WriteCommand("[CMD] List of Commands");
 
             foreach (ConsoleCommand command in commands)
             {
@@ -283,7 +302,7 @@ namespace PolarisServer
                     }
 
                     // Log it
-                    Logger.WriteCommand("[CON] {0}", help);
+                    Logger.WriteCommand("[CMD] {0}", help);
                 }
             }
         }
@@ -340,6 +359,63 @@ namespace PolarisServer
             client.SendPacket(fakePacket);
 
             Logger.WriteCommand("[CMD] Spawned a clone named " + fakeChar.Name);
+        }
+
+        private void SendNoPayload(string[] args, int length, string full)
+        {
+            string name = args[1].Trim('\"');
+            int ID = 0;
+            byte type = byte.Parse(args[2]);
+            byte subType = byte.Parse(args[3]);
+            bool foundPlayer = false;
+
+            // Find the player
+            ID = new Helper().FindPlayerByUsername(name);
+            if (ID != -1)
+                foundPlayer = true;
+
+            // Couldn't find the username
+            if (!foundPlayer)
+            {
+                Logger.WriteError("[CMD] Could not find user " + name);
+                return;
+            }
+
+            // Send packet
+            PolarisApp.Instance.server.Clients[ID].SendPacket(new Packets.NoPayloadPacket(type, subType));
+
+            Logger.WriteCommand("[CMD] Sent no payload packet to {0} of type {1:X}-{2:X}", name, type, subType);
+        }
+
+        private void SendPacketFile(string[] args, int length, string full)
+        {
+            string name = args[1].Trim('\"');
+            int ID = 0;
+            byte type = byte.Parse(args[2]);
+            byte subType = byte.Parse(args[3]);
+            byte flags = byte.Parse(args[4]);
+            string filename = args[5].Trim('\"');
+            bool foundPlayer = false;
+
+            // Find the player
+            ID = new Helper().FindPlayerByUsername(name);
+            if (ID != -1)
+                foundPlayer = true;
+
+            // Couldn't find the username
+            if (!foundPlayer)
+            {
+                Logger.WriteError("[CMD] Could not find user " + name);
+                return;
+            }
+
+            // Pull packet from the specified file
+            var packet = File.ReadAllBytes(filename);
+
+            // Send packet
+            PolarisApp.Instance.server.Clients[ID].SendPacket(type, subType, flags, packet);
+
+            Logger.WriteCommand("[CMD] Sent contents of {0} as packet {1:X}-{2:X} with flags {3} to {4}", filename, type, subType, flags, name);
         }
 
         #endregion
