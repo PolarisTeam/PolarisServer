@@ -7,7 +7,7 @@ namespace PolarisServer.Packets
 
         public enum MessageType
         {
-            GoldenTicker=0,
+            GoldenTicker = 0,
             AdminMessage,
             AdminMessageInstant,
             SystemMessage,

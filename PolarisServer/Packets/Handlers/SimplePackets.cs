@@ -10,7 +10,7 @@ namespace PolarisServer.Packets.Handlers
     [PacketHandlerAttr(0x11, 0x2B)]
     public class LogOutRequest : PacketHandler
     {
-        public override void handlePacket(Client context, byte[] data, uint position, uint size)
+        public override void HandlePacket(Client context, byte[] data, uint position, uint size)
         {
             // DOUBLE SOCKET UP IN HERE
             context.Socket.Close();
@@ -20,7 +20,7 @@ namespace PolarisServer.Packets.Handlers
     [PacketHandlerAttr(0x11, 0x41)]
     public class CreateCharacterOne : PacketHandler
     {
-        public override void handlePacket(Client context, byte[] data, uint position, uint size)
+        public override void HandlePacket(Client context, byte[] data, uint position, uint size)
         {
             PacketWriter writer = new PacketWriter();
             writer.Write((uint)0);
@@ -35,7 +35,7 @@ namespace PolarisServer.Packets.Handlers
     [PacketHandlerAttr(0x11, 0x54)]
     public class CreateCharacterTwo : PacketHandler
     {
-        public override void handlePacket(Client context, byte[] data, uint position, uint size)
+        public override void HandlePacket(Client context, byte[] data, uint position, uint size)
         {
             PacketWriter writer = new PacketWriter();
             writer.Write((uint)0);

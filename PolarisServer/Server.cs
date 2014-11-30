@@ -12,6 +12,7 @@ namespace PolarisServer
 
         public List<Client> Clients { get { return _clients; } }
         public static Server Instance { get; private set; }
+        public DateTime StartTime { get; private set; }
 
         public Server()
         {
@@ -19,6 +20,7 @@ namespace PolarisServer
             _server = new Network.SocketServer(12205);
             _server.NewClient += HandleNewClient;
             Instance = this;
+            StartTime = DateTime.Now;
             new QueryServer(QueryMode.BlockBalance, 12200);
         }
 

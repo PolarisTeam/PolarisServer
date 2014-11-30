@@ -19,7 +19,7 @@ namespace PolarisServer.Packets.Handlers
 
     public abstract class PacketHandler
     {
-        public abstract void handlePacket(Client context, byte[] data, uint position, uint size);
+        public abstract void HandlePacket(Client context, byte[] data, uint position, uint size);
     }
 
     public static class PacketHandlers
@@ -27,7 +27,7 @@ namespace PolarisServer.Packets.Handlers
 
         private static Dictionary<ushort, PacketHandler> loadedHandlers = new Dictionary<ushort, PacketHandler>();
 
-        public static void loadPacketHandlers()
+        public static void LoadPacketHandlers()
         {
             var classes = from t in Assembly.GetExecutingAssembly().GetTypes()
                           where t.IsClass && t.Namespace == "PolarisServer.Packets.Handlers" && t.IsSubclassOf(typeof(PacketHandler))
@@ -51,7 +51,7 @@ namespace PolarisServer.Packets.Handlers
         /// <returns>An instance of a PacketHandler or null</returns>
         /// <param name="typeA">Type a.</param>
         /// <param name="typeB">Type b.</param>
-        public static PacketHandler getHandlerFor(uint typeA, uint typeB)
+        public static PacketHandler GetHandlerFor(uint typeA, uint typeB)
         {
             ushort packetCode = (ushort)((typeA << 8) | typeB);  // Bitshifting is fun!
             PacketHandler handler = null;
@@ -61,7 +61,7 @@ namespace PolarisServer.Packets.Handlers
 
         }
 
-        public static PacketHandler[] getLoadedHandlers()
+        public static PacketHandler[] GetLoadedHandlers()
         {
             return loadedHandlers.Values.ToArray();
         }

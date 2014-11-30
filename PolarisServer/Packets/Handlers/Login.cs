@@ -11,7 +11,7 @@ namespace PolarisServer.Packets.Handlers
         {
         }
 
-        public override void handlePacket(Client context, byte[] data, uint position, uint size)
+        public override void HandlePacket(Client context, byte[] data, uint position, uint size)
         {
             // Parse the stuff we received
             var reader = new Packets.PacketReader(data, position, size);

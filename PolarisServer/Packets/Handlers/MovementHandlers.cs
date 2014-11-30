@@ -8,7 +8,7 @@ namespace PolarisServer.Packets.Handlers
 
         #region implemented abstract members of PacketHandler
 
-        public override void handlePacket(Client context, byte[] data, uint position, uint size)
+        public override void HandlePacket(Client context, byte[] data, uint position, uint size)
         {
 
             var bytes = BitConverter.GetBytes((uint)context.User.PlayerID);
@@ -40,7 +40,7 @@ namespace PolarisServer.Packets.Handlers
 
         #region implemented abstract members of PacketHandler
 
-        public override void handlePacket(Client context, byte[] data, uint position, uint size)
+        public override void HandlePacket(Client context, byte[] data, uint position, uint size)
         {
             var bytes = BitConverter.GetBytes((uint)context.User.PlayerID);
 
@@ -69,7 +69,7 @@ namespace PolarisServer.Packets.Handlers
     {
         #region implemented abstract members of PacketHandler
 
-        public override void handlePacket(Client context, byte[] data, uint position, uint size)
+        public override void HandlePacket(Client context, byte[] data, uint position, uint size)
         {
             var bytes = BitConverter.GetBytes((uint)context.User.PlayerID);
 

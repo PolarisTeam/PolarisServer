@@ -162,12 +162,19 @@ namespace PolarisServer
             Array.Copy(data, position, packet, 0, size);
             LogPacket(true, typeA, typeB, flags1, flags2, packet);
 
-            Packets.Handlers.PacketHandler handler = Packets.Handlers.PacketHandlers.getHandlerFor(typeA, typeB);
+            Packets.Handlers.PacketHandler handler = Packets.Handlers.PacketHandlers.GetHandlerFor(typeA, typeB);
             if (handler != null)
-                handler.handlePacket(this, packet, 0, size);
+                handler.HandlePacket(this, packet, 0, size);
             else
             {
-                Logger.WriteWarning("[!!!] UNIMPLEMENTED PACKET");
+                Logger.WriteWarning("[!!!] UNIMPLEMENTED PACKET {0:X}-{1:X} - (Flags {2}, {3}) ({4} bytes)", typeA, typeB, flags1, flags2, size);
+                /* Dump the contents of the packet
+                string dataString = string.Empty;
+                for (int i = 0; i < size; i++)
+                    dataString += packet[i].ToString("X2") + " ";
+                if (size > 0)
+                    Logger.WriteWarning("[!!!] Unimplemented Packet Data: {0}", dataString);
+                */ 
             }
             // throw new NotImplementedException();
         }
@@ -176,10 +183,11 @@ namespace PolarisServer
         void LogPacket(bool fromClient, byte typeA, byte typeB, byte flags1, byte flags2, byte[] packet)
         {
             // Check for and create packets directory if it doesn't exist
-            if (!Directory.Exists("packets"))
-                Directory.CreateDirectory("packets");
+            string packetPath = "packets/" + _server.StartTime.ToShortDateString().Replace('/', '-') + "-" + _server.StartTime.ToShortTimeString().Replace('/', '-').Replace(':', '-');
+            if (!Directory.Exists(packetPath))
+                Directory.CreateDirectory(packetPath);
 
-            var filename = string.Format("packets/{0}.{1:X}.{2:X}.{3}.bin", _packetID++, typeA, typeB, fromClient ? "C" : "S");
+            var filename = string.Format("{0}/{1}.{2:X}.{3:X}.{4}.bin", packetPath, _packetID++, typeA, typeB, fromClient ? "C" : "S");
 
             using (var stream = File.OpenWrite(filename))
             {
