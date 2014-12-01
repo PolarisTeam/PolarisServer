@@ -50,6 +50,9 @@
     <Reference Include="BCrypt.Net">
       <HintPath>..\packages\BCrypt-Official.0.1.109\lib\BCrypt.Net.dll</HintPath>
     </Reference>
+    <Reference Include="ILRepack">
+      <HintPath>..\packages\ILRepack.Lib.1.25.0\lib\ILRepack.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ConsoleSystem.cs" />
@@ -87,6 +90,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\System.Data.SQLite.Core.1.0.94.0\build\net40\System.Data.SQLite.Core.targets" Condition="Exists('..\packages\System.Data.SQLite.Core.1.0.94.0\build\net40\System.Data.SQLite.Core.targets')" />
+  <Import Project="..\packages\ILRepackTask.1.0.8\build\net40\ILRepackTask.targets" Condition="Exists('..\packages\ILRepackTask.1.0.8\build\net40\ILRepackTask.targets')" />
   <ItemGroup />
   <ProjectExtensions>
     <MonoDevelop>
