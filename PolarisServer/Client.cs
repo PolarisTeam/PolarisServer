@@ -122,6 +122,35 @@ namespace PolarisServer
             _isClosed = true;
         }
 
+        public void SendPacket(byte[] blob)
+        {
+            byte typeA = blob[4];
+            byte typeB = blob[5];
+            byte flags1 = blob[6];
+            byte flags2 = blob[7];
+
+            Logger.Write("[<--] Packet {0:X}-{1:X} (flags {2} {3}, {4} bytes)", typeA, typeB, flags1, flags2, blob.Length);
+            LogPacket(false, typeA, typeB, flags1, flags2, blob);
+
+            if (Logger.VerbosePackets)
+            {
+                string info = string.Format("[<--] {0:X}-{1:X} Data:", typeA, typeB);
+                Logger.WriteHex(info, blob);
+            }
+            
+            if (_outputARC4 != null)
+                _outputARC4.TransformBlock(blob, 0, blob.Length, blob, 0);
+            
+            try
+            {
+                _socket.Socket.Client.Send(blob);
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteException("Error sending packet", ex);
+            }
+        }
+
         public void SendPacket(byte typeA, byte typeB, byte flags, byte[] data)
         {
             var packet = new byte[8 + data.Length];
@@ -139,26 +168,7 @@ namespace PolarisServer
 
             Array.Copy(data, 0, packet, 8, data.Length);
 
-            Logger.Write("[<--] Packet {0:X}-{1:X} (flags {2}, {3} bytes)", typeA, typeB, flags, packet.Length);
-            LogPacket(false, typeA, typeB, flags, 0, packet);
-
-            if (Logger.VerbosePackets)
-            {
-                string info = string.Format("[<--] {0:X}-{1:X} Data:", typeA, typeB);
-                Logger.WriteHex(info, packet);
-            }
-            
-            if (_outputARC4 != null)
-                _outputARC4.TransformBlock(packet, 0, packet.Length, packet, 0);
-            
-            try
-            {
-                _socket.Socket.Client.Send(packet);
-            }
-            catch (Exception ex)
-            {
-                Logger.WriteException("Error sending packet", ex);
-            }
+            SendPacket(packet);
         }
 
         public void SendPacket(Packet packet)
@@ -214,10 +224,13 @@ namespace PolarisServer
 
             using (var stream = File.OpenWrite(filename))
             {
-                stream.WriteByte(typeA);
-                stream.WriteByte(typeB);
-                stream.WriteByte(flags1);
-                stream.WriteByte(flags2);
+                if (fromClient)
+                {
+                    stream.WriteByte(typeA);
+                    stream.WriteByte(typeB);
+                    stream.WriteByte(flags1);
+                    stream.WriteByte(flags2);
+                }
                 stream.Write(packet, 0, packet.Length);
             }
         }

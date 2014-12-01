@@ -242,8 +242,15 @@ namespace PolarisServer
             ConsoleCommand sendPacketFile = new ConsoleCommand(SendPacketFile, "sendpacketfile", "sendpf");
             sendPacketFile.Arguments.Add(new ConsoleCommandArgument("Username", false));
             sendPacketFile.Arguments.Add(new ConsoleCommandArgument("Filename", false));
-            sendPacketFile.Help = "Sends the specified files contents as a packet";
+            sendPacketFile.Help = "Sends the specified file's contents as a packet";
             commands.Add(sendPacketFile);
+
+            // SendPacketDirectory
+            ConsoleCommand sendPacketDirectory = new ConsoleCommand(SendPacketDirectory, "sendpacketdirectory", "sendpd");
+            sendPacketDirectory.Arguments.Add(new ConsoleCommandArgument("Username", false));
+            sendPacketDirectory.Arguments.Add(new ConsoleCommandArgument("Dirname", false));
+            sendPacketDirectory.Help = "Sends the specified directory's contents as a packet";
+            commands.Add(sendPacketDirectory);
 
             // Exit
             ConsoleCommand exit = new ConsoleCommand(Exit, "exit", "quit");
@@ -663,6 +670,46 @@ namespace PolarisServer
             PolarisApp.Instance.server.Clients[ID].SendPacket(type, subType, flags, data);
 
             Logger.WriteCommand("[CMD] Sent packet {0:X}-{1:X} with flags {2} to {3}", type, subType, flags, name);
+        }
+
+        private void SendPacketDirectory(string[] args, int length, string full)
+        {
+            string name = args[1].Trim('\"');
+            int ID = 0;
+            string dirname = args[2].Trim('\"');
+            bool foundPlayer = false;
+
+            // Find the player
+            ID = Helper.FindPlayerByUsername(name);
+            if (ID != -1)
+                foundPlayer = true;
+
+            // Couldn't find the username
+            if (!foundPlayer)
+            {
+                Logger.WriteError("[CMD] Could not find user " + name);
+                return;
+            }
+
+            // Pull packets from the specified directory
+            var packetList = Directory.GetFiles(dirname);
+            Array.Sort(packetList);
+
+            foreach (var path in packetList)
+            {
+                int index = -1;
+                byte[] data = File.ReadAllBytes(path);
+                byte[] packet = new byte[data.Length - 8];
+
+                // Strip the header out
+                while (++index < data.Length - 8)
+                    packet[index] = data[index + 8];
+
+                // Send packet
+                PolarisApp.Instance.server.Clients[ID].SendPacket(data[4], data[5], data[6], packet);
+
+                Logger.WriteCommand("[CMD] Sent contents of {0} as packet {1:X}-{2:X} with flags {3} to {4}", path, data[4], data[5], data[6], name);
+            }
         }
 
         private void SendPacketFile(string[] args, int length, string full)
