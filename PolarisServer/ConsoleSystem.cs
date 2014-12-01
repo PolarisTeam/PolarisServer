@@ -275,12 +275,11 @@ namespace PolarisServer
             // Build prompt string
             prompt = "Polaris> ";
 
-            Console.SetCursorPosition(0, 3);
-
             // Draw log
             if (Logger.lines.Count > prevCount || refreshDraw)
             {
                 Console.Clear();
+                Console.SetCursorPosition(0, 1);
 
                 for (int i = 0; i < Logger.lines.Count; i++)
                 {
