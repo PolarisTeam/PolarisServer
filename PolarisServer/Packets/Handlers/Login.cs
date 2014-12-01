@@ -14,6 +14,7 @@ namespace PolarisServer.Packets.Handlers
         public override void HandlePacket(Client context, byte[] data, uint position, uint size)
         {
             // Parse the stuff we received
+
             var reader = new Packets.PacketReader(data, position, size);
 
             reader.BaseStream.Seek(0x2C, SeekOrigin.Current);
@@ -55,13 +56,14 @@ namespace PolarisServer.Packets.Handlers
                     // Insert new player into database
                     user = new Database.Player
                     {
-                        Nickname = username,
                         Username = username,
                         Password = BCrypt.Net.BCrypt.HashPassword(password),
                         SettingsINI = System.IO.File.ReadAllText("settings.txt")
                     };
                     db.Players.Add(user);
                     db.SaveChanges();
+
+                    //context.SendPacket(0x11, 0x1e, 0x0, new byte[0x44]); // Request nickname
                 }
             }
             else
