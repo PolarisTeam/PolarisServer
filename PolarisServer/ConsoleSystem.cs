@@ -103,7 +103,12 @@ namespace PolarisServer
             ConsoleKey.UpArrow,
             ConsoleKey.DownArrow,
             ConsoleKey.LeftArrow,
-            ConsoleKey.RightArrow
+            ConsoleKey.RightArrow,
+
+            ConsoleKey.Home,
+            ConsoleKey.End,
+            
+            ConsoleKey.Delete
         };
 
         List<ConsoleCommand> commands = new List<ConsoleCommand>();
@@ -114,7 +119,9 @@ namespace PolarisServer
         public int width = 120;
         public int height = 35;
 
+        int commandIndex = 0;
         string commandLine = string.Empty;
+        
         string info = string.Empty;
         string prompt = string.Empty;
 
@@ -240,7 +247,7 @@ namespace PolarisServer
             }
 
             // Build prompt string
-            prompt = "Polaris> " + commandLine;
+            prompt = "Polaris> ";
 
             Console.SetCursorPosition(0, 3);
 
@@ -278,9 +285,10 @@ namespace PolarisServer
             // Draw Prompt
             Console.SetCursorPosition(0, height - 1);
             Console.Write(prompt);
+            Console.Write(commandLine);
             for (int i = 0; i < width - prompt.Length; i++)
                 Console.Write(" ");
-            Console.SetCursorPosition(prompt.Length, height - 1);
+            Console.SetCursorPosition(prompt.Length + commandIndex, height - 1);
 
             prevCount = Logger.lines.Count;
             infoUpdateCounter++;
@@ -304,11 +312,27 @@ namespace PolarisServer
 
             // Append key to the command line
             if (validKey)
-                commandLine += key.KeyChar;
+            {
+                commandLine = commandLine.Insert(commandIndex, key.KeyChar.ToString());
+                commandIndex++;
+            }
 
             // Backspace
-            if (key.Key == ConsoleKey.Backspace && commandLine.Length > 0)
-                commandLine = commandLine.Remove(commandLine.Length - 1);
+            if (key.Key == ConsoleKey.Backspace && commandLine.Length > 0 && commandIndex > 0)
+            {
+                commandLine = commandLine.Remove(commandIndex - 1, 1);
+                commandIndex--;
+            }
+
+            // Cursor movement
+            if (key.Key == ConsoleKey.LeftArrow && commandLine.Length > 0 && commandIndex > 0)
+                commandIndex--;
+            if (key.Key == ConsoleKey.RightArrow && commandLine.Length > 0 && commandIndex <= commandLine.Length - 1)
+                commandIndex++;
+            if (key.Key == ConsoleKey.Home)
+                commandIndex = 0;
+            if (key.Key == ConsoleKey.End)
+                commandIndex = commandLine.Length;
 
             // History
             if (key.Key == ConsoleKey.UpArrow && history.Count > 0)
@@ -319,6 +343,7 @@ namespace PolarisServer
                     historyIndex = history.Count - 1;
 
                 commandLine = history[historyIndex];
+                commandIndex = history[historyIndex].Length;
             }
             if (key.Key == ConsoleKey.DownArrow && history.Count > 0)
             {
@@ -328,6 +353,7 @@ namespace PolarisServer
                     historyIndex = 0;
 
                 commandLine = history[historyIndex];
+                commandIndex = history[historyIndex].Length;
             }
 
             // Run Command
@@ -366,6 +392,8 @@ namespace PolarisServer
                     historyIndex = history.Count;
                     commandLine = string.Empty;
                 }
+
+                commandIndex = 0;
             }
         }
 
