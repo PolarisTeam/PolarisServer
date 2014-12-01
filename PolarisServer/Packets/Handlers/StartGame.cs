@@ -44,8 +44,8 @@ namespace PolarisServer.Packets.Handlers
                 return;
 
             // Set Area
-            var packet = System.IO.File.ReadAllBytes("testSetAreaPacket.bin");
-            context.SendPacket(3, 0x24, 4, packet);
+            var setAreaPacket = System.IO.File.ReadAllBytes("testSetAreaPacket.bin");
+            context.SendPacket(3, 0x24, 4, setAreaPacket);
 
             // Set Player ID
             var setPlayerID = new PacketWriter();
@@ -101,6 +101,11 @@ namespace PolarisServer.Packets.Handlers
                 context.SendPacket(remoteChar);
 
             }
+
+            // memset packet - Enables menus
+            // Also holds event items and likely other stuff too
+            var memSetPacket = System.IO.File.ReadAllBytes("setMemoryPacket.bin");
+            context.SendPacket(0x23, 0x7, 0, memSetPacket);
 
         }
     }
