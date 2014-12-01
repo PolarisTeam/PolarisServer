@@ -106,6 +106,7 @@ namespace PolarisServer
         public ConsoleSystem()
         {
             Console.Title = "Polaris";
+            Console.CursorVisible = true;
             Console.SetWindowSize(width, height);
 
             CreateCommands();
@@ -118,7 +119,7 @@ namespace PolarisServer
                 try
                 {
                     PolarisApp.ConsoleSystem.Draw();
-                    Thread.Sleep(10);
+                    Thread.Sleep(20);
                 }
                 catch (ThreadInterruptedException ex)
                 {
@@ -138,7 +139,7 @@ namespace PolarisServer
                 try
                 {
                     PolarisApp.ConsoleSystem.CheckInput();
-                    Thread.Sleep(10);
+                    Thread.Sleep(20);
                 }
                 catch (ThreadInterruptedException ex)
                 {
@@ -250,9 +251,9 @@ namespace PolarisServer
             // Draw Prompt
             Console.SetCursorPosition(0, height - 1);
             Console.Write(prompt);
-            Console.Write("_");
-            for (int i = 0; i < width - prompt.Length - 2; i++)
+            for (int i = 0; i < width - prompt.Length; i++)
                 Console.Write(" ");
+            Console.SetCursorPosition(prompt.Length, height - 1);
 
             prevCount = Logger.lines.Count;
         }

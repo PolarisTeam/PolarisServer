@@ -51,14 +51,30 @@ namespace PolarisServer
 
                         case "-s":
                         case "--size":
-                            ConsoleSystem.width = int.Parse(args[0]);
-                            ConsoleSystem.height = int.Parse(args[0]);
+                            string[] splitArgs = args[++i].Split(',');
+                            int width = int.Parse(splitArgs[0]);
+                            int height = int.Parse(splitArgs[1]);
+                            if (width < ConsoleSystem.width)
+                            {
+                                Logger.WriteWarning("[ARG] Capping console width to {0} columns", ConsoleSystem.width);
+                                width = ConsoleSystem.width;
+                            }
+                            if (height < ConsoleSystem.height)
+                            {
+                                Logger.WriteWarning("[ARG] Capping console height to {0} rows", ConsoleSystem.height);
+                                height = ConsoleSystem.height;
+                            }
+                            ConsoleSystem.width = width;
+                            ConsoleSystem.height = height;
+                            Console.SetWindowSize(ConsoleSystem.width, ConsoleSystem.height);
                             break;
                     }
                 }
             }
             catch (Exception ex)
             {
+                for (int i = 0; i < args.Length; i++)
+                    Logger.WriteError("[CMD] {0} -> {1}", i, args[i].ToString());
                 Logger.WriteException("An error has occurred while parsing command line parameters", ex);
             }
 
