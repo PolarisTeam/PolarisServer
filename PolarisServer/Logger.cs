@@ -27,6 +27,8 @@ namespace PolarisServer
 
         public static List<LogLine> lines = new List<LogLine>();
 
+        public static bool VerbosePackets = false;
+
         private static void AddLine(LogLine line)
         {
             // Return if we don't have a ConsoleSystem created yet
@@ -187,6 +189,7 @@ namespace PolarisServer
                 hexString = hexString.Replace('\a', ' '); // Alert beeps
                 hexString = hexString.Replace('\n', ' '); // Newlines
                 hexString = hexString.Replace('\r', ' '); // Carriage returns
+                hexString = hexString.Replace('\\', ' '); // Escape break
 
                 LogLine hexLine = new LogLine();
                 hexLine.color = ConsoleColor.White;
@@ -198,7 +201,10 @@ namespace PolarisServer
 
         public static void WriteFile(string text, params object[] args)
         {
-            writer.WriteLine(DateTime.Now.ToString() + " - " + text, args);
+            if (args.Length > 0)
+                writer.WriteLine(DateTime.Now.ToString() + " - " + text, args);
+            else
+                writer.WriteLine(DateTime.Now.ToString() + " - " + text);
 
             // Later we should probably only flush once every X amount of lines or on some other condition
             writer.Flush();

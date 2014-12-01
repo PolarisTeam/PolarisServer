@@ -165,6 +165,15 @@ namespace PolarisServer
         void HandlePacket(byte typeA, byte typeB, byte flags1, byte flags2, byte[] data, uint position, uint size)
         {
             Logger.Write("[-->] Packet {0:X}-{1:X} (flags {2}, {3}) ({4} bytes)", typeA, typeB, flags1, flags2, size);
+            if (Logger.VerbosePackets && size > 0)
+            {
+                byte[] dataTrimmed = new byte[size];
+                for (int i = 0; i < size; i++)
+                    dataTrimmed[i] = data[i];
+
+                string info = string.Format("[-->] {0:X}-{1:X} Data:", typeA, typeB);
+                Logger.WriteHex(info, dataTrimmed);
+            }
 
             byte[] packet = new byte[size];
             Array.Copy(data, position, packet, 0, size);

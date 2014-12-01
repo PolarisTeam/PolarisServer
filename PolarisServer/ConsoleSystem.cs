@@ -192,6 +192,13 @@ namespace PolarisServer
             help.Help = "Displays help for all commands";
             commands.Add(help);
 
+            // Config
+            ConsoleCommand config = new ConsoleCommand(Config, "config", "c");
+            config.Arguments.Add(new ConsoleCommandArgument("Option", false));
+            config.Arguments.Add(new ConsoleCommandArgument("Value", false));
+            config.Help = "Set a configuration variable to the specified value";
+            commands.Add(config);
+
             // Echo
             ConsoleCommand echo = new ConsoleCommand(Echo, "echo");
             echo.Help = "Echo the given text back into the Console";
@@ -218,15 +225,18 @@ namespace PolarisServer
             ConsoleCommand loadLooks = new ConsoleCommand(LoadLooks, "loadlooks");
             loadLooks.Arguments.Add(new ConsoleCommandArgument("Username", false));
             loadLooks.Arguments.Add(new ConsoleCommandArgument("Filename", false));
+            loadLooks.Help = "Loads a binary file containing looks structure data";
             commands.Add(loadLooks);
 
-            // SendNoPayload
-            ConsoleCommand sendNoPayload = new ConsoleCommand(SendNoPayload, "sendnopayload", "sendnp");
-            sendNoPayload.Arguments.Add(new ConsoleCommandArgument("Username", false));
-            sendNoPayload.Arguments.Add(new ConsoleCommandArgument("Type", false));
-            sendNoPayload.Arguments.Add(new ConsoleCommandArgument("SubType", false));
-            sendNoPayload.Help = "Sends a packet with no payload";
-            commands.Add(sendNoPayload);
+            // SendPacket
+            ConsoleCommand sendPacket = new ConsoleCommand(SendPacket, "sendpacket", "sendp");
+            sendPacket.Arguments.Add(new ConsoleCommandArgument("Name", false));
+            sendPacket.Arguments.Add(new ConsoleCommandArgument("Type", false));
+            sendPacket.Arguments.Add(new ConsoleCommandArgument("SubType", false));
+            sendPacket.Arguments.Add(new ConsoleCommandArgument("Flags", false));
+            sendPacket.Arguments.Add(new ConsoleCommandArgument("Data ...", false));
+            sendPacket.Help = "Sends a packet to a client";
+            commands.Add(sendPacket);
 
             // SendPacketFile
             ConsoleCommand sendPacketFile = new ConsoleCommand(SendPacketFile, "sendpacketfile", "sendpf");
@@ -471,6 +481,21 @@ namespace PolarisServer
             Logger.WriteCommand("[CMD] " + echo);
         }
 
+        private void Config(string[] args, int length, string full)
+        {
+            switch (args[1].ToLower())
+            {
+                default:
+                    Logger.WriteError("[CMD] Invalid configuration option");
+                    break;
+                
+                case "verbosepackets":
+                    Logger.VerbosePackets = !Logger.VerbosePackets;
+                    Logger.WriteCommand("[CMD] Verbose packet logging " + (Logger.VerbosePackets ? "enabled" : "disabled"));
+                    break;
+            }
+        }
+
         private void Exit(string[] args, int length, string full)
         {
             Environment.Exit(0);
@@ -609,14 +634,16 @@ namespace PolarisServer
             Logger.WriteCommand("[CMD] Loaded looks from {0} onto {1}", filename, name);
         }
 
-        private void SendNoPayload(string[] args, int length, string full)
+        private void SendPacket(string[] args, int length, string full)
         {
             string name = args[1].Trim('\"');
             int ID = 0;
             byte type = byte.Parse(args[2]);
             byte subType = byte.Parse(args[3]);
+            byte flags = byte.Parse(args[4]);
+            byte[] data = new byte[args.Length - 5];
             bool foundPlayer = false;
-
+            
             // Find the player
             ID = Helper.FindPlayerByUsername(name);
             if (ID != -1)
@@ -629,10 +656,21 @@ namespace PolarisServer
                 return;
             }
 
-            // Send packet
-            PolarisApp.Instance.server.Clients[ID].SendPacket(new Packets.NoPayloadPacket(type, subType));
+            if (args.Length >= 5)
+            {
+                int packetSize = 4;
+                while (++packetSize < args.Length)
+                    data[packetSize - 5] = byte.Parse(args[packetSize]);
+            }
 
-            Logger.WriteCommand("[CMD] Sent no payload packet to {0} of type {1:X}-{2:X}", name, type, subType);
+            // Send packet
+            PolarisApp.Instance.server.Clients[ID].SendPacket(type, subType, flags, data);
+
+            Logger.WriteCommand("[CMD] Sent packet {0:X}-{1:X} with flags {2} to {3}", type, subType, flags, name);
+            if (args.Length < 6)
+                Logger.WriteCommand("[CMD] No data sent, sending basic payload");
+            else
+                Logger.WriteHex("[CMD] Sent packet data: ", data);
         }
 
         private void SendPacketFile(string[] args, int length, string full)
