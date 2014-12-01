@@ -127,13 +127,73 @@ namespace PolarisServer
                 line.text += string.Format("[ERR] Inner Exception: {0}", ex.InnerException.ToString());
 
             WriteFile(line.text);
-            
+
             // Strip the crap out of the exception so that the line splitting works properly on it
             line.text = line.text.Replace('\r', ' ');
             line.text = line.text.Replace('\n', ' ');
             line.text = line.text.Replace("     ", " ");
 
             AddLine(line);
+        }
+
+        public static void WriteHex(string text, byte[] array)
+        {
+            LogLine messageLine = new LogLine();
+            messageLine.color = ConsoleColor.DarkCyan;
+            messageLine.text = text;
+            AddLine(messageLine);
+
+            // Calculate lines
+            int lines = 0;
+            for (int i = 0; i < array.Length; i++)
+                if ((i % 16) == 0)
+                    lines++;
+
+            for (int i = 0; i < lines; i++)
+            {
+                string hexString = string.Empty;
+
+                // Address
+                hexString += string.Format("{0:X8} ", i * 16);
+
+                // Bytes
+                for (int j = 0; j < 16; j++)
+                {
+                    if (j + (i * 16) >= array.Length)
+                        break;
+
+                    hexString += string.Format("{0:X2} ", array[j + (i * 16)]);
+                };
+
+                // Spacing
+                while (hexString.Length < 16 * 4)
+                    hexString += ' ';
+
+                // ASCII
+                for (int j = 0; j < 16; j++)
+                {
+                    if (j + (i * 16) >= array.Length)
+                        break;
+
+                    char asciiChar = (char)array[j + (i * 16)];
+
+                    if (asciiChar == (char)0x00)
+                        asciiChar = '.';
+
+                    hexString += asciiChar;
+                };
+
+                // Strip off unnecessary stuff
+                hexString = hexString.Replace('\a', ' '); // Alert beeps
+                hexString = hexString.Replace('\n', ' '); // Newlines
+                hexString = hexString.Replace('\r', ' '); // Carriage returns
+
+                LogLine hexLine = new LogLine();
+                hexLine.color = ConsoleColor.White;
+                hexLine.text = hexString;
+                AddLine(hexLine);
+                WriteFile(hexString);
+            }
         }
 
         public static void WriteFile(string text, params object[] args)

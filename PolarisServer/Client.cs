@@ -144,7 +144,15 @@ namespace PolarisServer
 
             if (_outputARC4 != null)
                 _outputARC4.TransformBlock(packet, 0, packet.Length, packet, 0);
-            _socket.Socket.Client.Send(packet);
+            
+            try
+            {
+                _socket.Socket.Client.Send(packet);
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteException("Error sending packet", ex);
+            }
         }
 
         public void SendPacket(Packet packet)

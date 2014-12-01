@@ -56,7 +56,8 @@ namespace PolarisServer.Network
                     else
                     {
                         // Readable data
-                        _socketMap[socket].OnReadable();
+                        if (socket.Connected)
+                            _socketMap[socket].OnReadable();
                     }
                 }
             }

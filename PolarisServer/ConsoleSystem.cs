@@ -4,6 +4,9 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading;
 
+using PolarisServer.Models;
+using PolarisServer.Packets;
+
 namespace PolarisServer
 {
     public delegate void ConsoleCommandDelegate(string[] args, int length, string full);
@@ -121,7 +124,7 @@ namespace PolarisServer
 
         int commandIndex = 0;
         string commandLine = string.Empty;
-        
+
         string info = string.Empty;
         string prompt = string.Empty;
 
@@ -195,14 +198,27 @@ namespace PolarisServer
             echo.Arguments.Add(new ConsoleCommandArgument("text", false));
             commands.Add(echo);
 
+            // ClearPlayers
+            ConsoleCommand clearPlayers = new ConsoleCommand(ClearPlayers, "clearplayers", "cp");
+            clearPlayers.Arguments.Add(new ConsoleCommandArgument("Exempt Username", true));
+            clearPlayers.Help = "Disconnects all players from the server";
+            commands.Add(clearPlayers);
+
             // SpawnClone
             ConsoleCommand spawnClone = new ConsoleCommand(SpawnClone, "spawnclone");
-            spawnClone.Arguments.Add(new ConsoleCommandArgument("Name", false));
+            spawnClone.Arguments.Add(new ConsoleCommandArgument("Username", false));
+            spawnClone.Arguments.Add(new ConsoleCommandArgument("Player Name", false));
             spawnClone.Arguments.Add(new ConsoleCommandArgument("X", false));
             spawnClone.Arguments.Add(new ConsoleCommandArgument("Y", false));
             spawnClone.Arguments.Add(new ConsoleCommandArgument("Z", false));
             spawnClone.Help = "Spawns a clone of your character";
             commands.Add(spawnClone);
+
+            // LoadLooks
+            ConsoleCommand loadLooks = new ConsoleCommand(LoadLooks, "loadlooks");
+            loadLooks.Arguments.Add(new ConsoleCommandArgument("Username", false));
+            loadLooks.Arguments.Add(new ConsoleCommandArgument("Filename", false));
+            commands.Add(loadLooks);
 
             // SendNoPayload
             ConsoleCommand sendNoPayload = new ConsoleCommand(SendNoPayload, "sendnopayload", "sendnp");
@@ -460,13 +476,64 @@ namespace PolarisServer
             Environment.Exit(0);
         }
 
+        private void ClearPlayers(string[] args, int length, string full)
+        {
+            // Temporary haxifications to pull your own connection
+            int ID = -1;
+            bool foundPlayer = false;
+
+            if (args.Length > 1)
+            {
+                string name = args[1];
+                
+                // Find the player
+                ID = Helper.FindPlayerByUsername(name);
+                if (ID != -1)
+                    foundPlayer = true;
+                
+                // Couldn't find the username
+                if (!foundPlayer)
+                {
+                    Logger.WriteError("[CMD] Could not find user " + name);
+                    return;
+                }
+            }
+
+            for (int i = 0; i < PolarisApp.Instance.server.Clients.Count; i++)
+            {
+                if (ID > -1 && i == ID)
+                    continue;
+
+                // This is probably not the right way to do this
+                PolarisApp.Instance.server.Clients[i].Socket.Close();
+                Logger.WriteCommand("[CMD] Logged out user " + PolarisApp.Instance.server.Clients[i].User.Username);
+            }
+
+            Logger.WriteCommand("[CMD] Logged out all players successfully");
+        }
+
         private void SpawnClone(string[] args, int length, string full)
         {
             // Temporary haxifications to pull your own connection
-            Client client = PolarisApp.Instance.server.Clients[0];
-            float x = float.Parse(args[2]);
-            float y = float.Parse(args[3]);
-            float z = float.Parse(args[4]);
+            int ID = 0;
+            string name = args[1].Trim('\"');
+            string playerName = args[2].Trim('\"');
+            float x = float.Parse(args[3]);
+            float y = float.Parse(args[4]);
+            float z = float.Parse(args[5]);
+            bool foundPlayer = false;
+
+            // Find the player
+            ID = Helper.FindPlayerByUsername(name);
+            if (ID != -1)
+                foundPlayer = true;
+
+            // Couldn't find the username
+            if (!foundPlayer)
+            {
+                Logger.WriteError("[CMD] Could not find user " + name);
+                return;
+            }
 
             // Default coordinates
             if (x == 0)
@@ -476,15 +543,17 @@ namespace PolarisServer
             if (z == 0)
                 z = 134.375f;
 
+            Client client = PolarisApp.Instance.server.Clients[ID];
+
             var fakePlayer = new Database.Player();
-            fakePlayer.Username = args[1].Trim('\"');
-            fakePlayer.Nickname = args[1].Trim('\"');
+            fakePlayer.Username = name;
+            fakePlayer.Nickname = playerName;
             fakePlayer.PlayerID = 12345678 + new Random().Next();
 
-            var fakeChar = new Models.Character();
+            var fakeChar = new Character();
             fakeChar.CharacterID = 12345678 + new Random().Next();
             fakeChar.Player = fakePlayer;
-            fakeChar.Name = args[1].Trim('\"');
+            fakeChar.Name = playerName;
 
             fakeChar.Looks = client.Character.Looks;
             fakeChar.Jobs = client.Character.Jobs;
@@ -497,7 +566,47 @@ namespace PolarisServer
             fakePacket.IsItMe = false;
             client.SendPacket(fakePacket);
 
-            Logger.WriteCommand("[CMD] Spawned a clone named " + fakeChar.Name);
+            Logger.WriteCommand("[CMD] Spawned a clone of {0} named {1}", name, playerName);
+        }
+
+        private void LoadLooks(string[] args, int length, string full)
+        {
+            int ID = 0;
+            string name = args[1].Trim('\"');
+            string filename = args[2].Trim('\"');
+            bool foundPlayer = false;
+            
+            // Find the player
+            ID = Helper.FindPlayerByUsername(name);
+            if (ID != -1)
+                foundPlayer = true;
+
+            // Couldn't find the username
+            if (!foundPlayer)
+            {
+                Logger.WriteError("[CMD] Could not find user " + name);
+                return;
+            }
+
+            byte[] bytes = File.ReadAllBytes(filename);
+            Client client = PolarisApp.Instance.server.Clients[ID];
+            client.Character.Looks = new Character.LooksParam();
+            client.Character.Looks = Helper.ByteArrayToStructure<Character.LooksParam>(bytes);
+
+            // Setup packets
+            var areaPacket = File.ReadAllBytes("testSetAreaPacket.bin");
+            var playerID = new PacketWriter();
+            playerID.WritePlayerHeader((uint)client.User.PlayerID);
+            
+            // Send packets
+            client.SendPacket(new NoPayloadPacket(0x3, 0x4)); // Loading screen
+            client.SendPacket(0x6, 0x00, 0, playerID.ToArray()); // Set player ID
+            client.SendPacket(0x03, 0x24, 4, areaPacket); // Setup area
+            client.SendPacket(new CharacterSpawnPacket(client.Character)); // Spawn
+            client.SendPacket(new NoPayloadPacket(0x03, 0x2B)); // Enable Controls
+
+            Logger.WriteHex("[CMD] Looks Data from file: ", File.ReadAllBytes(filename));
+            Logger.WriteCommand("[CMD] Loaded looks from {0} onto {1}", filename, name);
         }
 
         private void SendNoPayload(string[] args, int length, string full)
@@ -509,7 +618,7 @@ namespace PolarisServer
             bool foundPlayer = false;
 
             // Find the player
-            ID = new Helper().FindPlayerByUsername(name);
+            ID = Helper.FindPlayerByUsername(name);
             if (ID != -1)
                 foundPlayer = true;
 
@@ -537,7 +646,7 @@ namespace PolarisServer
             bool foundPlayer = false;
 
             // Find the player
-            ID = new Helper().FindPlayerByUsername(name);
+            ID = Helper.FindPlayerByUsername(name);
             if (ID != -1)
                 foundPlayer = true;
 

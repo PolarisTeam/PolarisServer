@@ -1,6 +1,7 @@
 ﻿using System;
-using System.Text;
+using System.ComponentModel;
 using System.Runtime.InteropServices;
+using System.Text;
 
 namespace PolarisServer
 {
@@ -32,6 +33,19 @@ namespace PolarisServer
             return stuff;
         }
 
+        public static string ObjectToString(object obj)
+        {
+            string data = string.Empty;
+
+            data += "{ ";
+            foreach (PropertyDescriptor descriptor in TypeDescriptor.GetProperties(obj))
+                data += string.Format("{0} = {1}, ", descriptor.Name, descriptor.GetValue(obj));
+            data = data.Remove(data.Length - 3);
+            data += " }";
+
+            return data;
+        }
+        
         #region Float Manipulation
         public static unsafe float UIntToFloat(uint input)
         {
@@ -84,7 +98,7 @@ namespace PolarisServer
         }
         #endregion
 
-        public int FindPlayerByUsername(string name)
+        public static int FindPlayerByUsername(string name)
         {
             for (int i = 0; i < PolarisApp.Instance.server.Clients.Count; i++)
                 if (name.ToLower() == PolarisApp.Instance.server.Clients[i].User.Username)
