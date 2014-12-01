@@ -139,9 +139,15 @@ namespace PolarisServer
 
             Array.Copy(data, 0, packet, 8, data.Length);
 
-            Logger.Write("[<--] Packet {0:X}-{1:X} ({2} bytes)", typeA, typeB, packet.Length);
+            Logger.Write("[<--] Packet {0:X}-{1:X} (flags {2}, {3} bytes)", typeA, typeB, flags, packet.Length);
             LogPacket(false, typeA, typeB, flags, 0, packet);
 
+            if (Logger.VerbosePackets)
+            {
+                string info = string.Format("[<--] {0:X}-{1:X} Data:", typeA, typeB);
+                Logger.WriteHex(info, packet);
+            }
+            
             if (_outputARC4 != null)
                 _outputARC4.TransformBlock(packet, 0, packet.Length, packet, 0);
             

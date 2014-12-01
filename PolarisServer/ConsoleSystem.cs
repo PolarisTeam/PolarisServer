@@ -241,9 +241,6 @@ namespace PolarisServer
             // SendPacketFile
             ConsoleCommand sendPacketFile = new ConsoleCommand(SendPacketFile, "sendpacketfile", "sendpf");
             sendPacketFile.Arguments.Add(new ConsoleCommandArgument("Username", false));
-            sendPacketFile.Arguments.Add(new ConsoleCommandArgument("Type", false));
-            sendPacketFile.Arguments.Add(new ConsoleCommandArgument("SubType", false));
-            sendPacketFile.Arguments.Add(new ConsoleCommandArgument("Flags", false));
             sendPacketFile.Arguments.Add(new ConsoleCommandArgument("Filename", false));
             sendPacketFile.Help = "Sends the specified files contents as a packet";
             commands.Add(sendPacketFile);
@@ -487,7 +484,7 @@ namespace PolarisServer
                 default:
                     Logger.WriteError("[CMD] Invalid configuration option");
                     break;
-                
+
                 case "verbosepackets":
                     Logger.VerbosePackets = !Logger.VerbosePackets;
                     Logger.WriteCommand("[CMD] Verbose packet logging " + (Logger.VerbosePackets ? "enabled" : "disabled"));
@@ -509,12 +506,12 @@ namespace PolarisServer
             if (args.Length > 1)
             {
                 string name = args[1];
-                
+
                 // Find the player
                 ID = Helper.FindPlayerByUsername(name);
                 if (ID != -1)
                     foundPlayer = true;
-                
+
                 // Couldn't find the username
                 if (!foundPlayer)
                 {
@@ -599,7 +596,7 @@ namespace PolarisServer
             string name = args[1].Trim('\"');
             string filename = args[2].Trim('\"');
             bool foundPlayer = false;
-            
+
             // Find the player
             ID = Helper.FindPlayerByUsername(name);
             if (ID != -1)
@@ -621,7 +618,7 @@ namespace PolarisServer
             var areaPacket = File.ReadAllBytes("testSetAreaPacket.bin");
             var playerID = new PacketWriter();
             playerID.WritePlayerHeader((uint)client.User.PlayerID);
-            
+
             // Send packets
             client.SendPacket(new NoPayloadPacket(0x3, 0x4)); // Loading screen
             client.SendPacket(0x6, 0x00, 0, playerID.ToArray()); // Set player ID
@@ -642,7 +639,7 @@ namespace PolarisServer
             byte flags = byte.Parse(args[4]);
             byte[] data = new byte[args.Length - 5];
             bool foundPlayer = false;
-            
+
             // Find the player
             ID = Helper.FindPlayerByUsername(name);
             if (ID != -1)
@@ -666,20 +663,13 @@ namespace PolarisServer
             PolarisApp.Instance.server.Clients[ID].SendPacket(type, subType, flags, data);
 
             Logger.WriteCommand("[CMD] Sent packet {0:X}-{1:X} with flags {2} to {3}", type, subType, flags, name);
-            if (args.Length < 6)
-                Logger.WriteCommand("[CMD] No data sent, sending basic payload");
-            else
-                Logger.WriteHex("[CMD] Sent packet data: ", data);
         }
 
         private void SendPacketFile(string[] args, int length, string full)
         {
             string name = args[1].Trim('\"');
             int ID = 0;
-            byte type = byte.Parse(args[2]);
-            byte subType = byte.Parse(args[3]);
-            byte flags = byte.Parse(args[4]);
-            string filename = args[5].Trim('\"');
+            string filename = args[2].Trim('\"');
             bool foundPlayer = false;
 
             // Find the player
@@ -695,12 +685,18 @@ namespace PolarisServer
             }
 
             // Pull packet from the specified file
-            var packet = File.ReadAllBytes(filename);
+            int index = -1;
+            byte[] data = File.ReadAllBytes(filename);
+            byte[] packet = new byte[data.Length - 8];
+
+            // Strip the header out
+            while (++index < data.Length - 8)
+                packet[index] = data[index + 8];
 
             // Send packet
-            PolarisApp.Instance.server.Clients[ID].SendPacket(type, subType, flags, packet);
+            PolarisApp.Instance.server.Clients[ID].SendPacket(data[4], data[5], data[6], packet);
 
-            Logger.WriteCommand("[CMD] Sent contents of {0} as packet {1:X}-{2:X} with flags {3} to {4}", filename, type, subType, flags, name);
+            Logger.WriteCommand("[CMD] Sent contents of {0} as packet {1:X}-{2:X} with flags {3} to {4}", filename, data[4], data[5], data[6], name);
         }
 
         #endregion
