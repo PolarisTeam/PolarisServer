@@ -93,15 +93,34 @@ namespace PolarisServer
     /// </summary>
     public class ConsoleSystem
     {
-        List<ConsoleCommand> commands = new List<ConsoleCommand>();
+        // Input
         ConsoleKeyInfo key = new ConsoleKeyInfo();
+        List<ConsoleKey> controlKeys = new List<ConsoleKey>()
+        {
+            ConsoleKey.Backspace,
+            ConsoleKey.Enter,
+            
+            ConsoleKey.UpArrow,
+            ConsoleKey.DownArrow,
+            ConsoleKey.LeftArrow,
+            ConsoleKey.RightArrow
+        };
+
+        List<ConsoleCommand> commands = new List<ConsoleCommand>();
+
+        List<string> history = new List<string>();
+        int historyIndex = 0;
+
         public int width = 120;
         public int height = 35;
+
         string commandLine = string.Empty;
         string info = string.Empty;
         string prompt = string.Empty;
+
         int prevCount = 0;
         int infoUpdateCounter = 0;
+
         const int ThreadSleepTime = 20;
         public bool refreshDraw = false;
 
@@ -270,15 +289,46 @@ namespace PolarisServer
         public void CheckInput()
         {
             // Read key
+            bool validKey = true;
             key = Console.ReadKey(true);
 
+            // Check to make sure this is a valid key to append to the command line
+            foreach (ConsoleKey controlKey in controlKeys)
+            {
+                if (key.Key == controlKey)
+                {
+                    validKey = false;
+                    break;
+                }
+            }
+
             // Append key to the command line
-            if (key.Key != ConsoleKey.Backspace && key.Key != ConsoleKey.Enter)
+            if (validKey)
                 commandLine += key.KeyChar;
 
             // Backspace
             if (key.Key == ConsoleKey.Backspace && commandLine.Length > 0)
                 commandLine = commandLine.Remove(commandLine.Length - 1);
+
+            // History
+            if (key.Key == ConsoleKey.UpArrow && history.Count > 0)
+            {
+                historyIndex--;
+
+                if (historyIndex < 0)
+                    historyIndex = history.Count - 1;
+
+                commandLine = history[historyIndex];
+            }
+            if (key.Key == ConsoleKey.DownArrow && history.Count > 0)
+            {
+                historyIndex++;
+
+                if (historyIndex > history.Count - 1)
+                    historyIndex = 0;
+
+                commandLine = history[historyIndex];
+            }
 
             // Run Command
             if (key.Key == ConsoleKey.Enter)
@@ -311,7 +361,9 @@ namespace PolarisServer
                     if (!valid)
                         Logger.WriteError("[CMD] {0} - Command not found", commandLine.Split(' ')[0].Trim('\r'));
 
-                    // Empty the command line
+                    // Add the command line to history and wipe it
+                    history.Add(commandLine);
+                    historyIndex = history.Count;
                     commandLine = string.Empty;
                 }
             }
