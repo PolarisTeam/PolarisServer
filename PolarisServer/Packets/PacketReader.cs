@@ -68,7 +68,7 @@ namespace PolarisServer.Packets
             else
             {
                 uint charCount = magic - 1;
-                uint padding = (charCount & 1);
+                uint padding = (magic & 1);
 
                 byte[] data = ReadBytes((int)(charCount * 2));
                 ReadUInt16();

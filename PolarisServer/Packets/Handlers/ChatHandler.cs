@@ -15,26 +15,28 @@ namespace PolarisServer.Packets.Handlers
 
             //PacketReader reader = new PacketReader(data, position, size);
 
-            var bytes = BitConverter.GetBytes((uint)context.User.PlayerID);
+            /*var bytes = BitConverter.GetBytes((uint)context.User.PlayerID);
             data[0] = bytes[0];
             data[1] = bytes[1];
             data[2] = bytes[2];
             data[3] = bytes[3];
 
-            data[9] = 4; // From player
-            /*
+            data[9] = 4; // From player*/
+
             PacketReader reader = new PacketReader(data, position, size);
-            reader.BaseStream.Seek(0x10, System.IO.SeekOrigin.Begin);
+            reader.BaseStream.Seek(0xC, System.IO.SeekOrigin.Begin);
             UInt32 channel = reader.ReadUInt32();
             string message = reader.ReadUTF16(0x9d3f, 0x44);
 
-            Logger.WriteLine("[CHT] <{0}> <{1}>", context.Character.Name, message);
+            Logger.Write("[CHT] <{0}> <{1}>", context.Character.Name, message);
 
             PacketWriter writer = new PacketWriter();
             writer.WritePlayerHeader((uint)context.Character.CharacterID);
             writer.Write((uint)channel);
             writer.WriteUTF16(message, 0x9d3f, 0x44);
-            */
+
+            data = writer.ToArray();
+
             foreach (Client c in Server.Instance.Clients)
             {
                 if (c.Character == null)
