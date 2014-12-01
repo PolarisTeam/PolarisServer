@@ -101,7 +101,7 @@ namespace PolarisServer
         public static int FindPlayerByUsername(string name)
         {
             for (int i = 0; i < PolarisApp.Instance.server.Clients.Count; i++)
-                if (name.ToLower() == PolarisApp.Instance.server.Clients[i].User.Username)
+                if (name.ToLower() == PolarisApp.Instance.server.Clients[i].User.Username.ToLower())
                     return i;
 
             return -1;
