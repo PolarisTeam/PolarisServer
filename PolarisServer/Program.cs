@@ -27,9 +27,11 @@ namespace PolarisServer
         public static void Main(string[] args)
         {
             ConsoleSystem = new ConsoleSystem();
-            ConsoleDrawThread = new Thread(StartConsoleSystemDrawing);
-            ConsoleInputThread = new Thread(StartConsoleSystemInput);
+            ConsoleDrawThread = new Thread(new ThreadStart(ConsoleSystem.StartDrawing));
+            ConsoleInputThread = new Thread(new ThreadStart(ConsoleSystem.StartInput));
+            ConsoleDrawThread.Name = "Draw";
             ConsoleDrawThread.Start();
+            ConsoleInputThread.Name = "Input";
             ConsoleInputThread.Start();
             
             try
@@ -45,6 +47,12 @@ namespace PolarisServer
                         case "--bind-address":
                             if (++i < args.Length)
                                 BindAddress = IPAddress.Parse(args[i]);
+                            break;
+
+                        case "-s":
+                        case "--size":
+                            ConsoleSystem.width = int.Parse(args[0]);
+                            ConsoleSystem.height = int.Parse(args[0]);
                             break;
                     }
                 }
@@ -74,18 +82,6 @@ namespace PolarisServer
 
             server = new Server();
             server.Run();
-        }
-
-        private static void StartConsoleSystemDrawing(object threadContext)
-        {
-            while (true)
-                ConsoleSystem.Draw();
-        }
-
-        private static void StartConsoleSystemInput(object threadContext)
-        {
-            while (true)
-                ConsoleSystem.CheckInput();
         }
     }
 }

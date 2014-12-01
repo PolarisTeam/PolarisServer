@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
+using System.Threading;
 
 namespace PolarisServer
 {
@@ -93,6 +95,8 @@ namespace PolarisServer
     {
         List<ConsoleCommand> commands = new List<ConsoleCommand>();
         ConsoleKeyInfo key = new ConsoleKeyInfo();
+        public int width = 120;
+        public int height = 35;
         string commandLine = string.Empty;
         string info = string.Empty;
         string prompt = string.Empty;
@@ -102,9 +106,49 @@ namespace PolarisServer
         public ConsoleSystem()
         {
             Console.Title = "Polaris";
-            Console.CursorVisible = false;
+            Console.SetWindowSize(width, height);
 
             CreateCommands();
+        }
+
+        public static void StartDrawing()
+        {
+            while (true)
+            {
+                try
+                {
+                    PolarisApp.ConsoleSystem.Draw();
+                    Thread.Sleep(10);
+                }
+                catch (ThreadInterruptedException ex)
+                {
+                    Logger.WriteException("Thread inturrupted", ex);
+                }
+                catch (ThreadStateException ex)
+                {
+                    Logger.WriteException("Thread state error", ex);
+                }
+            }
+        }
+
+        public static void StartInput()
+        {
+            while (true)
+            {
+                try
+                {
+                    PolarisApp.ConsoleSystem.CheckInput();
+                    Thread.Sleep(10);
+                }
+                catch (ThreadInterruptedException ex)
+                {
+                    Logger.WriteException("Thread inturrupted", ex);
+                }
+                catch (ThreadStateException ex)
+                {
+                    Logger.WriteException("Thread state error", ex);
+                }
+            }
         }
 
         public void CreateCommands()
@@ -157,41 +201,32 @@ namespace PolarisServer
         {
             // Build info string
             if (PolarisApp.Instance != null && PolarisApp.Instance.server != null)
-                info = "Clients: " + PolarisApp.Instance.server.Clients.Count + " | Time: " + DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToLongTimeString();
+            {
+                int clients = PolarisApp.Instance.server.Clients.Count;
+                float usage = Process.GetCurrentProcess().PrivateMemorySize64 / 1024 / 1024;
+                string time = DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToLongTimeString();
+
+                info = string.Format("Clients: {0} | Memory: {1} MB | {2}", clients, usage, time);
+            }
             else
                 info = "Initializing...";
 
             // Build prompt string
             prompt = "Polaris> " + commandLine;
 
-            // Draw info
-            Console.SetCursorPosition(0, 0);
-            Console.Write(info);
-            for (int i = 0; i < Console.WindowWidth - info.Length; i++)
-                Console.Write(" ");
-
-            // Draw Prompt
-            Console.SetCursorPosition(0, 1);
-            Console.Write(prompt);
-            Console.Write("_");
-            for (int i = 0; i < Console.WindowWidth - prompt.Length - 2; i++)
-                Console.Write(" ");
+            Console.SetCursorPosition(0, 3);
 
             // Draw log
             if (Logger.lines.Count > prevCount || refreshDraw)
             {
-                int height = Console.WindowHeight - 4;
-                int currentCount = Logger.lines.Count;
-
                 Console.Clear();
-                Console.SetCursorPosition(0, 3);
 
-                for (int i = 0; i < currentCount; i++)
+                for (int i = 0; i < Logger.lines.Count; i++)
                 {
                     try
                     {
                         Console.ForegroundColor = Logger.lines[i].color;
-                        if (Logger.lines[i].text.Length >= Console.WindowWidth)
+                        if (Logger.lines[i].text.Length >= width)
                             Console.Write(Logger.lines[i].text);
                         else
                             Console.WriteLine(Logger.lines[i].text);
@@ -202,9 +237,23 @@ namespace PolarisServer
                         Logger.WriteException("Tried to draw past the log buffer", ex);
                     }
                 }
+
+                refreshDraw = false;
             }
 
-            refreshDraw = false;
+            // Draw info
+            Console.SetCursorPosition(0, height - 2);
+            Console.Write(info);
+            for (int i = 0; i < width - info.Length; i++)
+                Console.Write(" ");
+
+            // Draw Prompt
+            Console.SetCursorPosition(0, height - 1);
+            Console.Write(prompt);
+            Console.Write("_");
+            for (int i = 0; i < width - prompt.Length - 2; i++)
+                Console.Write(" ");
+
             prevCount = Logger.lines.Count;
         }
 
@@ -215,7 +264,7 @@ namespace PolarisServer
 
             // Append key to the command line
             if (key.Key != ConsoleKey.Backspace && key.Key != ConsoleKey.Enter)
-            commandLine += key.KeyChar;
+                commandLine += key.KeyChar;
 
             // Backspace
             if (key.Key == ConsoleKey.Backspace && commandLine.Length > 0)
@@ -236,7 +285,7 @@ namespace PolarisServer
                     {
                         string full = commandLine;
                         string[] args = full.Split(' ');
-                        
+
                         foreach (string name in command.Names)
                             if (args[0].ToLower() == name.ToLower())
                             {
@@ -251,7 +300,7 @@ namespace PolarisServer
 
                     if (!valid)
                         Logger.WriteError("[CMD] {0} - Command not found", commandLine.Split(' ')[0].Trim('\r'));
-                    
+
                     // Empty the command line
                     commandLine = string.Empty;
                 }
@@ -312,7 +361,7 @@ namespace PolarisServer
             string echo = string.Empty;
             for (int i = 1; i < args.Length; i++)
                 echo += args[i];
-            
+
             Logger.WriteCommand("[CMD] " + echo);
         }
 

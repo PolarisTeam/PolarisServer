@@ -33,7 +33,7 @@ namespace PolarisServer
             if (PolarisApp.ConsoleSystem == null) return;
 
             // Split the lines and append it into new lines if it's too big
-            if (line.text.Length >= Console.WindowWidth)
+            if (line.text.Length >= PolarisApp.ConsoleSystem.width)
             {
                 List<LogLine> splitLines = new List<LogLine>();
                 int splits = line.text.Length / Console.WindowWidth;
@@ -41,8 +41,8 @@ namespace PolarisServer
                 for (int i = 0; i <= splits; i++)
                 {
                     LogLine splitLine = new LogLine();
-                    int start = i * Console.WindowWidth;
-                    int length = Console.WindowWidth;
+                    int start = i * PolarisApp.ConsoleSystem.width;
+                    int length = PolarisApp.ConsoleSystem.width;
                     if (length >= line.text.Length - start)
                         length = line.text.Length - start;
 
@@ -58,7 +58,8 @@ namespace PolarisServer
             else // Add the line normally
                 lines.Add(line);
 
-            while (lines.Count > Console.WindowHeight - 4)
+            // Push old lines off the buffer
+            while (lines.Count > PolarisApp.ConsoleSystem.height - 4)
                 lines.RemoveAt(0);
 
             // Tell the console to refresh
