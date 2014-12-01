@@ -7,6 +7,15 @@ using PolarisServer.Models;
 
 namespace PolarisServer.Packets.Handlers
 {
+    [PacketHandlerAttr(0x11, 0xD)]
+    public class PingResponse : PacketHandler
+    {
+        public override void HandlePacket(Client context, byte[] data, uint position, uint size)
+        {
+            Logger.Write("[HI!] Recieved a ping from " + context.User.Username);
+        }
+    }
+
     [PacketHandlerAttr(0x11, 0x2B)]
     public class LogOutRequest : PacketHandler
     {
