@@ -101,6 +101,8 @@ namespace PolarisServer
         string info = string.Empty;
         string prompt = string.Empty;
         int prevCount = 0;
+        int infoUpdateCounter = 0;
+        const int ThreadSleepTime = 20;
         public bool refreshDraw = false;
 
         public ConsoleSystem()
@@ -110,6 +112,8 @@ namespace PolarisServer
             Console.SetWindowSize(width, height);
 
             CreateCommands();
+
+            infoUpdateCounter = ThreadSleepTime;
         }
 
         public static void StartDrawing()
@@ -119,7 +123,7 @@ namespace PolarisServer
                 try
                 {
                     PolarisApp.ConsoleSystem.Draw();
-                    Thread.Sleep(20);
+                    Thread.Sleep(ThreadSleepTime);
                 }
                 catch (ThreadInterruptedException ex)
                 {
@@ -139,7 +143,7 @@ namespace PolarisServer
                 try
                 {
                     PolarisApp.ConsoleSystem.CheckInput();
-                    Thread.Sleep(20);
+                    Thread.Sleep(ThreadSleepTime);
                 }
                 catch (ThreadInterruptedException ex)
                 {
@@ -201,16 +205,20 @@ namespace PolarisServer
         public void Draw()
         {
             // Build info string
-            if (PolarisApp.Instance != null && PolarisApp.Instance.server != null)
+            if (infoUpdateCounter >= ThreadSleepTime)
             {
-                int clients = PolarisApp.Instance.server.Clients.Count;
-                float usage = Process.GetCurrentProcess().PrivateMemorySize64 / 1024 / 1024;
-                string time = DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToLongTimeString();
+                if (PolarisApp.Instance != null && PolarisApp.Instance.server != null)
+                {
+                    int clients = PolarisApp.Instance.server.Clients.Count;
+                    float usage = Process.GetCurrentProcess().PrivateMemorySize64 / 1024 / 1024;
+                    string time = DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToLongTimeString();
 
-                info = string.Format("Clients: {0} | Memory: {1} MB | {2}", clients, usage, time);
+                    info = string.Format("Clients: {0} | Memory: {1} MB | {2}", clients, usage, time);
+                    infoUpdateCounter = 0;
+                }
+                else
+                    info = "Initializing...";
             }
-            else
-                info = "Initializing...";
 
             // Build prompt string
             prompt = "Polaris> " + commandLine;
@@ -256,6 +264,7 @@ namespace PolarisServer
             Console.SetCursorPosition(prompt.Length, height - 1);
 
             prevCount = Logger.lines.Count;
+            infoUpdateCounter++;
         }
 
         public void CheckInput()

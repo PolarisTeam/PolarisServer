@@ -74,7 +74,7 @@ namespace PolarisServer
             catch (Exception ex)
             {
                 for (int i = 0; i < args.Length; i++)
-                    Logger.WriteError("[CMD] {0} -> {1}", i, args[i].ToString());
+                    Logger.WriteError("[CMD] Argument List: args[{0}] = {1}", i, args[i].ToString());
                 Logger.WriteException("An error has occurred while parsing command line parameters", ex);
             }
 
