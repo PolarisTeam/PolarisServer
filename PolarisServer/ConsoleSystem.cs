@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
+using System.Reflection;
 using System.Threading;
 
 using PolarisServer.Models;
@@ -97,7 +99,8 @@ namespace PolarisServer
     /// </summary>
     public class ConsoleSystem
     {
-        // Input
+        public Thread thread;
+
         ConsoleKeyInfo key = new ConsoleKeyInfo();
         List<ConsoleKey> controlKeys = new List<ConsoleKey>()
         {
@@ -130,10 +133,10 @@ namespace PolarisServer
         string prompt = string.Empty;
 
         int prevCount = 0;
-        int infoUpdateCounter = 0;
 
-        const int ThreadSleepTime = 20;
+        public System.Timers.Timer timer;
         public bool refreshDraw = false;
+        public bool refreshPrompt = false;
 
         public ConsoleSystem()
         {
@@ -141,39 +144,26 @@ namespace PolarisServer
             Console.CursorVisible = true;
             Console.SetWindowSize(width, height);
 
-            CreateCommands();
+            timer = new System.Timers.Timer(1000);
+            timer.Elapsed += TimerRefresh;
+            timer.Start();
 
-            infoUpdateCounter = ThreadSleepTime;
+            CreateCommands();
         }
 
-        public static void StartDrawing()
+        private void TimerRefresh(object sender, System.Timers.ElapsedEventArgs e)
+        {
+            refreshPrompt = true;
+        }
+
+        public static void StartThread()
         {
             while (true)
             {
                 try
                 {
                     PolarisApp.ConsoleSystem.Draw();
-                    Thread.Sleep(ThreadSleepTime);
-                }
-                catch (ThreadInterruptedException ex)
-                {
-                    Logger.WriteException("Thread inturrupted", ex);
-                }
-                catch (ThreadStateException ex)
-                {
-                    Logger.WriteException("Thread state error", ex);
-                }
-            }
-        }
-
-        public static void StartInput()
-        {
-            while (true)
-            {
-                try
-                {
                     PolarisApp.ConsoleSystem.CheckInput();
-                    Thread.Sleep(ThreadSleepTime);
                 }
                 catch (ThreadInterruptedException ex)
                 {
@@ -182,6 +172,10 @@ namespace PolarisServer
                 catch (ThreadStateException ex)
                 {
                     Logger.WriteException("Thread state error", ex);
+                }
+                catch (Exception ex)
+                {
+                    Logger.WriteException(string.Empty, ex);
                 }
             }
         }
@@ -261,25 +255,6 @@ namespace PolarisServer
 
         public void Draw()
         {
-            // Build info string
-            if (infoUpdateCounter >= ThreadSleepTime)
-            {
-                if (PolarisApp.Instance != null && PolarisApp.Instance.server != null)
-                {
-                    int clients = PolarisApp.Instance.server.Clients.Count;
-                    float usage = Process.GetCurrentProcess().PrivateMemorySize64 / 1024 / 1024;
-                    string time = DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToLongTimeString();
-
-                    info = string.Format("Clients: {0} | Memory: {1} MB | {2}", clients, usage, time);
-                    infoUpdateCounter = 0;
-                }
-                else
-                    info = "Initializing...";
-            }
-
-            // Build prompt string
-            prompt = "Polaris> ";
-
             // Draw log
             if (Logger.lines.Count > prevCount || refreshDraw)
             {
@@ -304,126 +279,152 @@ namespace PolarisServer
                 }
 
                 refreshDraw = false;
+                refreshPrompt = true;
             }
 
-            // Draw info
-            Console.SetCursorPosition(0, height - 2);
-            Console.Write(info);
-            for (int i = 0; i < width - info.Length; i++)
-                Console.Write(" ");
+            if (refreshPrompt)
+            {
+                // Build info string
+                if (PolarisApp.Instance != null && PolarisApp.Instance.server != null)
+                {
+                    int clients = PolarisApp.Instance.server.Clients.Count;
+                    float usage = Process.GetCurrentProcess().PrivateMemorySize64 / 1024 / 1024;
+                    string time = DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToLongTimeString();
 
-            // Draw Prompt
-            Console.SetCursorPosition(0, height - 1);
-            Console.Write(prompt);
-            Console.Write(commandLine);
-            for (int i = 0; i < width - prompt.Length; i++)
-                Console.Write(" ");
-            Console.SetCursorPosition(prompt.Length + commandIndex, height - 1);
+                    info = string.Format("Clients: {0} | Memory: {1} MB | {2}", clients, usage, time);
+                }
+                else
+                    info = "Initializing...";
+
+                // Build prompt string
+                prompt = "Polaris> ";
+
+                // Draw info
+                Console.SetCursorPosition(0, height - 2);
+                Console.Write(info);
+                for (int i = 0; i < width - info.Length; i++)
+                    Console.Write(" ");
+
+                // Draw Prompt
+                Console.SetCursorPosition(0, height - 1);
+                Console.Write(prompt);
+                Console.Write(commandLine);
+                for (int i = 0; i < width - prompt.Length; i++)
+                    Console.Write(" ");
+                Console.SetCursorPosition(prompt.Length + commandIndex, height - 1);
+
+                refreshPrompt = false;
+            }
 
             prevCount = Logger.lines.Count;
-            infoUpdateCounter++;
         }
 
         public void CheckInput()
         {
-            // Read key
-            bool validKey = true;
-            key = Console.ReadKey(true);
-
-            // Check to make sure this is a valid key to append to the command line
-            foreach (ConsoleKey controlKey in controlKeys)
+            if (Console.KeyAvailable)
             {
-                if (key.Key == controlKey)
+                // Need to refresh the display
+                refreshPrompt = true;
+
+                // Read key
+                bool validKey = true;
+                key = Console.ReadKey(true);
+
+                // Check to make sure this is a valid key to append to the command line
+                foreach (ConsoleKey controlKey in controlKeys)
                 {
-                    validKey = false;
-                    break;
-                }
-            }
-
-            // Append key to the command line
-            if (validKey)
-            {
-                commandLine = commandLine.Insert(commandIndex, key.KeyChar.ToString());
-                commandIndex++;
-            }
-
-            // Backspace
-            if (key.Key == ConsoleKey.Backspace && commandLine.Length > 0 && commandIndex > 0)
-            {
-                commandLine = commandLine.Remove(commandIndex - 1, 1);
-                commandIndex--;
-            }
-
-            // Cursor movement
-            if (key.Key == ConsoleKey.LeftArrow && commandLine.Length > 0 && commandIndex > 0)
-                commandIndex--;
-            if (key.Key == ConsoleKey.RightArrow && commandLine.Length > 0 && commandIndex <= commandLine.Length - 1)
-                commandIndex++;
-            if (key.Key == ConsoleKey.Home)
-                commandIndex = 0;
-            if (key.Key == ConsoleKey.End)
-                commandIndex = commandLine.Length;
-
-            // History
-            if (key.Key == ConsoleKey.UpArrow && history.Count > 0)
-            {
-                historyIndex--;
-
-                if (historyIndex < 0)
-                    historyIndex = history.Count - 1;
-
-                commandLine = history[historyIndex];
-                commandIndex = history[historyIndex].Length;
-            }
-            if (key.Key == ConsoleKey.DownArrow && history.Count > 0)
-            {
-                historyIndex++;
-
-                if (historyIndex > history.Count - 1)
-                    historyIndex = 0;
-
-                commandLine = history[historyIndex];
-                commandIndex = history[historyIndex].Length;
-            }
-
-            // Run Command
-            if (key.Key == ConsoleKey.Enter)
-            {
-                bool valid = false;
-
-                // Stop if the command line is blank
-                if (string.IsNullOrEmpty(commandLine))
-                    Logger.WriteWarning("[CMD] No command specified");
-                else
-                {
-                    // Iterate commands
-                    foreach (ConsoleCommand command in commands)
+                    if (key.Key == controlKey)
                     {
-                        string full = commandLine;
-                        string[] args = full.Split(' ');
+                        validKey = false;
+                        break;
+                    }
+                }
 
-                        foreach (string name in command.Names)
-                            if (args[0].ToLower() == name.ToLower())
-                            {
-                                command.Run(args, args.Length, full);
-                                valid = true;
+                // Append key to the command line
+                if (validKey)
+                {
+                    commandLine = commandLine.Insert(commandIndex, key.KeyChar.ToString());
+                    commandIndex++;
+                }
+
+                // Backspace
+                if (key.Key == ConsoleKey.Backspace && commandLine.Length > 0 && commandIndex > 0)
+                {
+                    commandLine = commandLine.Remove(commandIndex - 1, 1);
+                    commandIndex--;
+                }
+
+                // Cursor movement
+                if (key.Key == ConsoleKey.LeftArrow && commandLine.Length > 0 && commandIndex > 0)
+                    commandIndex--;
+                if (key.Key == ConsoleKey.RightArrow && commandLine.Length > 0 && commandIndex <= commandLine.Length - 1)
+                    commandIndex++;
+                if (key.Key == ConsoleKey.Home)
+                    commandIndex = 0;
+                if (key.Key == ConsoleKey.End)
+                    commandIndex = commandLine.Length;
+
+                // History
+                if (key.Key == ConsoleKey.UpArrow && history.Count > 0)
+                {
+                    historyIndex--;
+
+                    if (historyIndex < 0)
+                        historyIndex = history.Count - 1;
+
+                    commandLine = history[historyIndex];
+                    commandIndex = history[historyIndex].Length;
+                }
+                if (key.Key == ConsoleKey.DownArrow && history.Count > 0)
+                {
+                    historyIndex++;
+
+                    if (historyIndex > history.Count - 1)
+                        historyIndex = 0;
+
+                    commandLine = history[historyIndex];
+                    commandIndex = history[historyIndex].Length;
+                }
+
+                // Run Command
+                if (key.Key == ConsoleKey.Enter)
+                {
+                    bool valid = false;
+
+                    // Stop if the command line is blank
+                    if (string.IsNullOrEmpty(commandLine))
+                        Logger.WriteWarning("[CMD] No command specified");
+                    else
+                    {
+                        // Iterate commands
+                        foreach (ConsoleCommand command in commands)
+                        {
+                            string full = commandLine;
+                            string[] args = full.Split(' ');
+
+                            foreach (string name in command.Names)
+                                if (args[0].ToLower() == name.ToLower())
+                                {
+                                    command.Run(args, args.Length, full);
+                                    valid = true;
+                                    break;
+                                }
+
+                            if (valid)
                                 break;
-                            }
+                        }
 
-                        if (valid)
-                            break;
+                        if (!valid)
+                            Logger.WriteError("[CMD] {0} - Command not found", commandLine.Split(' ')[0].Trim('\r'));
+
+                        // Add the command line to history and wipe it
+                        history.Add(commandLine);
+                        historyIndex = history.Count;
+                        commandLine = string.Empty;
                     }
 
-                    if (!valid)
-                        Logger.WriteError("[CMD] {0} - Command not found", commandLine.Split(' ')[0].Trim('\r'));
-
-                    // Add the command line to history and wipe it
-                    history.Add(commandLine);
-                    historyIndex = history.Count;
-                    commandLine = string.Empty;
+                    commandIndex = 0;
                 }
-
-                commandIndex = 0;
             }
         }
 
@@ -620,16 +621,16 @@ namespace PolarisServer
             Client client = PolarisApp.Instance.server.Clients[ID];
             byte[] data = File.ReadAllBytes(filename);
             var reader = new PacketReader(data, 0, (uint)data.Length);
-            
+
             reader.BaseStream.Seek(0x6C, System.IO.SeekOrigin.Begin);
             client.Character.Name = reader.ReadFixedLengthUTF16(16);
             reader.BaseStream.Seek(0x90, System.IO.SeekOrigin.Begin); // TODO: Should be 0x8C since it actually starts there
             client.Character.Looks = reader.ReadStruct<Character.LooksParam>();
             client.Character.Jobs = reader.ReadStruct<Character.JobParam>();
-            
+
             // Spawn Character
             client.SendPacket(new CharacterSpawnPacket(client.Character));
-            
+
             Logger.WriteHex("[CMD] Looks Data from file: ", File.ReadAllBytes(filename));
             Logger.WriteCommand("[CMD] Loaded looks from {0} onto {1}", filename, name);
         }
@@ -727,6 +728,7 @@ namespace PolarisServer
                 Logger.WriteError("[CMD] Could not find user " + name);
                 return;
             }
+
 
             // Pull packet from the specified file
             int index = -1;

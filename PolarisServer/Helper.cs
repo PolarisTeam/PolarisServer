@@ -106,6 +106,11 @@ namespace PolarisServer
 
             return -1;
         }
+
+        // packets.Add((ushort)((attr.type << 8) | attr.subtype), (Packet)Activator.CreateInstance(t));
+        public static ushort PacketTypeToUShort(uint type, uint subtype)
+        {
+            return (ushort)((type << 8) | subtype);
+        }
     }
 }
-

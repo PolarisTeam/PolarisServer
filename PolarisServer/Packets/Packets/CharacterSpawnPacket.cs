@@ -1,12 +1,18 @@
 ﻿using System;
 
+using PolarisServer.Models;
+
 namespace PolarisServer.Packets
 {
     public class CharacterSpawnPacket : Packet
     {
-        public CharacterSpawnPacket(Models.Character character)
+        private Character character = null;
+        public MysteryPositions Position;
+        public bool IsItMe = true;
+
+        public CharacterSpawnPacket(Character character)
         {
-            _character = character;
+            this.character = character;
 
             Position.a = 0.000031f;
             Position.b = 1.0f;
@@ -18,17 +24,14 @@ namespace PolarisServer.Packets
             Position.z = 134.375f;
         }
 
-        private Models.Character _character = null;
-        public Models.MysteryPositions Position;
-        public bool IsItMe = true;
-
         #region implemented abstract members of Packet
+
         public override byte[] Build()
         {
             var writer = new PacketWriter();
 
             // Player header
-            writer.WritePlayerHeader((uint)_character.Player.PlayerID);
+            writer.WritePlayerHeader((uint)character.Player.PlayerID);
 
             // Spawn position
             writer.Write(Position);
@@ -44,27 +47,29 @@ namespace PolarisServer.Packets
             writer.Write((uint)(IsItMe ? 47 : 39)); // 0x58
             writer.Write((ushort)559); // 0x5C
             writer.Write((ushort)306); // 0x5E
-            writer.Write((uint)_character.Player.PlayerID); // player ID copy
+            writer.Write((uint)character.Player.PlayerID); // player ID copy
             writer.Write((uint)0); // "char array ugggghhhhh" according to PolarisLegacy
             writer.Write((uint)0); // "voiceParam_unknown4"
             writer.Write((uint)0); // "voiceParam_unknown8"
-            writer.WriteFixedLengthUTF16(_character.Name, 16);
+            writer.WriteFixedLengthUTF16(character.Name, 16);
             writer.Write((uint)0); // 0x90
-            writer.WriteStruct(_character.Looks);
-            writer.WriteStruct(_character.Jobs);
+            writer.WriteStruct(character.Looks);
+            writer.WriteStruct(character.Jobs);
             writer.WriteFixedLengthUTF16("", 32); // title?
             writer.Write((uint)0); // 0x204
             writer.Write((uint)0); // gmflag?
-            writer.WriteFixedLengthUTF16(_character.Player.Nickname, 16); // nickname, maybe not 16 chars?
+            writer.WriteFixedLengthUTF16(character.Player.Nickname, 16); // nickname, maybe not 16 chars?
             for (int i = 0; i < 64; i++)
                 writer.Write((byte)0);
 
             return writer.ToArray();
         }
-        public override PolarisServer.Models.PacketHeader GetHeader()
+        
+        public override PacketHeader GetHeader()
         {
-            return new Models.PacketHeader(8, 4);
+            return new PacketHeader(0x08, 0x04);
         }
+
         #endregion
     }
 }

@@ -1,10 +1,11 @@
 ﻿using System;
 
+using PolarisServer.Models;
+
 namespace PolarisServer.Packets
 {
     public class SystemMessagePacket : Packet
     {
-
         public enum MessageType
         {
             GoldenTicker = 0,
@@ -34,20 +35,16 @@ namespace PolarisServer.Packets
             return writer.ToArray();
         }
 
-
-
-
-        public override PolarisServer.Models.PacketHeader GetHeader()
+        public override PacketHeader GetHeader()
         {
-            return new PolarisServer.Models.PacketHeader
+            return new PacketHeader
             {
                 type = 0x19,
                 subtype = 0x01,
                 flags1 = 0x04
             };
         }
-
-
+        
         #endregion
     }
 }

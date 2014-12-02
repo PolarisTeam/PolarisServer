@@ -19,23 +19,16 @@ namespace PolarisServer
         
         public static IPAddress BindAddress = IPAddress.Parse("127.0.0.1");
         public List<QueryServer> queryServers = new List<QueryServer>();
-        
+
         public Server server;
 
-        // Console System
         public static ConsoleSystem ConsoleSystem;
-        public static Thread ConsoleDrawThread;
-        public static Thread ConsoleInputThread;
 
         public static void Main(string[] args)
         {
             ConsoleSystem = new ConsoleSystem();
-            ConsoleDrawThread = new Thread(new ThreadStart(ConsoleSystem.StartDrawing));
-            ConsoleInputThread = new Thread(new ThreadStart(ConsoleSystem.StartInput));
-            ConsoleDrawThread.Name = "Draw";
-            ConsoleDrawThread.Start();
-            ConsoleInputThread.Name = "Input";
-            ConsoleInputThread.Start();
+            ConsoleSystem.thread = new Thread(new ThreadStart(ConsoleSystem.StartThread));
+            ConsoleSystem.thread.Start();
             
             try
             {

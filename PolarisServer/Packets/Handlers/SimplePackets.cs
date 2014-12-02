@@ -16,7 +16,7 @@ namespace PolarisServer.Packets.Handlers
             PacketReader reader = new PacketReader(data);
             int ID = reader.ReadInt32();
 
-            Logger.Write("[---] Player is deleting character with ID " + ID);
+            Logger.Write("[CHR] {0} is deleting character with ID {1}", context.User.Username, ID);
 
             // Delete Character
             foreach (Character character in PolarisApp.Instance.Database.Characters)

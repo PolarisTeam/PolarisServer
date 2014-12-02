@@ -4,33 +4,31 @@ using PolarisServer.Models;
 
 namespace PolarisServer.Packets
 {
-    public class NoPayloadPacket : Packet
+    public class SetMesetaPacket : Packet
     {
-        byte type, subtype;
-
-        public NoPayloadPacket(byte type, byte subtype)
-        {
-            this.type = type;
-            this.subtype = subtype;
-        }
-
+        public Int64 newAmount = 0;
+        
         #region implemented abstract members of Packet
 
         public override byte[] Build()
         {
-            return new byte[0];
+            var writer = new PacketWriter();
+
+            writer.Write(newAmount);
+
+            return writer.ToArray();
         }
 
         public override PacketHeader GetHeader()
         {
             return new PacketHeader
             {
-                type = type,
-                subtype = subtype
+                type = 0x0F,
+                subtype = 0x14,
+                flags1 = 0
             };
         }
-
+        
         #endregion
     }
 }
-
