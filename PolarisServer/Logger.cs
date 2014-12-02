@@ -61,8 +61,15 @@ namespace PolarisServer
                 lines.Add(line);
 
             // Push old lines off the buffer
-            while (lines.Count > PolarisApp.ConsoleSystem.height - 4)
-                lines.RemoveAt(0);
+            try
+            {
+                while (lines.Count > PolarisApp.ConsoleSystem.height - 4)
+                    lines.RemoveAt(0);
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteException("Error pushing lines off the log", ex);
+            }
 
             // Tell the console to refresh
             PolarisApp.ConsoleSystem.refreshDraw = true;

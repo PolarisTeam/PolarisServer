@@ -66,6 +66,9 @@ namespace PolarisServer.Packets.Handlers
             var memSetPacket = System.IO.File.ReadAllBytes("setMemoryPacket.bin");
             context.SendPacket(0x23, 0x7, 0, memSetPacket);
 
+            // Give a blank palette
+            context.SendPacket(new PalettePacket());
+
             Logger.Write("[CHR] {0}'s character has spawned", context.User.Username);
         }
     }

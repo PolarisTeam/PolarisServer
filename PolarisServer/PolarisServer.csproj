@@ -55,6 +55,8 @@
     <Compile Include="ConsoleSystem.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="Packets\Handlers\CharacterSpawn.cs" />
+    <Compile Include="Packets\Packets\PalettePacket.cs" />
+    <Compile Include="Packets\Packets\SetCurrencyPacket.cs" />
     <Compile Include="Packets\Packets\SetMesetaPacket.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
