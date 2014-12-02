@@ -38,90 +38,20 @@ namespace PolarisServer.Packets.Handlers
         // 3-3 only does anything at the points where the client is supposed
         // to be sending it, etc etc
 
+        // This seems to only ever be called once after logging in, yet is also handled by 11-3E in other places
+        // Moved the actual handling into 11-3E until I can actually confirm this
+        // Just insantiate a new CharacterSpawn and push it through until then
+        // - Kyle
+
         public override void HandlePacket(Client context, byte[] data, uint position, uint size)
         {
-            if (context.User == null || context.Character == null)
-                return;
-
-            // Set Area
-            var setAreaPacket = System.IO.File.ReadAllBytes("testSetAreaPacket.bin");
-            context.SendPacket(3, 0x24, 4, setAreaPacket);
-
             // Set Player ID
             var setPlayerID = new PacketWriter();
             setPlayerID.WritePlayerHeader((uint)context.User.PlayerID);
             context.SendPacket(6, 0, 0, setPlayerID.ToArray());
 
-            // Spawn Lobby Objects
-            if (System.IO.Directory.Exists("objects/lobby"))
-            {
-                var objectPaths = System.IO.Directory.GetFiles("objects/lobby");
-                Array.Sort(objectPaths);
-                foreach (var path in objectPaths)
-                {
-                    context.SendPacket(System.IO.File.ReadAllBytes(path));
-                }
-            }
-            else
-            {
-                Logger.WriteWarning("Directory 'objects/lobby' not found!");
-            }
-
-            // Spawn Character
-            context.SendPacket(new CharacterSpawnPacket(context.Character));
-
-            /* Spawn more characters just because we can
-             * Don't do this, ever --Ninji
-             * Moved this into a testing command for the hell of it --Kyle
-            for (int i = 0; i < 50; i++)
-            {
-                var fakePlayer = new Database.Player();
-                fakePlayer.Username = string.Format("Fake Player {0}", i);
-                fakePlayer.Nickname = string.Format("Fake Name {0}", i);
-                fakePlayer.PlayerID = 12345678 + i;
-                
-                var fakeChar = new Models.Character();
-                fakeChar.CharacterID = 1234567 + i;
-                fakeChar.Player = fakePlayer;
-                fakeChar.Name = string.Format("Fake Char {0}", i);
-                fakeChar.Looks = context.Character.Looks;
-                fakeChar.Jobs = context.Character.Jobs;
-                
-                var fakePacket = new CharacterSpawnPacket(fakeChar);
-                fakePacket.Position.facingAngle = (0.2f * i);
-                fakePacket.Position.x = -0.417969f + (float)(Math.Sin(i) * 8.0);
-                fakePacket.Position.y = 0.000031f;
-                fakePacket.Position.z = 134.375f + (float)(Math.Cos(i) * 8.0);
-                fakePacket.IsItMe = false;
-                context.SendPacket(fakePacket);
-            } */
-
-            // Unlock Controls
-            context.SendPacket(new NoPayloadPacket(3, 0x2B));
-
-            var spawnPacket = new CharacterSpawnPacket(context.Character);
-            spawnPacket.IsItMe = false;
-            foreach (Client c in Server.Instance.Clients)
-            {
-                if (c == context)
-                    continue;
-
-                if (c.Character == null)
-                    continue;
-                    
-                c.SendPacket(spawnPacket);
-
-                var remoteChar = new CharacterSpawnPacket(c.Character);
-                remoteChar.IsItMe = false;
-                context.SendPacket(remoteChar);
-
-            }
-
-            // memset packet - Enables menus
-            // Also holds event items and likely other stuff too
-            var memSetPacket = System.IO.File.ReadAllBytes("setMemoryPacket.bin");
-            context.SendPacket(0x23, 0x7, 0, memSetPacket);
-
+            // Spawn Player
+            new CharacterSpawn().HandlePacket(context, data, position, size);
         }
     }
 

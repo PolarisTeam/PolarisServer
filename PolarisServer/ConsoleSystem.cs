@@ -6,6 +6,7 @@ using System.Threading;
 
 using PolarisServer.Models;
 using PolarisServer.Packets;
+using PolarisServer.Packets.Handlers;
 
 namespace PolarisServer
 {
@@ -221,12 +222,12 @@ namespace PolarisServer
             spawnClone.Help = "Spawns a clone of your character";
             commands.Add(spawnClone);
 
-            // LoadLooks
-            ConsoleCommand loadLooks = new ConsoleCommand(LoadLooks, "loadlooks");
-            loadLooks.Arguments.Add(new ConsoleCommandArgument("Username", false));
-            loadLooks.Arguments.Add(new ConsoleCommandArgument("Filename", false));
-            loadLooks.Help = "Loads a binary file containing looks structure data";
-            commands.Add(loadLooks);
+            // LoadCharData
+            ConsoleCommand loadCharData = new ConsoleCommand(LoadCharData, "loadchardata", "lcd");
+            loadCharData.Arguments.Add(new ConsoleCommandArgument("Username", false));
+            loadCharData.Arguments.Add(new ConsoleCommandArgument("Filename", false));
+            loadCharData.Help = "Loads a binary file containing information about a player";
+            commands.Add(loadCharData);
 
             // SendPacket
             ConsoleCommand sendPacket = new ConsoleCommand(SendPacket, "sendpacket", "sendp");
@@ -597,7 +598,7 @@ namespace PolarisServer
             Logger.WriteCommand("[CMD] Spawned a clone of {0} named {1}", name, playerName);
         }
 
-        private void LoadLooks(string[] args, int length, string full)
+        private void LoadCharData(string[] args, int length, string full)
         {
             int ID = 0;
             string name = args[1].Trim('\"');
@@ -616,23 +617,19 @@ namespace PolarisServer
                 return;
             }
 
-            byte[] bytes = File.ReadAllBytes(filename);
             Client client = PolarisApp.Instance.server.Clients[ID];
-            client.Character.Looks = new Character.LooksParam();
-            client.Character.Looks = Helper.ByteArrayToStructure<Character.LooksParam>(bytes);
-
-            // Setup packets
-            var areaPacket = File.ReadAllBytes("testSetAreaPacket.bin");
-            var playerID = new PacketWriter();
-            playerID.WritePlayerHeader((uint)client.User.PlayerID);
-
-            // Send packets
-            client.SendPacket(new NoPayloadPacket(0x3, 0x4)); // Loading screen
-            client.SendPacket(0x6, 0x00, 0, playerID.ToArray()); // Set player ID
-            client.SendPacket(0x03, 0x24, 4, areaPacket); // Setup area
-            client.SendPacket(new CharacterSpawnPacket(client.Character)); // Spawn
-            client.SendPacket(new NoPayloadPacket(0x03, 0x2B)); // Enable Controls
-
+            byte[] data = File.ReadAllBytes(filename);
+            var reader = new PacketReader(data, 0, (uint)data.Length);
+            
+            reader.BaseStream.Seek(0x6C, System.IO.SeekOrigin.Begin);
+            client.Character.Name = reader.ReadFixedLengthUTF16(16);
+            reader.BaseStream.Seek(0x90, System.IO.SeekOrigin.Begin); // TODO: Should be 0x8C since it actually starts there
+            client.Character.Looks = reader.ReadStruct<Character.LooksParam>();
+            client.Character.Jobs = reader.ReadStruct<Character.JobParam>();
+            
+            // Spawn Character
+            client.SendPacket(new CharacterSpawnPacket(client.Character));
+            
             Logger.WriteHex("[CMD] Looks Data from file: ", File.ReadAllBytes(filename));
             Logger.WriteCommand("[CMD] Loaded looks from {0} onto {1}", filename, name);
         }

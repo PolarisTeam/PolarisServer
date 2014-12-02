@@ -54,6 +54,7 @@
   <ItemGroup>
     <Compile Include="ConsoleSystem.cs" />
     <Compile Include="Logger.cs" />
+    <Compile Include="Packets\Handlers\CharacterSpawn.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Client.cs" />
