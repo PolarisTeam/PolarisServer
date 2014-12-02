@@ -5,50 +5,48 @@ namespace PolarisServer.Network
 {
     public class SocketClient
     {
-        private SocketServer _server;
-        private TcpClient _socket;
+        private SocketServer server;
+        private TcpClient socket;
 
-        public TcpClient Socket { get { return _socket; } }
+        public TcpClient Socket { get { return socket; } }
 
-        private byte[] _readBuffer;
+        private byte[] readBuffer;
 
         public delegate void DataReceivedDelegate(byte[] data, int size);
-
         public event DataReceivedDelegate DataReceived;
 
         public delegate void ConnectionLostDelegate();
-
         public event ConnectionLostDelegate ConnectionLost;
 
         public SocketClient(SocketServer server, TcpClient socket)
         {
-            _server = server;
-            _socket = socket;
+            this.server = server;
+            this.socket = socket;
 
-            _readBuffer = new byte[1024 * 16];
+            readBuffer = new byte[1024 * 16];
         }
 
         public bool OnReadable()
         {
             try
             {
-                int read = _socket.Client.Receive(_readBuffer);
+                int read = socket.Client.Receive(readBuffer);
                 if (read == 0)
                 {
                     // Connection failed, presumably
                     ConnectionLost();
-                    _server.NotifyConnectionClosed(this);
+                    server.NotifyConnectionClosed(this);
                     return false;
                 }
 
-                DataReceived(_readBuffer, read);
+                DataReceived(readBuffer, read);
 
                 return true;
             }
             catch (SocketException)
             {
                 ConnectionLost();
-                _server.NotifyConnectionClosed(this);
+                server.NotifyConnectionClosed(this);
                 return false;
             }
         }
@@ -56,8 +54,8 @@ namespace PolarisServer.Network
         public void Close()
         {
             ConnectionLost();
-            _server.NotifyConnectionClosed(this);
-            _socket.Close();
+            server.NotifyConnectionClosed(this);
+            socket.Close();
         }
     }
 }

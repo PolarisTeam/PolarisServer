@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using PolarisServer.Packets;
 using PolarisServer.Models;
@@ -7,7 +8,36 @@ using PolarisServer.Models;
 
 namespace PolarisServer.Packets.Handlers
 {
-    [PacketHandlerAttr(0x11, 0xD)]
+    [PacketHandlerAttr(0x11, 0x6)]
+    public class DeleteCharacter : PacketHandler
+    {
+        public override void HandlePacket(Client context, byte[] data, uint position, uint size)
+        {
+            PacketReader reader = new PacketReader(data);
+            int ID = reader.ReadInt32();
+
+            Logger.Write("[---] Player is deleting character with ID " + ID);
+
+            // Delete Character
+            foreach (Character character in PolarisApp.Instance.Database.Characters)
+                if (character.CharacterID == ID)
+                {
+                    PolarisApp.Instance.Database.Characters.Remove(character);
+
+                    // TODO: Currently this throws System.Data.Entity.Core.EntityException when called, not sure why
+                    // See: http://puu.sh/ddWKc/b8d91751a9.txt
+                    // PolarisApp.Instance.Database.SaveChanges();
+
+                    break;
+                }
+
+            // Disconnect for now
+            context.Socket.Close();
+        }
+    }
+
+    // [PacketHandlerAttr(0x11, 0xD)]  // It seems both of these are used for some form of pinging, needs investigation
+    [PacketHandlerAttr(0x11, 0x68)]    // One of them might just be a timestamp update - Kyle
     public class PingResponse : PacketHandler
     {
         public override void HandlePacket(Client context, byte[] data, uint position, uint size)
@@ -52,6 +82,6 @@ namespace PolarisServer.Packets.Handlers
             context.SendPacket(0x11, 0x55, 0x0, writer.ToArray());
         }
     }
-        
+
 }
 

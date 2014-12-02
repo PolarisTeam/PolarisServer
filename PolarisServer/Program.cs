@@ -11,12 +11,15 @@ namespace PolarisServer
 {
     class PolarisApp
     {
-        private static PolarisApp _Instance;
-        public static PolarisApp Instance { get { return _Instance; } }
-        public PolarisEF Database { get { return _Database; } }
-        private PolarisEF _Database;
+        private static PolarisApp instance;
+        public static PolarisApp Instance { get { return instance; } }
+
+        public PolarisEF Database { get { return database; } }
+        private PolarisEF database;
+        
         public static IPAddress BindAddress = IPAddress.Parse("127.0.0.1");
         public List<QueryServer> queryServers = new List<QueryServer>();
+        
         public Server server;
 
         // Console System
@@ -73,15 +76,13 @@ namespace PolarisServer
             }
             catch (Exception ex)
             {
-                for (int i = 0; i < args.Length; i++)
-                    Logger.WriteError("[CMD] Argument List: args[{0}] = {1}", i, args[i].ToString());
                 Logger.WriteException("An error has occurred while parsing command line parameters", ex);
             }
 
             Logger.Write("Arf. Polaris Server version GIT.\nCreated by PolarisTeam (http://github.com/PolarisTeam) and licenced under AGPL.");
             System.Data.Entity.Database.SetInitializer(new DropCreateDatabaseIfModelChanges<PolarisEF>());
-            _Instance = new PolarisApp();
-            _Instance.Start();
+            instance = new PolarisApp();
+            instance.Start();
         }
 
         public void Start()
@@ -91,7 +92,7 @@ namespace PolarisServer
             Packets.Handlers.PacketHandlers.LoadPacketHandlers();
             
             Logger.WriteInternal("[DB ] Loading database...");
-            _Database = new PolarisEF();
+            database = new PolarisEF();
             
             for (int i = 0; i < 10; i++)
                 queryServers.Add(new QueryServer(QueryMode.ShipList, 12099 + (100 * i)));

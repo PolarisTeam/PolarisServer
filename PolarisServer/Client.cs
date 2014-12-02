@@ -12,36 +12,36 @@ namespace PolarisServer
     {
         internal static RSACryptoServiceProvider _rsaCsp = null;
 
-        private bool _isClosed = false;
+        private bool isClosed = false;
 
-        private Server _server;
-        private Network.SocketClient _socket;
+        private Server server;
+        private Network.SocketClient socket;
 
-        public Network.SocketClient Socket { get { return _socket; } }
+        public Network.SocketClient Socket { get { return socket; } }
 
         public Player User { get; set; }
         public Character Character { get; set; }
 
-        private byte[] _readBuffer;
-        private uint _readBufferSize;
+        private byte[] readBuffer;
+        private uint readBufferSize;
 
-        internal ICryptoTransform _inputARC4, _outputARC4;
+        internal ICryptoTransform inputARC4, outputARC4;
 
-        private int _packetID = 0;
+        private int packetID = 0;
 
         public Client(Server server, Network.SocketClient socket)
         {
-            _server = server;
-            _socket = socket;
+            this.server = server;
+            this.socket = socket;
 
             socket.DataReceived += HandleDataReceived;
             socket.ConnectionLost += HandleConnectionLost;
 
-            _readBuffer = new byte[1024 * 64];
-            _readBufferSize = 0;
+            readBuffer = new byte[1024 * 64];
+            readBufferSize = 0;
 
-            _inputARC4 = null;
-            _outputARC4 = null;
+            inputARC4 = null;
+            outputARC4 = null;
 
             var welcome = new Packets.PacketWriter();
             welcome.Write((ushort)3);
@@ -54,49 +54,49 @@ namespace PolarisServer
         void HandleDataReceived(byte[] data, int size)
         {
             Logger.Write("[<--] Recieved {0} bytes", size);
-            if ((_readBufferSize + size) > _readBuffer.Length)
+            if ((readBufferSize + size) > readBuffer.Length)
             {
                 // Buffer overrun
                 // TODO: Drop the connection when this occurs?
                 return;
             }
 
-            Array.Copy(data, 0, _readBuffer, _readBufferSize, size);
+            Array.Copy(data, 0, readBuffer, readBufferSize, size);
 
-            if (_inputARC4 != null)
+            if (inputARC4 != null)
             {
-                _inputARC4.TransformBlock(_readBuffer, (int)_readBufferSize, (int)size, _readBuffer, (int)_readBufferSize);
+                inputARC4.TransformBlock(readBuffer, (int)readBufferSize, (int)size, readBuffer, (int)readBufferSize);
             }
 
-            _readBufferSize += (uint)size;
+            readBufferSize += (uint)size;
 
             // Process ALL the packets
             uint position = 0;
 
-            while ((position + 8) <= _readBufferSize)
+            while ((position + 8) <= readBufferSize)
             {
                 uint packetSize =
-                    (uint)_readBuffer[position] |
-                    ((uint)_readBuffer[position + 1] << 8) |
-                    ((uint)_readBuffer[position + 2] << 16) |
-                    ((uint)_readBuffer[position + 3] << 24);
+                    (uint)readBuffer[position] |
+                    ((uint)readBuffer[position + 1] << 8) |
+                    ((uint)readBuffer[position + 2] << 16) |
+                    ((uint)readBuffer[position + 3] << 24);
 
                 // Minimum size, just to avoid possible infinite loops etc
                 if (packetSize < 8)
                     packetSize = 8;
 
                 // If we don't have enough data for this one...
-                if (packetSize > 0x1000000 || (packetSize + position) > _readBufferSize)
+                if (packetSize > 0x1000000 || (packetSize + position) > readBufferSize)
                     break;
 
                 // Now handle this one
                 HandlePacket(
-                    _readBuffer[position + 4], _readBuffer[position + 5],
-                    _readBuffer[position + 6], _readBuffer[position + 7],
-                    _readBuffer, position + 8, packetSize - 8);
+                    readBuffer[position + 4], readBuffer[position + 5],
+                    readBuffer[position + 6], readBuffer[position + 7],
+                    readBuffer, position + 8, packetSize - 8);
 
                 // If the connection was closed, we have no more business here
-                if (_isClosed)
+                if (isClosed)
                     break;
 
                 position += packetSize;
@@ -105,12 +105,12 @@ namespace PolarisServer
             // Wherever 'position' is up to, is what was successfully processed
             if (position > 0)
             {
-                if (position >= _readBufferSize)
-                    _readBufferSize = 0;
+                if (position >= readBufferSize)
+                    readBufferSize = 0;
                 else
                 {
-                    Array.Copy(_readBuffer, position, _readBuffer, 0, _readBufferSize - position);
-                    _readBufferSize -= position;
+                    Array.Copy(readBuffer, position, readBuffer, 0, readBufferSize - position);
+                    readBufferSize -= position;
                 }
             }
         }
@@ -119,7 +119,7 @@ namespace PolarisServer
         {
             // :(
             Logger.Write("[BYE] Connection lost. :(");
-            _isClosed = true;
+            isClosed = true;
         }
 
         public void SendPacket(byte[] blob)
@@ -137,13 +137,13 @@ namespace PolarisServer
                 string info = string.Format("[<--] {0:X}-{1:X} Data:", typeA, typeB);
                 Logger.WriteHex(info, blob);
             }
-            
-            if (_outputARC4 != null)
-                _outputARC4.TransformBlock(blob, 0, blob.Length, blob, 0);
-            
+
+            if (outputARC4 != null)
+                outputARC4.TransformBlock(blob, 0, blob.Length, blob, 0);
+
             try
             {
-                _socket.Socket.Client.Send(blob);
+                socket.Socket.Client.Send(blob);
             }
             catch (Exception ex)
             {
@@ -178,10 +178,10 @@ namespace PolarisServer
         }
 
 
-        void HandlePacket(byte typeA, byte typeB, byte flags1, byte flags2, byte[] data, uint position, uint size)
+        private void HandlePacket(byte typeA, byte typeB, byte flags1, byte flags2, byte[] data, uint position, uint size)
         {
             Logger.Write("[-->] Packet {0:X}-{1:X} (flags {2}, {3}) ({4} bytes)", typeA, typeB, flags1, flags2, size);
-            if (Logger.VerbosePackets && size > 0)
+            if (Logger.VerbosePackets && size > 0) // TODO: This is trimming too far?
             {
                 byte[] dataTrimmed = new byte[size];
                 for (int i = 0; i < size; i++)
@@ -201,26 +201,20 @@ namespace PolarisServer
             else
             {
                 Logger.WriteWarning("[!!!] UNIMPLEMENTED PACKET {0:X}-{1:X} - (Flags {2}, {3}) ({4} bytes)", typeA, typeB, flags1, flags2, size);
-                /* Dump the contents of the packet
-                string dataString = string.Empty;
-                for (int i = 0; i < size; i++)
-                    dataString += packet[i].ToString("X2") + " ";
-                if (size > 0)
-                    Logger.WriteWarning("[!!!] Unimplemented Packet Data: {0}", dataString);
-                */ 
             }
+
             // throw new NotImplementedException();
         }
 
 
-        void LogPacket(bool fromClient, byte typeA, byte typeB, byte flags1, byte flags2, byte[] packet)
+        private void LogPacket(bool fromClient, byte typeA, byte typeB, byte flags1, byte flags2, byte[] packet)
         {
             // Check for and create packets directory if it doesn't exist
-            string packetPath = "packets/" + _server.StartTime.ToShortDateString().Replace('/', '-') + "-" + _server.StartTime.ToShortTimeString().Replace('/', '-').Replace(':', '-');
+            string packetPath = "packets/" + server.StartTime.ToShortDateString().Replace('/', '-') + "-" + server.StartTime.ToShortTimeString().Replace('/', '-').Replace(':', '-');
             if (!Directory.Exists(packetPath))
                 Directory.CreateDirectory(packetPath);
 
-            var filename = string.Format("{0}/{1}.{2:X}.{3:X}.{4}.bin", packetPath, _packetID++, typeA, typeB, fromClient ? "C" : "S");
+            var filename = string.Format("{0}/{1}.{2:X}.{3:X}.{4}.bin", packetPath, packetID++, typeA, typeB, fromClient ? "C" : "S");
 
             using (var stream = File.OpenWrite(filename))
             {

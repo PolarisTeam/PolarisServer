@@ -14,7 +14,7 @@ namespace PolarisServer.Packets.Handlers
 
         public override void HandlePacket(Client context, byte[] data, uint position, uint size)
         {
-            if (context._inputARC4 != null)
+            if (context.inputARC4 != null)
                 return;
             if (size < 0x80)
                 return;
@@ -58,11 +58,11 @@ namespace PolarisServer.Packets.Handlers
             // Create three RC4 mungers
             var arc4 = new ARC4Managed();
             arc4.Key = arc4Key;
-            context._inputARC4 = arc4.CreateDecryptor();
+            context.inputARC4 = arc4.CreateDecryptor();
 
             arc4 = new ARC4Managed();
             arc4.Key = arc4Key;
-            context._outputARC4 = arc4.CreateEncryptor();
+            context.outputARC4 = arc4.CreateEncryptor();
 
             arc4 = new ARC4Managed();
             arc4.Key = arc4Key;

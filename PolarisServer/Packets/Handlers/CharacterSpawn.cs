@@ -14,7 +14,7 @@ namespace PolarisServer.Packets.Handlers
                 return;
 
             // Set Area
-            var setAreaPacket = System.IO.File.ReadAllBytes("testSetAreaPacket.bin");
+            var setAreaPacket = File.ReadAllBytes("testSetAreaPacket.bin");
             context.SendPacket(3, 0x24, 4, setAreaPacket);
 
             // Set Player ID
@@ -43,6 +43,7 @@ namespace PolarisServer.Packets.Handlers
             // Unlock Controls
             context.SendPacket(new NoPayloadPacket(3, 0x2B));
 
+            // Spawn on other player's clients
             var spawnPacket = new CharacterSpawnPacket(context.Character);
             spawnPacket.IsItMe = false;
             foreach (Client c in Server.Instance.Clients)
@@ -58,7 +59,6 @@ namespace PolarisServer.Packets.Handlers
                 var remoteChar = new CharacterSpawnPacket(c.Character);
                 remoteChar.IsItMe = false;
                 context.SendPacket(remoteChar);
-
             }
 
             // memset packet - Enables menus
@@ -66,7 +66,7 @@ namespace PolarisServer.Packets.Handlers
             var memSetPacket = System.IO.File.ReadAllBytes("setMemoryPacket.bin");
             context.SendPacket(0x23, 0x7, 0, memSetPacket);
 
-            Logger.Write("[CHR] {0}'s character has respawned", context.User.Username);
+            Logger.Write("[CHR] {0}'s character has spawned", context.User.Username);
         }
     }
 }

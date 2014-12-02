@@ -7,18 +7,18 @@ namespace PolarisServer
 {
     public class Server
     {
-        private List<Client> _clients;
-        private Network.SocketServer _server;
+        private List<Client> clients;
+        private Network.SocketServer server;
 
-        public List<Client> Clients { get { return _clients; } }
+        public List<Client> Clients { get { return clients; } }
         public static Server Instance { get; private set; }
         public DateTime StartTime { get; private set; }
 
         public Server()
         {
-            _clients = new List<Client>();
-            _server = new Network.SocketServer(12205);
-            _server.NewClient += HandleNewClient;
+            clients = new List<Client>();
+            server = new Network.SocketServer(12205);
+            server.NewClient += HandleNewClient;
             Instance = this;
             StartTime = DateTime.Now;
 
@@ -27,13 +27,13 @@ namespace PolarisServer
 
         public void Run()
         {
-            _server.Run();
+            server.Run();
         }
 
         void HandleNewClient(SocketClient client)
         {
             var c = new Client(this, client);
-            _clients.Add(c);
+            clients.Add(c);
         }
     }
 }

@@ -7,24 +7,23 @@ namespace PolarisServer.Network
 {
     public class SocketServer
     {
-        private int _port;
-        private List<SocketClient> _clients = new List<SocketClient>();
-        private Dictionary<Socket, SocketClient> _socketMap = new Dictionary<Socket, SocketClient>();
+        private int port;
+        private List<SocketClient> clients = new List<SocketClient>();
+        private Dictionary<Socket, SocketClient> socketMap = new Dictionary<Socket, SocketClient>();
 
-        public IList<SocketClient> Clients { get { return _clients.AsReadOnly(); } }
+        public IList<SocketClient> Clients { get { return clients.AsReadOnly(); } }
 
         public delegate void NewClientDelegate(SocketClient client);
-
         public event NewClientDelegate NewClient;
 
         public SocketServer(int port)
         {
-            _port = port;
+            this.port = port;
         }
 
         public void Run()
         {
-            TcpListener listener = new TcpListener(IPAddress.Any, _port);
+            TcpListener listener = new TcpListener(IPAddress.Any, port);
             listener.Start();
 
             List<Socket> readableSockets = new List<Socket>();
@@ -34,7 +33,7 @@ namespace PolarisServer.Network
                 // Compile a list of possibly-readable sockets
                 readableSockets.Clear();
                 readableSockets.Add(listener.Server);
-                foreach (SocketClient client in _clients)
+                foreach (SocketClient client in clients)
                     readableSockets.Add(client.Socket.Client);
 
                 Socket.Select(readableSockets, null, null, 1000000);
@@ -48,8 +47,8 @@ namespace PolarisServer.Network
 
                         SocketClient c = new SocketClient(this, listener.AcceptTcpClient());
 
-                        _clients.Add(c);
-                        _socketMap.Add(c.Socket.Client, c);
+                        clients.Add(c);
+                        socketMap.Add(c.Socket.Client, c);
 
                         NewClient(c);
                     }
@@ -57,7 +56,7 @@ namespace PolarisServer.Network
                     {
                         // Readable data
                         if (socket.Connected)
-                            _socketMap[socket].OnReadable();
+                            socketMap[socket].OnReadable();
                     }
                 }
             }
@@ -67,8 +66,8 @@ namespace PolarisServer.Network
         {
             Console.WriteLine("Connection closed");
 
-            _socketMap.Remove(client.Socket.Client);
-            _clients.Remove(client);
+            socketMap.Remove(client.Socket.Client);
+            clients.Remove(client);
         }
     }
 }
