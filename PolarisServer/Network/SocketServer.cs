@@ -9,7 +9,9 @@ namespace PolarisServer.Network
     {
         private int port;
         private List<SocketClient> clients = new List<SocketClient>();
+        private List<Socket> readableSockets = new List<Socket>();
         private Dictionary<Socket, SocketClient> socketMap = new Dictionary<Socket, SocketClient>();
+        private TcpListener listener;
 
         public IList<SocketClient> Clients { get { return clients.AsReadOnly(); } }
 
@@ -19,45 +21,41 @@ namespace PolarisServer.Network
         public SocketServer(int port)
         {
             this.port = port;
+
+            listener = new TcpListener(IPAddress.Any, port);
+            listener.Start();
         }
 
         public void Run()
         {
-            TcpListener listener = new TcpListener(IPAddress.Any, port);
-            listener.Start();
+            // Compile a list of possibly-readable sockets
+            readableSockets.Clear();
+            readableSockets.Add(listener.Server);
 
-            List<Socket> readableSockets = new List<Socket>();
+            foreach (SocketClient client in clients)
+                readableSockets.Add(client.Socket.Client);
 
-            while (true)
+            Socket.Select(readableSockets, null, null, 1000000);
+
+            foreach (Socket socket in readableSockets)
             {
-                // Compile a list of possibly-readable sockets
-                readableSockets.Clear();
-                readableSockets.Add(listener.Server);
-                foreach (SocketClient client in clients)
-                    readableSockets.Add(client.Socket.Client);
-
-                Socket.Select(readableSockets, null, null, 1000000);
-
-                foreach (Socket socket in readableSockets)
+                if (socket == listener.Server)
                 {
-                    if (socket == listener.Server)
-                    {
-                        // New connection
-                        Logger.WriteInternal("[HI!] New connection!");
+                    // New connection
+                    Logger.WriteInternal("[HI!] New connection!");
 
-                        SocketClient c = new SocketClient(this, listener.AcceptTcpClient());
+                    SocketClient c = new SocketClient(this, listener.AcceptTcpClient());
 
-                        clients.Add(c);
-                        socketMap.Add(c.Socket.Client, c);
+                    clients.Add(c);
+                    socketMap.Add(c.Socket.Client, c);
 
-                        NewClient(c);
-                    }
-                    else
-                    {
-                        // Readable data
-                        if (socket.Connected)
-                            socketMap[socket].OnReadable();
-                    }
+                    NewClient(c);
+                }
+                else
+                {
+                    // Readable data
+                    if (socket.Connected)
+                        socketMap[socket].OnReadable();
                 }
             }
         }

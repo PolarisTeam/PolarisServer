@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Timers;
 
 using PolarisServer.Network;
 using PolarisServer.Packets;
@@ -9,27 +10,51 @@ namespace PolarisServer
     public class Server
     {
         private List<Client> clients;
-        private Network.SocketServer server;
+        private SocketServer server;
 
         public List<Client> Clients { get { return clients; } }
         public static Server Instance { get; private set; }
         public DateTime StartTime { get; private set; }
-        private System.Timers.Timer pingTimer = new System.Timers.Timer(1000 * 60); // 1 Minute
+        private Timer pingTimer;
 
         public Server()
         {
             clients = new List<Client>();
-            server = new Network.SocketServer(12205);
+            server = new SocketServer(12205);
             server.NewClient += HandleNewClient;
             Instance = this;
             StartTime = DateTime.Now;
 
+            pingTimer = new Timer(1000 * 60); // 1 Minute
             pingTimer.Elapsed += PingClients;
             pingTimer.Start();
 
             new QueryServer(QueryMode.BlockBalance, 12200);
         }
 
+        public void Run()
+        {
+            while (true)
+            {
+                // Run the underlying SocketServer
+                server.Run();
+
+                // Check Clients to make sure they still exist
+                foreach (Client client in clients)
+                    if (client.IsClosed)
+                    {
+                        clients.Remove(client);
+                        break;
+                    }
+            }
+        }
+
+        void HandleNewClient(SocketClient client)
+        {
+            var c = new Client(this, client);
+            clients.Add(c);
+        }
+        
         void PingClients(object sender, System.Timers.ElapsedEventArgs e)
         {
             // Ping!
@@ -42,17 +67,6 @@ namespace PolarisServer
                     client.SendPacket(new NoPayloadPacket(0x03, 0x0B));
                 }
             }
-        }
-
-        public void Run()
-        {
-            server.Run();
-        }
-
-        void HandleNewClient(SocketClient client)
-        {
-            var c = new Client(this, client);
-            clients.Add(c);
         }
     }
 }

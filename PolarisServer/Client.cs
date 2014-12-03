@@ -14,6 +14,7 @@ namespace PolarisServer
         internal static RSACryptoServiceProvider _rsaCsp = null;
 
         private bool isClosed = false;
+        public bool IsClosed { get { return isClosed; } }
 
         private Server server;
         private SocketClient socket;
