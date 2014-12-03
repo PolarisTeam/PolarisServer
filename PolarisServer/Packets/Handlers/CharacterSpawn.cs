@@ -13,12 +13,16 @@ namespace PolarisServer.Packets.Handlers
             if (context.User == null || context.Character == null)
                 return;
 
-            var reader = new PacketReader(data);
 
             // Looks/Jobs
-            reader.BaseStream.Seek(0x38, SeekOrigin.Begin);
-            context.Character.Looks = reader.ReadStruct<Character.LooksParam>();
-            context.Character.Jobs = reader.ReadStruct<Character.JobParam>();
+            if (size > 0)
+            {
+                var reader = new PacketReader(data);
+
+                reader.BaseStream.Seek(0x38, SeekOrigin.Begin);
+                context.Character.Looks = reader.ReadStruct<Character.LooksParam>();
+                context.Character.Jobs = reader.ReadStruct<Character.JobParam>();
+            }
 
             // Set Area
             var setAreaPacket = File.ReadAllBytes("testSetAreaPacket.bin");
