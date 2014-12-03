@@ -13,11 +13,11 @@ namespace PolarisServer.Packets.Handlers
 
             var db = PolarisApp.Instance.Database;
             var chars = from c in db.Characters
-                    where c.Player.PlayerID == context.User.PlayerID
-                select c;
+                        where c.Player.PlayerID == context.User.PlayerID
+                        select c;
 
             PacketWriter writer = new PacketWriter();
-            writer.Write((uint) chars.Count());
+            writer.Write((uint)chars.Count());
 
             foreach (var ch in chars)
             {

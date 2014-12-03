@@ -11,7 +11,6 @@ using System.ComponentModel;
 
 namespace PolarisServer.Database
 {
-
     public class ServerInfo
     {
         [Key, MaxLength(255)]
@@ -31,7 +30,6 @@ namespace PolarisServer.Database
         public string SettingsINI { get; set; }
     }
 
-
     [DbConfigurationType(typeof(MySqlEFConfiguration))]
     public class PolarisEF : DbContext
     {
@@ -50,7 +48,6 @@ namespace PolarisServer.Database
                 {
                     revision = new ServerInfo { key = "Revision", value = "0" };
                     this.ServerInfos.Add(revision);
-
                 }
                 this.SaveChanges();
 
@@ -60,9 +57,6 @@ namespace PolarisServer.Database
             {
                 Logger.WriteException("A database exception has occured", ex);
             }
-
         }
-
     }
 }
-

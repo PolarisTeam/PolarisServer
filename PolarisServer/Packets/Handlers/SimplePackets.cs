@@ -32,15 +32,16 @@ namespace PolarisServer.Packets.Handlers
                 if (character.CharacterID == ID)
                 {
                     PolarisApp.Instance.Database.Characters.Remove(character);
-
-                    // TODO: Currently this throws System.Data.Entity.Core.EntityException when called, not sure why
-                    // See: http://puu.sh/ddWKc/b8d91751a9.txt
-                    // PolarisApp.Instance.Database.SaveChanges();
-
+                    PolarisApp.Instance.Database.ChangeTracker.DetectChanges();
                     break;
                 }
 
+            // Detect the deletion and save the Database
+            if (PolarisApp.Instance.Database.ChangeTracker.HasChanges())
+                PolarisApp.Instance.Database.SaveChanges();
+
             // Disconnect for now
+            // TODO: What do we do after a deletion?
             context.Socket.Close();
         }
     }
@@ -50,7 +51,6 @@ namespace PolarisServer.Packets.Handlers
     {
         public override void HandlePacket(Client context, byte[] data, uint position, uint size)
         {
-            // DOUBLE SOCKET UP IN HERE
             context.Socket.Close();
         }
     }
