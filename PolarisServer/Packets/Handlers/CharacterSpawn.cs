@@ -13,6 +13,13 @@ namespace PolarisServer.Packets.Handlers
             if (context.User == null || context.Character == null)
                 return;
 
+            var reader = new PacketReader(data);
+
+            // Looks/Jobs
+            reader.BaseStream.Seek(0x38, SeekOrigin.Begin);
+            context.Character.Looks = reader.ReadStruct<Character.LooksParam>();
+            context.Character.Jobs = reader.ReadStruct<Character.JobParam>();
+
             // Set Area
             var setAreaPacket = File.ReadAllBytes("testSetAreaPacket.bin");
             context.SendPacket(0x03, 0x24, 4, setAreaPacket);
@@ -22,10 +29,12 @@ namespace PolarisServer.Packets.Handlers
             setPlayerID.WritePlayerHeader((uint)context.User.PlayerID);
             context.SendPacket(0x06, 0x00, 0, setPlayerID.ToArray());
 
-            // Spawn Lobby Objects
-            if (System.IO.Directory.Exists("objects/lobby"))
+            /* Spawn Lobby Objects
+             * DON"T FORGET TO RE-ENABLE THIS BEFORE COMITTING!
+             * turned off for less packet spam
+            if (Directory.Exists("objects/lobby"))
             {
-                var objectPaths = System.IO.Directory.GetFiles("objects/lobby");
+                var objectPaths = Directory.GetFiles("objects/lobby");
                 Array.Sort(objectPaths);
                 foreach (var path in objectPaths)
                 {
@@ -36,6 +45,7 @@ namespace PolarisServer.Packets.Handlers
             {
                 Logger.WriteWarning("Directory 'objects/lobby' not found!");
             }
+            */
 
             // Spawn Character
             context.SendPacket(new CharacterSpawnPacket(context.Character));
