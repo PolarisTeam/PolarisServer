@@ -11,6 +11,17 @@ namespace PolarisServer.Models
 {
     public class Character
     {
+        public enum ClassType
+        {
+            Hunter = 0,
+            Ranger,
+            Fighter,
+            Gunner,
+            Techer,
+            Braver,
+            Bouncer,
+        }
+        
         [StructLayout(LayoutKind.Sequential)]
         public struct HSVColor
         {
@@ -35,7 +46,7 @@ namespace PolarisServer.Models
         public unsafe struct JobParam
         {
             public fixed byte unknown_0[4];
-            public uint unknown_4;
+            public uint mainClass; // Main Class
             public Entries entries;
 
             public ushort unknown_48, unknown_4A;
@@ -54,35 +65,18 @@ namespace PolarisServer.Models
         [StructLayout(LayoutKind.Sequential)]
         public unsafe struct LooksParam
         {
-            public fixed byte charData[86];
-            public fixed ushort accData[3];
-            public fixed byte unknown_4[6];
-            public HSVColor costumeColor;
-            public fixed byte unknown_5[12];
-            public HSVColor skinColor;
+            public fixed byte unknown0[100];
+            public HSVColor SkinColor;
+            public HSVColor unknownColor0; // Cast Color parts maybe?
             public HSVColor eyeColor;
-            public fixed byte unknown_6[6];
+            public fixed byte unknown1[8]; // Cast Color parts maybe?
             public HSVColor hairColor;
-            public fixed byte unknown_7[2];
-            public ushort bodyPaint;
-            public byte emblem;
-            public byte eyePattern;
-            public ushort eyebrows;
-            public byte eyelashes;
-            public uint faceVariant;
-            public byte makeupPattern1;
-            public byte hairstyle;
-            public ushort acc1;
-            public ushort acc2;
-            public ushort acc3;
-            public byte makeupPattern2;
-            public ushort acc4;
-            public ushort costume;
-            public fixed byte unknown_8[2];
-            public byte race;
-            public byte unknown_9;
-            public byte female;
-            public fixed byte unknown_10[5];
+            public fixed byte unknown2[12];
+            public fixed byte unknown3[2]; // Seems to fuck around with the skin texture
+            public fixed byte unknown4[4];
+            public ushort hairstyle;
+            public fixed byte unknown5[18];
+            public ushort female;
         }
 
         // Probably more info than this

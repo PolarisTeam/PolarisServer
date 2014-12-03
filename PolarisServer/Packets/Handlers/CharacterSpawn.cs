@@ -15,12 +15,12 @@ namespace PolarisServer.Packets.Handlers
 
             // Set Area
             var setAreaPacket = File.ReadAllBytes("testSetAreaPacket.bin");
-            context.SendPacket(3, 0x24, 4, setAreaPacket);
+            context.SendPacket(0x03, 0x24, 4, setAreaPacket);
 
             // Set Player ID
             var setPlayerID = new PacketWriter();
             setPlayerID.WritePlayerHeader((uint)context.User.PlayerID);
-            context.SendPacket(6, 0, 0, setPlayerID.ToArray());
+            context.SendPacket(0x06, 0x00, 0, setPlayerID.ToArray());
 
             // Spawn Lobby Objects
             if (System.IO.Directory.Exists("objects/lobby"))
@@ -41,7 +41,7 @@ namespace PolarisServer.Packets.Handlers
             context.SendPacket(new CharacterSpawnPacket(context.Character));
 
             // Unlock Controls
-            context.SendPacket(new NoPayloadPacket(3, 0x2B));
+            context.SendPacket(new NoPayloadPacket(0x03, 0x2B));
 
             // Spawn on other player's clients
             var spawnPacket = new CharacterSpawnPacket(context.Character);
@@ -64,7 +64,7 @@ namespace PolarisServer.Packets.Handlers
             // memset packet - Enables menus
             // Also holds event items and likely other stuff too
             var memSetPacket = System.IO.File.ReadAllBytes("setMemoryPacket.bin");
-            context.SendPacket(0x23, 0x7, 0, memSetPacket);
+            context.SendPacket(0x23, 0x07, 0, memSetPacket);
 
             // Give a blank palette
             context.SendPacket(new PalettePacket());
