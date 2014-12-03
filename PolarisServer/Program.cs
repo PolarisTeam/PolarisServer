@@ -29,7 +29,11 @@ namespace PolarisServer
             ConsoleSystem = new ConsoleSystem();
             ConsoleSystem.thread = new Thread(new ThreadStart(ConsoleSystem.StartThread));
             ConsoleSystem.thread.Start();
-            
+
+            // Setup function exit handlers to guarentee Exit() is run before closing
+            Console.CancelKeyPress += Exit;
+            AppDomain.CurrentDomain.ProcessExit += Exit;
+
             try
             {
                 for (int i = 0; i < args.Length; i++)
@@ -92,6 +96,13 @@ namespace PolarisServer
 
             server = new Server();
             server.Run();
+        }
+        
+        static void Exit(object sender, EventArgs e)
+        {
+            // Save the database
+            if (instance != null && instance.database != null)
+                instance.database.SaveChanges();
         }
     }
 }

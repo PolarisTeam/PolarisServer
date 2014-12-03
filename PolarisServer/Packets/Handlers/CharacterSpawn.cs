@@ -22,6 +22,8 @@ namespace PolarisServer.Packets.Handlers
                 reader.BaseStream.Seek(0x38, SeekOrigin.Begin);
                 context.Character.Looks = reader.ReadStruct<Character.LooksParam>();
                 context.Character.Jobs = reader.ReadStruct<Character.JobParam>();
+
+                PolarisApp.Instance.Database.ChangeTracker.DetectChanges();
             }
 
             // Set Area
