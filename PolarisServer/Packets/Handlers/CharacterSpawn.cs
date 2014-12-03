@@ -33,9 +33,7 @@ namespace PolarisServer.Packets.Handlers
             setPlayerID.WritePlayerHeader((uint)context.User.PlayerID);
             context.SendPacket(0x06, 0x00, 0, setPlayerID.ToArray());
 
-            /* Spawn Lobby Objects
-             * DON"T FORGET TO RE-ENABLE THIS BEFORE COMITTING!
-             * turned off for less packet spam
+            // Spawn Lobby Objects
             if (Directory.Exists("objects/lobby"))
             {
                 var objectPaths = Directory.GetFiles("objects/lobby");
@@ -49,7 +47,6 @@ namespace PolarisServer.Packets.Handlers
             {
                 Logger.WriteWarning("Directory 'objects/lobby' not found!");
             }
-            */
 
             // Spawn Character
             context.SendPacket(new CharacterSpawnPacket(context.Character));
