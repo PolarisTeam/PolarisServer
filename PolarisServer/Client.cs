@@ -4,6 +4,7 @@ using System.Security.Cryptography;
 
 using PolarisServer.Database;
 using PolarisServer.Models;
+using PolarisServer.Network;
 using PolarisServer.Packets;
 
 namespace PolarisServer
@@ -15,9 +16,9 @@ namespace PolarisServer
         private bool isClosed = false;
 
         private Server server;
-        private Network.SocketClient socket;
+        private SocketClient socket;
 
-        public Network.SocketClient Socket { get { return socket; } }
+        public SocketClient Socket { get { return socket; } }
 
         public Player User { get; set; }
         public Character Character { get; set; }
@@ -129,7 +130,7 @@ namespace PolarisServer
             byte flags1 = blob[6];
             byte flags2 = blob[7];
 
-            Logger.Write("[<--] Packet {0:X}-{1:X} (flags {2} {3}, {4} bytes)", typeA, typeB, flags1, flags2, blob.Length);
+            Logger.Write("[<--] Packet {0:X}-{1:X} (flags {2}, {3}) ({4} bytes)", typeA, typeB, flags1, flags2, blob.Length);
             LogPacket(false, typeA, typeB, flags1, flags2, blob);
 
             if (Logger.VerbosePackets)

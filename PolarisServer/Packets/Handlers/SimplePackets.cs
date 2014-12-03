@@ -8,7 +8,16 @@ using PolarisServer.Models;
 
 namespace PolarisServer.Packets.Handlers
 {
-    [PacketHandlerAttr(0x11, 0x6)]
+    [PacketHandlerAttr(0x03, 0x0C)]
+    public class PingResponse : PacketHandler
+    {
+        public override void HandlePacket(Client context, byte[] data, uint position, uint size)
+        {
+            Logger.Write("[HI!] Recieved ping response from " + context.User.Username);
+        }
+    }
+
+    [PacketHandlerAttr(0x11, 0x06)]
     public class DeleteCharacter : PacketHandler
     {
         public override void HandlePacket(Client context, byte[] data, uint position, uint size)
@@ -33,16 +42,6 @@ namespace PolarisServer.Packets.Handlers
 
             // Disconnect for now
             context.Socket.Close();
-        }
-    }
-
-    // [PacketHandlerAttr(0x11, 0xD)]  // It seems both of these are used for some form of pinging, needs investigation
-    [PacketHandlerAttr(0x11, 0x68)]    // One of them might just be a timestamp update - Kyle
-    public class PingResponse : PacketHandler
-    {
-        public override void HandlePacket(Client context, byte[] data, uint position, uint size)
-        {
-            Logger.Write("[HI!] Recieved a ping from " + context.User.Username);
         }
     }
 
@@ -82,6 +81,4 @@ namespace PolarisServer.Packets.Handlers
             context.SendPacket(0x11, 0x55, 0x0, writer.ToArray());
         }
     }
-
 }
-

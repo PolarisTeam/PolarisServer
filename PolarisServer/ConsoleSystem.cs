@@ -194,6 +194,11 @@ namespace PolarisServer
             config.Help = "Set a configuration variable to the specified value";
             commands.Add(config);
 
+            // Clear
+            ConsoleCommand clearLog = new ConsoleCommand(ClearLog, "clear", "cls");
+            clearLog.Help = "Clears the current log buffer";
+            commands.Add(clearLog);
+
             // Echo
             ConsoleCommand echo = new ConsoleCommand(Echo, "echo");
             echo.Help = "Echo the given text back into the Console";
@@ -484,6 +489,12 @@ namespace PolarisServer
                 echo += args[i];
 
             Logger.WriteCommand("[CMD] " + echo);
+        }
+
+        private void ClearLog(string[] args, int length, string full)
+        {
+            Logger.lines.Clear();
+            refreshDraw = true;
         }
 
         private void Config(string[] args, int length, string full)
