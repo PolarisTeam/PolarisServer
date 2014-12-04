@@ -12,17 +12,7 @@ namespace PolarisServer.Packets.Handlers
         {
             if (context.Character == null)
                 return;
-
-            //PacketReader reader = new PacketReader(data, position, size);
-
-            /*var bytes = BitConverter.GetBytes((uint)context.User.PlayerID);
-            data[0] = bytes[0];
-            data[1] = bytes[1];
-            data[2] = bytes[2];
-            data[3] = bytes[3];
-
-            data[9] = 4; // From player*/
-
+                
             PacketReader reader = new PacketReader(data, position, size);
             reader.BaseStream.Seek(0xC, System.IO.SeekOrigin.Begin);
             UInt32 channel = reader.ReadUInt32();

@@ -81,7 +81,7 @@ namespace PolarisServer.Packets.Handlers
             // Give a blank palette
             context.SendPacket(new PalettePacket());
 
-            Logger.Write("[CHR] {0}'s character has spawned", context.User.Username);
+            Logger.Write("[CHR] {0}'s character {1} has spawned", context.User.Username, context.Character.Name);
         }
     }
 }
