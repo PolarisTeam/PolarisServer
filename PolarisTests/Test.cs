@@ -79,7 +79,7 @@ namespace PolarisTests
             writer.WriteStruct(jp);
             byte[] structArray = writer.ToArray();
             Assert.AreEqual(structureSize, structArray.Length);
-            Assert.AreEqual(7, structArray[8]);
+            Assert.AreEqual(7, structArray[12]);
         }
     }
 }
