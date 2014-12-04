@@ -23,7 +23,7 @@ namespace PolarisServer.Models
             Female
         }
 
-        public enum ClassType : ushort
+        public enum ClassType : byte
         {
             Hunter = 0,
             Fighter,
