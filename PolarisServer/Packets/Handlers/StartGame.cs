@@ -30,7 +30,7 @@ namespace PolarisServer.Packets.Handlers
         }
     }
 
-    [PacketHandlerAttr(3, 3)]
+    [PacketHandlerAttr(0x03, 0x03)]
     public class InitialLoad : PacketHandler
     {
         // Ninji note: 3-3 may not be the correct place to do this
@@ -55,7 +55,7 @@ namespace PolarisServer.Packets.Handlers
         }
     }
 
-    [PacketHandlerAttr(3, 0x10)]
+    [PacketHandlerAttr(0x03, 0x10)]
     public class DoItMaybe : PacketHandler
     {
         public override void HandlePacket(Client context, byte[] data, uint position, uint size)

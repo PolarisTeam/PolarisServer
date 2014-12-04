@@ -13,7 +13,6 @@ namespace PolarisServer.Packets.Handlers
             if (context.User == null || context.Character == null)
                 return;
 
-
             // Looks/Jobs
             if (size > 0)
             {
