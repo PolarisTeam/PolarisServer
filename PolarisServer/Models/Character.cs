@@ -9,17 +9,45 @@ namespace PolarisServer.Models
 {
     public class Character
     {
-        public enum ClassType
+        public enum Race : ushort
+        {
+            Human = 0,
+            Newman,
+            Cast,
+            Dewman
+        }
+
+        public enum Gender : ushort
+        {
+            Male = 0,
+            Female
+        }
+
+        public enum ClassType : ushort
         {
             Hunter = 0,
-            Ranger,
             Fighter,
+            Ranger,
             Gunner,
+            Force,
             Techer,
             Braver,
             Bouncer,
         }
         
+        [Flags]
+        public enum ClassTypeField : byte
+        {
+            Hunter = 1,
+            Fighter = 2,
+            Ranger = 4,
+            Gunner = 8,
+            Force = 16,
+            Techer = 32,
+            Braver = 64,
+            Bouncer = 128
+        }
+
         [StructLayout(LayoutKind.Sequential)]
         public struct HSVColor
         {
@@ -31,25 +59,31 @@ namespace PolarisServer.Models
         {
             public ushort x, y, z; // Great naming, SEGA
         }
+
         [StructLayout(LayoutKind.Sequential)]
         public struct JobEntry
         {
             public ushort level;
-            public ushort unknown_2;
+            public ushort level2; // Usually the same as the above, what is this used for?
             public uint exp;
         }
 
         [StructLayout(LayoutKind.Sequential)]
         public struct Entries
         {
-            public JobEntry entry0, entry1, entry2, entry3, entry4, entry5, entry6, entry7;
+            public JobEntry hunter, fighter, ranger, gunner, force, techer, braver, bouncer;
         }
 
         [StructLayout(LayoutKind.Sequential)]
         public unsafe struct JobParam
         {
             public fixed byte unknown_0[4];
-            public uint mainClass; // Main Class
+            public ClassType mainClass;
+            public ClassType subClass;
+            public fixed byte uknown_6[2];
+            public ClassTypeField enabledClasses;
+            public fixed byte uknown_8[2];
+
             public Entries entries;
 
             public ushort unknown_48, unknown_4A;
@@ -100,8 +134,8 @@ namespace PolarisServer.Models
             public ushort legs;
             public ushort accessory4;
             public ushort costume;
-            public ushort race;
-            public ushort gender;
+            public Race race;
+            public Gender gender;
         }
 
         // Probably more info than this
@@ -145,10 +179,6 @@ namespace PolarisServer.Models
             
         public LooksParam Looks { get; set; }
         public JobParam Jobs { get; set; }
-
-        public Character()
-        {
-        }
     }
 
 
