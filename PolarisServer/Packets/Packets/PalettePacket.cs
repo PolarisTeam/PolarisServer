@@ -12,10 +12,10 @@ namespace PolarisServer.Packets
         {
             var writer = new PacketWriter();
 
-            // Enabled?
+            // Enable flag
             writer.Write((byte)1);
 
-            // Blank out the rest
+            // Blank out the rest (skills)
             for (int i = 0; i < 1091; i++)
                 writer.Write((byte)0);
 
