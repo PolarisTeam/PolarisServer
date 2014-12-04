@@ -5,8 +5,6 @@ using System.ComponentModel.DataAnnotations;
 using PolarisServer.Packets;
 using PolarisServer.Database;
 
-
-
 namespace PolarisServer.Models
 {
     public class Character
@@ -28,6 +26,11 @@ namespace PolarisServer.Models
             public ushort hue, saturation, value;
         }
 
+        [StructLayout(LayoutKind.Sequential)]
+        public struct Figure
+        {
+            public ushort x, y, z; // Great naming, SEGA
+        }
         [StructLayout(LayoutKind.Sequential)]
         public struct JobEntry
         {
@@ -65,18 +68,40 @@ namespace PolarisServer.Models
         [StructLayout(LayoutKind.Sequential)]
         public unsafe struct LooksParam
         {
-            public fixed byte unknown0[100];
-            public HSVColor SkinColor;
-            public HSVColor unknownColor0; // Cast Color parts maybe?
+            public fixed byte padding[4];
+            public ushort height;
+            public fixed byte charData[80]; // Figure Data, needs more work
+            public ushort accessoryData1;
+            public ushort accessoryData2;
+            public ushort accessoryData3;
+            public ushort accessoryData4;
+            public HSVColor costumeColor;
+            public HSVColor mainColor;
+            public HSVColor sub1Color;
+            public HSVColor sub2Color;
+            public HSVColor sub3Color;
             public HSVColor eyeColor;
-            public fixed byte unknown1[8]; // Cast Color parts maybe?
             public HSVColor hairColor;
-            public fixed byte unknown2[12];
-            public fixed byte unknown3[2]; // Seems to fuck around with the skin texture
-            public fixed byte unknown4[4];
+            public int modelID;
+            public ushort mainParts;
+            public ushort bodyPaint;
+            public ushort emblem;
+            public ushort eyePattern;
+            public ushort eyelashes;
+            public ushort eyebrows;
+            public ushort face;
+            public ushort facePaint1;
             public ushort hairstyle;
-            public fixed byte unknown5[18];
-            public ushort female;
+            public ushort accessory1;
+            public ushort accessory2;
+            public ushort accessory3;
+            public ushort facePaint2;
+            public ushort arms;
+            public ushort legs;
+            public ushort accessory4;
+            public ushort costume;
+            public ushort race;
+            public ushort gender;
         }
 
         // Probably more info than this
