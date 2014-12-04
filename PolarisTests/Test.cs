@@ -75,7 +75,7 @@ namespace PolarisTests
         {
             var structureSize = sizeof(Character.JobParam);
             Character.JobParam jp = new Character.JobParam();
-            jp.entries.fighter.level = 7;
+            jp.entries.hunter.level = 7;
             writer.WriteStruct(jp);
             byte[] structArray = writer.ToArray();
             Assert.AreEqual(structureSize, structArray.Length);
@@ -83,4 +83,3 @@ namespace PolarisTests
         }
     }
 }
-
