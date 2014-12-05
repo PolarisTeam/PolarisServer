@@ -27,7 +27,7 @@ namespace PolarisServer
 
         public static List<LogLine> lines = new List<LogLine>();
 
-        public static bool VerbosePackets = true;
+        public static bool VerbosePackets = false;
 
         private static void AddLine(LogLine line)
         {

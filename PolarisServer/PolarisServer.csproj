@@ -52,6 +52,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Config.cs" />
     <Compile Include="ConsoleSystem.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="Packets\Handlers\CharacterSpawn.cs" />

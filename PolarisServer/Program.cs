@@ -6,6 +6,7 @@ using System.Net.Sockets;
 using System.Threading;
 
 using PolarisServer.Database;
+using PolarisServer.Packets.Handlers;
 
 namespace PolarisServer
 {
@@ -22,14 +23,17 @@ namespace PolarisServer
 
         public Server server;
 
+        public static Config Config;
         public static ConsoleSystem ConsoleSystem;
 
         public static void Main(string[] args)
         {
+            Config = new Config();
+            
             ConsoleSystem = new ConsoleSystem();
             ConsoleSystem.thread = new Thread(new ThreadStart(ConsoleSystem.StartThread));
             ConsoleSystem.thread.Start();
-
+            
             // Setup function exit handlers to guarentee Exit() is run before closing
             Console.CancelKeyPress += Exit;
             AppDomain.CurrentDomain.ProcessExit += Exit;
@@ -85,8 +89,12 @@ namespace PolarisServer
         public void Start()
         {
             Logger.WriteInternal("Server starting at " + DateTime.Now.ToString());
+
+            server = new Server();
             
-            Packets.Handlers.PacketHandlers.LoadPacketHandlers();
+            Config.Load();
+            
+            PacketHandlers.LoadPacketHandlers();
             
             Logger.WriteInternal("[DB ] Loading database...");
             database = new PolarisEF();
@@ -94,12 +102,14 @@ namespace PolarisServer
             for (int i = 0; i < 10; i++)
                 queryServers.Add(new QueryServer(QueryMode.ShipList, 12099 + (100 * i)));
 
-            server = new Server();
             server.Run();
         }
         
         static void Exit(object sender, EventArgs e)
         {
+            // Save the configuration
+            Config.Save();
+
             // Save the database
             if (instance != null && instance.database != null)
                 instance.database.SaveChanges();

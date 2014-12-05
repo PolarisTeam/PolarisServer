@@ -5,7 +5,7 @@ using System.Text;
 
 namespace PolarisServer
 {
-    public class Helper
+    public static class Helper
     {
         public static string ByteArrayToString(byte[] ba)
         {

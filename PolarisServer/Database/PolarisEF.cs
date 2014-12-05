@@ -38,7 +38,7 @@ namespace PolarisServer.Database
         public DbSet<Character> Characters { get; set; }
 
         public PolarisEF()
-            : base("server=localhost;database=polaris;username=polaris;password=polaris")
+            : base(string.Format("server={0};database={1};username={2};password={3}", PolarisApp.Config.DatabaseAddress, PolarisApp.Config.DatabaseName, PolarisApp.Config.DatabaseUsername, PolarisApp.Config.DatabasePassword))
         {
             try
             {

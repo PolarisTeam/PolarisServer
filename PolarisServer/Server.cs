@@ -15,7 +15,7 @@ namespace PolarisServer
         public List<Client> Clients { get { return clients; } }
         public static Server Instance { get; private set; }
         public DateTime StartTime { get; private set; }
-        private Timer pingTimer;
+        public Timer pingTimer;
 
         public Server()
         {
@@ -25,7 +25,7 @@ namespace PolarisServer
             Instance = this;
             StartTime = DateTime.Now;
 
-            pingTimer = new Timer(1000 * 60); // 1 Minute
+            pingTimer = new Timer(1000 * PolarisApp.Config.PingTime); // 1 Minute default
             pingTimer.Elapsed += PingClients;
             pingTimer.Start();
 

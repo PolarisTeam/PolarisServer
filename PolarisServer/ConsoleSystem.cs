@@ -189,8 +189,8 @@ namespace PolarisServer
 
             // Config
             ConsoleCommand config = new ConsoleCommand(Config, "config", "c");
-            config.Arguments.Add(new ConsoleCommandArgument("Option", false));
-            config.Arguments.Add(new ConsoleCommandArgument("Value", false));
+            config.Arguments.Add(new ConsoleCommandArgument("Save | Load | List | Option Name", false));
+            config.Arguments.Add(new ConsoleCommandArgument("Value", true));
             config.Help = "Set a configuration variable to the specified value";
             commands.Add(config);
 
@@ -220,13 +220,6 @@ namespace PolarisServer
             spawnClone.Arguments.Add(new ConsoleCommandArgument("Z", false));
             spawnClone.Help = "Spawns a clone of your character";
             commands.Add(spawnClone);
-
-            // LoadCharData
-            ConsoleCommand loadCharData = new ConsoleCommand(LoadCharData, "loadchardata", "lcd");
-            loadCharData.Arguments.Add(new ConsoleCommandArgument("Username", false));
-            loadCharData.Arguments.Add(new ConsoleCommandArgument("Filename", false));
-            loadCharData.Help = "Loads a binary file containing information about a player";
-            commands.Add(loadCharData);
 
             // SendPacket
             ConsoleCommand sendPacket = new ConsoleCommand(SendPacket, "sendpacket", "sendp");
@@ -499,15 +492,47 @@ namespace PolarisServer
 
         private void Config(string[] args, int length, string full)
         {
+            FieldInfo[] fields = PolarisApp.Config.GetType().GetFields();
+            FieldInfo field = fields.FirstOrDefault(o => o.Name == args[1]);
+
             switch (args[1].ToLower())
             {
-                default:
-                    Logger.WriteError("[CMD] Invalid configuration option");
+                case "save":
+                    PolarisApp.Config.Save();
                     break;
 
-                case "verbosepackets":
-                    Logger.VerbosePackets = !Logger.VerbosePackets;
-                    Logger.WriteCommand("[CMD] Verbose packet logging " + (Logger.VerbosePackets ? "enabled" : "disabled"));
+                case "load":
+                    PolarisApp.Config.Load();
+                    break;
+
+                case "list":
+                    Logger.WriteCommand("[CMD] Config Options");
+                    foreach (FieldInfo f in fields)
+                        Logger.WriteCommand("[CMD] {0} = {1}", f.Name, f.GetValue(PolarisApp.Config));
+                    break;
+
+                default: // Set a config option
+                    if (args.Length < 3)
+                        Logger.WriteWarning("[CMD] Too few arguments");
+                    else if (field != null)
+                    {
+                        string value = string.Empty;
+
+                        if (args[2].Contains('\"'))
+                            value = full.Split('"')[1].Split('"')[0].Trim('\"');
+                        else
+                            value = args[2];
+
+                        if (!PolarisApp.Config.SetField(args[1], value))
+                            Logger.WriteWarning("[CMD] Config option {0} could not be changed to {1}", args[1], value);
+                        else
+                        {
+                            Logger.WriteCommand("[CMD] Config option {0} changed to {1}", args[1], value);
+                            PolarisApp.Config.SettingsChanged();
+                        }
+                    }
+                    else
+                        Logger.WriteWarning("[CMD] Config option {0} not found", args[1]);
                     break;
             }
         }
@@ -608,42 +633,6 @@ namespace PolarisServer
             client.SendPacket(fakePacket);
 
             Logger.WriteCommand("[CMD] Spawned a clone of {0} named {1}", name, playerName);
-        }
-
-        private void LoadCharData(string[] args, int length, string full)
-        {
-            int ID = 0;
-            string name = args[1].Trim('\"');
-            string filename = args[2].Trim('\"');
-            bool foundPlayer = false;
-
-            // Find the player
-            ID = Helper.FindPlayerByUsername(name);
-            if (ID != -1)
-                foundPlayer = true;
-
-            // Couldn't find the username
-            if (!foundPlayer)
-            {
-                Logger.WriteError("[CMD] Could not find user " + name);
-                return;
-            }
-
-            Client client = PolarisApp.Instance.server.Clients[ID];
-            byte[] data = File.ReadAllBytes(filename);
-            var reader = new PacketReader(data, 0, (uint)data.Length);
-
-            reader.BaseStream.Seek(0x6C, System.IO.SeekOrigin.Begin);
-            client.Character.Name = reader.ReadFixedLengthUTF16(16);
-            reader.BaseStream.Seek(0x90, System.IO.SeekOrigin.Begin); // TODO: Should be 0x8C since it actually starts there
-            client.Character.Looks = reader.ReadStruct<Character.LooksParam>();
-            client.Character.Jobs = reader.ReadStruct<Character.JobParam>();
-
-            // Spawn Character
-            client.SendPacket(new CharacterSpawnPacket(client.Character));
-
-            Logger.WriteHex("[CMD] Looks Data from file: ", File.ReadAllBytes(filename));
-            Logger.WriteCommand("[CMD] Loaded looks from {0} onto {1}", filename, name);
         }
 
         private void SendPacket(string[] args, int length, string full)
