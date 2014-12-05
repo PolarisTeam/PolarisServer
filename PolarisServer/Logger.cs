@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 
+using PolarisServer.Packets;
+
 namespace PolarisServer
 {
     /// <summary>
@@ -95,16 +97,28 @@ namespace PolarisServer
             WriteFile(text, args);
         }
 
-        public static void WriteCommand(string text, params object[] args)
+        public static void WriteCommand(Client client, string text, params object[] args)
         {
-            LogLine line = new LogLine();
-            line.color = ConsoleColor.Green;
-            line.text = string.Format(text, args);
+            if (client == null)
+            {
+                LogLine line = new LogLine();
+                line.color = ConsoleColor.Green;
+                line.text = string.Format(text, args);
 
-            AddLine(line);
-            WriteFile(text, args);
+                AddLine(line);
+                WriteFile(text, args);
+            }
+            else
+                WriteClient(client, text, args);
         }
 
+        public static void WriteClient(Client client, string text, params object[] args)
+        {
+            string message = string.Format(text, args).Replace('\\', '/');
+            SystemMessagePacket packet = new SystemMessagePacket(message, SystemMessagePacket.MessageType.SystemMessage);
+            client.SendPacket(packet);
+        }
+        
         public static void WriteWarning(string text, params object[] args)
         {
             LogLine line = new LogLine();

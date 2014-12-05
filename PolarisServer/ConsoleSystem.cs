@@ -12,72 +12,42 @@ using PolarisServer.Packets.Handlers;
 
 namespace PolarisServer
 {
-    public delegate void ConsoleCommandDelegate(string[] args, int length, string full);
+    public delegate void ConsoleCommandDelegate(string[] args, int length, string full, Client client);
 
     public class ConsoleCommandArgument
     {
-        private string name;
-        public string Name
-        {
-            get { return name; }
-            set { name = value; }
-        }
-        private bool optional;
-        public bool Optional
-        {
-            get { return optional; }
-            set { optional = value; }
-        }
-
+        public string Name { get; set; }
+        public bool Optional { get; set; }
+        
         public ConsoleCommandArgument(string name, bool optional)
         {
-            this.name = name;
-            this.optional = optional;
+            this.Name = name;
+            this.Optional = optional;
         }
     }
 
     public class ConsoleCommand
     {
-        private ConsoleCommandDelegate command;
-        public ConsoleCommandDelegate Command
-        {
-            get { return command; }
-            set { command = value; }
-        }
-        private List<string> names;
-        public List<string> Names
-        {
-            get { return names; }
-            set { names = value; }
-        }
-        private List<ConsoleCommandArgument> arguments;
-        public List<ConsoleCommandArgument> Arguments
-        {
-            get { return arguments; }
-            set { arguments = value; }
-        }
-        private string help;
-        public string Help
-        {
-            get { return help; }
-            set { help = value; }
-        }
+        public ConsoleCommandDelegate Command { get; set; }
+        public List<string> Names { get; set; }
+        public List<ConsoleCommandArgument> Arguments { get; set; }
+        public string Help { get; set; }
 
         public ConsoleCommand(ConsoleCommandDelegate cmd, params string[] cmdNames)
         {
             if (cmdNames == null || cmdNames.Length < 1)
                 throw new NotSupportedException();
 
-            command = cmd;
-            names = new List<string>(cmdNames);
-            arguments = new List<ConsoleCommandArgument>();
+            this.Command = cmd;
+            this.Names = new List<string>(cmdNames);
+            this.Arguments = new List<ConsoleCommandArgument>();
         }
 
-        public bool Run(string[] args, int length, string full)
+        public bool Run(string[] args, int length, string full, Client client)
         {
             try
             {
-                command(args, length, full);
+                Command(args, length, full, client);
             }
             catch (IndexOutOfRangeException ex)
             {
@@ -118,7 +88,7 @@ namespace PolarisServer
             ConsoleKey.Delete
         };
 
-        List<ConsoleCommand> commands = new List<ConsoleCommand>();
+        public List<ConsoleCommand> commands = new List<ConsoleCommand>();
 
         List<string> history = new List<string>();
         int historyIndex = 0;
@@ -204,6 +174,12 @@ namespace PolarisServer
             echo.Help = "Echo the given text back into the Console";
             echo.Arguments.Add(new ConsoleCommandArgument("text", false));
             commands.Add(echo);
+            
+            // Announce
+            ConsoleCommand announce = new ConsoleCommand(Announce, "announce", "a");
+            announce.Arguments.Add(new ConsoleCommandArgument("Message", false));
+            announce.Help = "Sends a message to all connected players";
+            commands.Add(announce);
 
             // ClearPlayers
             ConsoleCommand clearPlayers = new ConsoleCommand(ClearPlayers, "clearplayers", "cp");
@@ -403,7 +379,7 @@ namespace PolarisServer
                             foreach (string name in command.Names)
                                 if (args[0].ToLower() == name.ToLower())
                                 {
-                                    command.Run(args, args.Length, full);
+                                    command.Run(args, args.Length, full, null);
                                     valid = true;
                                     break;
                                 }
@@ -428,9 +404,10 @@ namespace PolarisServer
 
         #region Command Handlers
 
-        private void Help(string[] args, int length, string full)
+        // TODO: Use that fancy popup box when sending help to a client
+        private void Help(string[] args, int length, string full, Client client)
         {
-            Logger.WriteCommand("[CMD] List of Commands");
+            Logger.WriteCommand(client, "[CMD] List of Commands");
 
             foreach (ConsoleCommand command in commands)
             {
@@ -470,27 +447,43 @@ namespace PolarisServer
                     }
 
                     // Log it
-                    Logger.WriteCommand("[CMD] {0}", help);
+                    Logger.WriteCommand(client, "[CMD] {0}", help);
                 }
             }
         }
 
-        private void Echo(string[] args, int length, string full)
+        private void Echo(string[] args, int length, string full, Client client)
         {
             string echo = string.Empty;
             for (int i = 1; i < args.Length; i++)
                 echo += args[i];
 
-            Logger.WriteCommand("[CMD] " + echo);
+            Logger.WriteCommand(client, "[CMD] " + echo);
         }
 
-        private void ClearLog(string[] args, int length, string full)
+        private void Announce(string[] args, int length, string full, Client client)
+        {
+            string message = full.Split('"')[1].Split('"')[0].Trim('\"');
+            SystemMessagePacket messagePacket = new SystemMessagePacket(message, SystemMessagePacket.MessageType.GoldenTicker);
+
+            foreach (Client c in Server.Instance.Clients)
+            {
+                if (c.Character == null)
+                    continue;
+
+                c.SendPacket(messagePacket);
+            }
+
+            Logger.WriteCommand(client, "[CMD] Sent announcement to all players");
+        }
+
+        private void ClearLog(string[] args, int length, string full, Client client)
         {
             Logger.lines.Clear();
             refreshDraw = true;
         }
 
-        private void Config(string[] args, int length, string full)
+        private void Config(string[] args, int length, string full, Client client)
         {
             FieldInfo[] fields = PolarisApp.Config.GetType().GetFields();
             FieldInfo field = fields.FirstOrDefault(o => o.Name == args[1]);
@@ -506,14 +499,14 @@ namespace PolarisServer
                     break;
 
                 case "list":
-                    Logger.WriteCommand("[CMD] Config Options");
+                    Logger.WriteCommand(client, "[CMD] Config Options");
                     foreach (FieldInfo f in fields)
-                        Logger.WriteCommand("[CMD] {0} = {1}", f.Name, f.GetValue(PolarisApp.Config));
+                        Logger.WriteCommand(client, "[CMD] {0} = {1}", f.Name, f.GetValue(PolarisApp.Config));
                     break;
 
                 default: // Set a config option
                     if (args.Length < 3)
-                        Logger.WriteWarning("[CMD] Too few arguments");
+                        Logger.WriteCommand(client, "[CMD] Too few arguments");
                     else if (field != null)
                     {
                         string value = string.Empty;
@@ -524,25 +517,25 @@ namespace PolarisServer
                             value = args[2];
 
                         if (!PolarisApp.Config.SetField(args[1], value))
-                            Logger.WriteWarning("[CMD] Config option {0} could not be changed to {1}", args[1], value);
+                            Logger.WriteCommand(client, "[CMD] Config option {0} could not be changed to {1}", args[1], value);
                         else
                         {
-                            Logger.WriteCommand("[CMD] Config option {0} changed to {1}", args[1], value);
+                            Logger.WriteCommand(client, "[CMD] Config option {0} changed to {1}", args[1], value);
                             PolarisApp.Config.SettingsChanged();
                         }
                     }
                     else
-                        Logger.WriteWarning("[CMD] Config option {0} not found", args[1]);
+                        Logger.WriteCommand(client, "[CMD] Config option {0} not found", args[1]);
                     break;
             }
         }
 
-        private void Exit(string[] args, int length, string full)
+        private void Exit(string[] args, int length, string full, Client client)
         {
             Environment.Exit(0);
         }
 
-        private void ClearPlayers(string[] args, int length, string full)
+        private void ClearPlayers(string[] args, int length, string full, Client client)
         {
             // Temporary haxifications to pull your own connection
             int ID = -1;
@@ -560,7 +553,7 @@ namespace PolarisServer
                 // Couldn't find the username
                 if (!foundPlayer)
                 {
-                    Logger.WriteError("[CMD] Could not find user " + name);
+                    Logger.WriteCommand(client, "[CMD] Could not find user " + name);
                     return;
                 }
             }
@@ -572,35 +565,41 @@ namespace PolarisServer
 
                 // This is probably not the right way to do this
                 PolarisApp.Instance.server.Clients[i].Socket.Close();
-                Logger.WriteCommand("[CMD] Logged out user " + PolarisApp.Instance.server.Clients[i].User.Username);
+                Logger.WriteCommand(client, "[CMD] Logged out user " + PolarisApp.Instance.server.Clients[i].User.Username);
             }
 
-            Logger.WriteCommand("[CMD] Logged out all players successfully");
+            Logger.WriteCommand(client, "[CMD] Logged out all players successfully");
         }
 
-        private void SpawnClone(string[] args, int length, string full)
+        private void SpawnClone(string[] args, int length, string full, Client client)
         {
             // Temporary haxifications to pull your own connection
-            int ID = 0;
             string name = args[1].Trim('\"');
             string playerName = args[2].Trim('\"');
             float x = float.Parse(args[3]);
             float y = float.Parse(args[4]);
             float z = float.Parse(args[5]);
-            bool foundPlayer = false;
 
-            // Find the player
-            ID = Helper.FindPlayerByUsername(name);
-            if (ID != -1)
-                foundPlayer = true;
-
-            // Couldn't find the username
-            if (!foundPlayer)
+            if (client == null)
             {
-                Logger.WriteError("[CMD] Could not find user " + name);
-                return;
-            }
+                int ID = 0;
+                bool foundPlayer = false;
+                
+                // Find the player
+                ID = Helper.FindPlayerByUsername(name);
+                if (ID != -1)
+                    foundPlayer = true;
 
+                // Couldn't find the username
+                if (!foundPlayer)
+                {
+                    Logger.WriteError("[CMD] Could not find user " + name);
+                    return;
+                }
+
+                client = PolarisApp.Instance.server.Clients[ID];
+            }
+            
             // Default coordinates
             if (x == 0)
                 x = -0.417969f;
@@ -608,8 +607,6 @@ namespace PolarisServer
                 y = 0.000031f;
             if (z == 0)
                 z = 134.375f;
-
-            Client client = PolarisApp.Instance.server.Clients[ID];
 
             var fakePlayer = new Database.Player();
             fakePlayer.Username = name;
@@ -632,13 +629,12 @@ namespace PolarisServer
             fakePacket.IsItMe = false;
             client.SendPacket(fakePacket);
 
-            Logger.WriteCommand("[CMD] Spawned a clone of {0} named {1}", name, playerName);
+            Logger.WriteCommand(client, "[CMD] Spawned a clone of {0} named {1}", name, playerName);
         }
 
-        private void SendPacket(string[] args, int length, string full)
+        private void SendPacket(string[] args, int length, string full, Client client)
         {
             string name = args[1].Trim('\"');
-            int ID = 0;
             byte type = byte.Parse(args[2]);
             byte subType = byte.Parse(args[3]);
             byte flags = byte.Parse(args[4]);
@@ -646,6 +642,7 @@ namespace PolarisServer
             bool foundPlayer = false;
 
             // Find the player
+            int ID = 0;
             ID = Helper.FindPlayerByUsername(name);
             if (ID != -1)
                 foundPlayer = true;
@@ -653,7 +650,7 @@ namespace PolarisServer
             // Couldn't find the username
             if (!foundPlayer)
             {
-                Logger.WriteError("[CMD] Could not find user " + name);
+                Logger.WriteCommand(client, "[CMD] Could not find user " + name);
                 return;
             }
 
@@ -667,10 +664,10 @@ namespace PolarisServer
             // Send packet
             PolarisApp.Instance.server.Clients[ID].SendPacket(type, subType, flags, data);
 
-            Logger.WriteCommand("[CMD] Sent packet {0:X}-{1:X} with flags {2} to {3}", type, subType, flags, name);
+            Logger.WriteCommand(client, "[CMD] Sent packet {0:X}-{1:X} with flags {2} to {3}", type, subType, flags, name);
         }
 
-        private void SendPacketDirectory(string[] args, int length, string full)
+        private void SendPacketDirectory(string[] args, int length, string full, Client client)
         {
             string name = args[1].Trim('\"');
             int ID = 0;
@@ -685,7 +682,7 @@ namespace PolarisServer
             // Couldn't find the username
             if (!foundPlayer)
             {
-                Logger.WriteError("[CMD] Could not find user " + name);
+                Logger.WriteCommand(client, "[CMD] Could not find user " + name);
                 return;
             }
 
@@ -706,11 +703,11 @@ namespace PolarisServer
                 // Send packet
                 PolarisApp.Instance.server.Clients[ID].SendPacket(data[4], data[5], data[6], packet);
 
-                Logger.WriteCommand("[CMD] Sent contents of {0} as packet {1:X}-{2:X} with flags {3} to {4}", path, data[4], data[5], data[6], name);
+                Logger.WriteCommand(client, "[CMD] Sent contents of {0} as packet {1:X}-{2:X} with flags {3} to {4}", path, data[4], data[5], data[6], name);
             }
         }
 
-        private void SendPacketFile(string[] args, int length, string full)
+        private void SendPacketFile(string[] args, int length, string full, Client client)
         {
             string name = args[1].Trim('\"');
             int ID = 0;
@@ -729,7 +726,6 @@ namespace PolarisServer
                 return;
             }
 
-
             // Pull packet from the specified file
             int index = -1;
             byte[] data = File.ReadAllBytes(filename);
@@ -742,7 +738,7 @@ namespace PolarisServer
             // Send packet
             PolarisApp.Instance.server.Clients[ID].SendPacket(data[4], data[5], data[6], packet);
 
-            Logger.WriteCommand("[CMD] Sent contents of {0} as packet {1:X}-{2:X} with flags {3} to {4}", filename, data[4], data[5], data[6], name);
+            Logger.WriteCommand(client, "[CMD] Sent contents of {0} as packet {1:X}-{2:X} with flags {3} to {4}", filename, data[4], data[5], data[6], name);
         }
 
         #endregion
