@@ -51,7 +51,7 @@ namespace PolarisServer.Database
                 }
                 this.SaveChanges();
 
-                Logger.WriteInternal("[DB ] Loaded database with dataset revsision {0}", revision.value);
+                Logger.WriteInternal("[DB ] Loaded database with dataset revision {0}", revision.value);
             }
             catch (Exception ex)
             {
