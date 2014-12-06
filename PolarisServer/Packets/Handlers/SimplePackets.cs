@@ -46,6 +46,28 @@ namespace PolarisServer.Packets.Handlers
         }
     }
 
+    [PacketHandlerAttr(0x11, 0x1D)]
+    public class GuildInfoRequest : PacketHandler
+    {
+        public override void HandlePacket(Client context, byte[] data, uint position, uint size)
+        {
+            PacketReader reader = new PacketReader(data);
+            reader.BaseStream.Seek(0xC, SeekOrigin.Begin);
+            uint ID = reader.ReadUInt32();
+
+            foreach (Client client in PolarisApp.Instance.server.Clients)
+            {
+                if (client.Character.CharacterID == ID)
+                {
+                    GuildInfoPacket infoPacket = new GuildInfoPacket(context.Character);
+                    context.SendPacket(infoPacket);
+                    Logger.Write("[NFO] Sent guild info to " + client.Character.CharacterID);
+                    break;
+                }
+            }
+        }
+    }
+    
     [PacketHandlerAttr(0x11, 0x2B)]
     public class LogOutRequest : PacketHandler
     {

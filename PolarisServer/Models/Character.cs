@@ -83,7 +83,7 @@ namespace PolarisServer.Models
             public fixed byte uknown_6[2];
             public ClassTypeField enabledClasses;
             public fixed byte uknown_8[2];
-            public byte _padding_B;
+            public byte padding0;
 
             public Entries entries;
 
