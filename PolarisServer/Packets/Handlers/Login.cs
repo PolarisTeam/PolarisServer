@@ -13,8 +13,6 @@ namespace PolarisServer.Packets.Handlers
 
         public override void HandlePacket(Client context, byte[] data, uint position, uint size)
         {
-            // Parse the stuff we received
-
             var reader = new Packets.PacketReader(data, position, size);
 
             reader.BaseStream.Seek(0x2C, SeekOrigin.Current);
@@ -32,7 +30,7 @@ namespace PolarisServer.Packets.Handlers
             var users = from u in db.Players
                         where u.Username == username
                         select u;
-            
+
             string error = "";
             Database.Player user = null;
 
@@ -50,20 +48,20 @@ namespace PolarisServer.Packets.Handlers
                     error = "Username must not contain special characters.\nPlease use letters and numbers only.";
                     user = null;
                 }
-                // We're all good!
-                else
+                else // We're all good!
                 {
                     // Insert new player into database
                     user = new Database.Player
                     {
                         Username = username,
                         Password = BCrypt.Net.BCrypt.HashPassword(password),
+                        Nickname = username, // Since we can't display the nickname prompt yet, just default it to the username
                         SettingsINI = System.IO.File.ReadAllText("settings.txt")
                     };
                     db.Players.Add(user);
                     db.SaveChanges();
 
-                    //context.SendPacket(0x11, 0x1e, 0x0, new byte[0x44]); // Request nickname
+                    // context.SendPacket(0x11, 0x1e, 0x0, new byte[0x44]); // Request nickname
                 }
             }
             else
@@ -76,11 +74,10 @@ namespace PolarisServer.Packets.Handlers
                 }
             }
 
-
             // Mystery packet
-            var mystery = new Packets.PacketWriter();
+            var mystery = new PacketWriter();
             mystery.Write((uint)100);
-            //SendPacket (0x11, 0x49, 0, mystery.ToArray ());
+            // SendPacket(0x11, 0x49, 0, mystery.ToArray());
 
             // Login response packet
             var resp = new Packets.PacketWriter();
@@ -94,8 +91,6 @@ namespace PolarisServer.Packets.Handlers
                 context.SendPacket(0x11, 1, 4, resp.ToArray());
                 return;
             }
-
-
 
             resp.Write((uint)user.PlayerID); // Player ID
             resp.Write((uint)0); // Unknown
@@ -113,7 +108,7 @@ namespace PolarisServer.Packets.Handlers
 
             context.User = user;
 
-            //context.SendPacket(new SystemMessagePacket("I looooooove my Raxxy <3", SystemMessagePacket.MessageType.AdminMessage));
+            // context.SendPacket(new SystemMessagePacket("I looooooove my Raxxy <3", SystemMessagePacket.MessageType.AdminMessage));
         }
     }
 }
