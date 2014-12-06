@@ -104,10 +104,7 @@ namespace PolarisServer
                 queryServers.Add(new QueryServer(QueryMode.ShipList, 12099 + (100 * i)));
 
             //Check for settings.txt [AIDA]
-            if (File.Exists("settings.txt"))
-            {
-                Logger.WriteInternal("[CFG ] Loaded settings.txt");
-            }
+            if (File.Exists("settings.txt")) {}
             else
             {
                 //If it doesn't exist, throw an error and quit [AIDA]
