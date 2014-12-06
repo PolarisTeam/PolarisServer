@@ -113,6 +113,17 @@ namespace PolarisServer
                 Environment.Exit(0);
             }
 
+            //Check for Private Key BLOB [AIDA]
+            //tfw Kyle will come along and rewrite my code and yell at me
+            if (File.Exists("privateKey.blob")) { }
+            else
+            {
+                //If it doesn't exist, throw an error and quit [AIDA]
+                Logger.WriteInternal("[ERR] Failed to load privateKey.blob. Press any key to quit.");
+                Console.ReadKey();
+                Environment.Exit(0);
+            }
+
             server.Run();
         }
         
