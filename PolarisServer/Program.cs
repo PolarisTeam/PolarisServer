@@ -18,7 +18,7 @@ namespace PolarisServer
 
         public PolarisEF Database { get { return database; } }
         private PolarisEF database;
-        
+
         public static IPAddress BindAddress = IPAddress.Parse("127.0.0.1");
         public List<QueryServer> queryServers = new List<QueryServer>();
 
@@ -30,11 +30,11 @@ namespace PolarisServer
         public static void Main(string[] args)
         {
             Config = new Config();
-            
+
             ConsoleSystem = new ConsoleSystem();
             ConsoleSystem.thread = new Thread(new ThreadStart(ConsoleSystem.StartThread));
             ConsoleSystem.thread.Start();
-            
+
             // Setup function exit handlers to guarentee Exit() is run before closing
             Console.CancelKeyPress += Exit;
             AppDomain.CurrentDomain.ProcessExit += Exit;
@@ -81,6 +81,24 @@ namespace PolarisServer
                 Logger.WriteException("An error has occurred while parsing command line parameters", ex);
             }
 
+            // Check for settings.txt [AIDA]
+            if (!File.Exists("settings.txt"))
+            {
+                // If it doesn't exist, throw an error and quit [AIDA]
+                Logger.WriteError("[ERR] Failed to load settings.txt. Press any key to quit.");
+                Console.ReadKey();
+                Environment.Exit(0);
+            }
+
+            // Check for Private Key BLOB [AIDA]
+            if (!File.Exists("privateKey.blob"))
+            {
+                // If it doesn't exist, throw an error and quit [AIDA]
+                Logger.WriteError("[ERR] Failed to load privateKey.blob. Press any key to quit.");
+                Console.ReadKey();
+                Environment.Exit(0);
+            }
+
             Logger.Write("Arf. Polaris Server version GIT.\nCreated by PolarisTeam (http://github.com/PolarisTeam) and licenced under AGPL.");
             System.Data.Entity.Database.SetInitializer(new DropCreateDatabaseIfModelChanges<PolarisEF>());
             instance = new PolarisApp();
@@ -92,41 +110,20 @@ namespace PolarisServer
             Logger.WriteInternal("Server starting at " + DateTime.Now.ToString());
 
             server = new Server();
-            
+
             Config.Load();
-            
+
             PacketHandlers.LoadPacketHandlers();
-            
+
             Logger.WriteInternal("[DB ] Loading database...");
             database = new PolarisEF();
-            
+
             for (int i = 0; i < 10; i++)
                 queryServers.Add(new QueryServer(QueryMode.ShipList, 12099 + (100 * i)));
 
-            //Check for settings.txt [AIDA]
-            if (File.Exists("settings.txt")) {}
-            else
-            {
-                //If it doesn't exist, throw an error and quit [AIDA]
-                Logger.WriteInternal("[ERR] Failed to load settings.txt. Press any key to quit.");
-                Console.ReadKey();
-                Environment.Exit(0);
-            }
-
-            //Check for Private Key BLOB [AIDA]
-            //tfw Kyle will come along and rewrite my code and yell at me
-            if (File.Exists("privateKey.blob")) { }
-            else
-            {
-                //If it doesn't exist, throw an error and quit [AIDA]
-                Logger.WriteInternal("[ERR] Failed to load privateKey.blob. Press any key to quit.");
-                Console.ReadKey();
-                Environment.Exit(0);
-            }
-
             server.Run();
         }
-        
+
         static void Exit(object sender, EventArgs e)
         {
             // Save the configuration

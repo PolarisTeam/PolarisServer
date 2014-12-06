@@ -28,44 +28,42 @@ namespace PolarisServer.Network
 
         public void Run()
         {
-            //Added exception catching [AIDA]
             try
             {
-            // Compile a list of possibly-readable sockets
-            readableSockets.Clear();
-            readableSockets.Add(listener.Server);
+                // Compile a list of possibly-readable sockets
+                readableSockets.Clear();
+                readableSockets.Add(listener.Server);
 
-            foreach (SocketClient client in clients)
-                readableSockets.Add(client.Socket.Client);
+                foreach (SocketClient client in clients)
+                    readableSockets.Add(client.Socket.Client);
 
-            Socket.Select(readableSockets, null, null, 1000000);
+                Socket.Select(readableSockets, null, null, 1000000);
 
-            foreach (Socket socket in readableSockets)
-            {
-                if (socket == listener.Server)
+                foreach (Socket socket in readableSockets)
                 {
-                    // New connection
-                    Logger.WriteInternal("[HI!] New connection!");
+                    if (socket == listener.Server)
+                    {
+                        // New connection
+                        Logger.WriteInternal("[HI!] New connection!");
 
-                    SocketClient c = new SocketClient(this, listener.AcceptTcpClient());
+                        SocketClient c = new SocketClient(this, listener.AcceptTcpClient());
 
-                    clients.Add(c);
-                    socketMap.Add(c.Socket.Client, c);
+                        clients.Add(c);
+                        socketMap.Add(c.Socket.Client, c);
 
-                    NewClient(c);
-                }
-                else
-                {
-                    // Readable data
-                    if (socket.Connected)
-                        socketMap[socket].OnReadable();
+                        NewClient(c);
+                    }
+                    else
+                    {
+                        // Readable data
+                        if (socket.Connected)
+                            socketMap[socket].OnReadable();
+                    }
                 }
             }
-            }
-        catch (Exception e)
+            catch (Exception ex)
             {
-                //Output the error [AIDA]
-                Logger.WriteInternal("An error occurred: '{0}'", e);
+                Logger.WriteException("A socket error occurred", ex);
             }
         }
 
