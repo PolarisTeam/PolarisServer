@@ -34,10 +34,6 @@ namespace PolarisServer.Packets.Handlers
             setPlayerID.WritePlayerHeader((uint)context.User.PlayerID);
             context.SendPacket(0x06, 0x00, 0, setPlayerID.ToArray());
 
-            // Guild Info
-            GuildInfoPacket guildPacket = new GuildInfoPacket(context.Character);
-            context.SendPacket(guildPacket);
-
             // Spawn Lobby Objects
             if (Directory.Exists("objects/lobby"))
             {
