@@ -28,6 +28,9 @@ namespace PolarisServer.Network
 
         public void Run()
         {
+            //Added exception catching [AIDA]
+            try
+            {
             // Compile a list of possibly-readable sockets
             readableSockets.Clear();
             readableSockets.Add(listener.Server);
@@ -57,6 +60,12 @@ namespace PolarisServer.Network
                     if (socket.Connected)
                         socketMap[socket].OnReadable();
                 }
+            }
+            }
+        catch (Exception e)
+            {
+                //Output the error [AIDA]
+                Logger.WriteInternal("An error occurred: '{0}'", e);
             }
         }
 
