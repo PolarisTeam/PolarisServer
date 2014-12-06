@@ -4,6 +4,7 @@ using System.Data.Entity;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+using System.IO;
 
 using PolarisServer.Database;
 using PolarisServer.Packets.Handlers;
@@ -101,6 +102,19 @@ namespace PolarisServer
             
             for (int i = 0; i < 10; i++)
                 queryServers.Add(new QueryServer(QueryMode.ShipList, 12099 + (100 * i)));
+
+            //Check for settings.txt [AIDA]
+            if (File.Exists("settings.txt"))
+            {
+                Logger.WriteInternal("[CFG ] Loaded settings.txt");
+            }
+            else
+            {
+                //If it doesn't exist, throw an error and quit [AIDA]
+                Logger.WriteInternal("Error: Failed to load settings.txt. Press any key to quit.");
+                Console.ReadKey();
+                Environment.Exit(0);
+            }
 
             server.Run();
         }
