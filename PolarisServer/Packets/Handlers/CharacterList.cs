@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace PolarisServer.Packets.Handlers
 {
-    [PacketHandlerAttr(0x11, 2)]
+    [PacketHandlerAttr(0x11, 0x02)]
     public class RequestCharacterList : PacketHandler
     {
         public override void HandlePacket(Client context, byte[] data, uint position, uint size)
