@@ -51,8 +51,8 @@ namespace PolarisServer
 
         void HandleNewClient(SocketClient client)
         {
-            var c = new Client(this, client);
-            clients.Add(c);
+            Client newClient = new Client(this, client);
+            clients.Add(newClient);
         }
         
         void PingClients(object sender, System.Timers.ElapsedEventArgs e)

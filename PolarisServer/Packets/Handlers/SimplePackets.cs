@@ -11,15 +11,21 @@ namespace PolarisServer.Packets.Handlers
     [PacketHandlerAttr(0x03, 0x0C)]
     public class PingResponse : PacketHandler
     {
+        #region implemented abstract members of PacketHandler
+
         public override void HandlePacket(Client context, byte[] data, uint position, uint size)
         {
             Logger.Write("[HI!] Recieved ping response from " + context.User.Username);
         }
+        
+        #endregion
     }
 
     [PacketHandlerAttr(0x11, 0x06)]
     public class DeleteCharacter : PacketHandler
     {
+        #region implemented abstract members of PacketHandler
+
         public override void HandlePacket(Client context, byte[] data, uint position, uint size)
         {
             PacketReader reader = new PacketReader(data);
@@ -44,26 +50,34 @@ namespace PolarisServer.Packets.Handlers
             // TODO: What do we do after a deletion?
             context.Socket.Close();
         }
+
+        #endregion
     }
 
     [PacketHandlerAttr(0x11, 0x0D)]
     public class PingTimestampResponse : PacketHandler
     {
+        #region implemented abstract members of PacketHandler
+
         public override void HandlePacket(Client context, byte[] data, uint position, uint size)
         {
-            var reader = new PacketReader(data, position, size);
+            PacketReader reader = new PacketReader(data, position, size);
             ulong clientTime = reader.ReadUInt64();
 
-            var writer = new PacketWriter();
+            PacketWriter writer = new PacketWriter();
             writer.Write(clientTime);
             writer.Write(Helper.Timestamp(DateTime.UtcNow));
             context.SendPacket(0x11, 0xE, 0, writer.ToArray());
         }
+
+        #endregion
     }
     
     [PacketHandlerAttr(0x11, 0x1D)]
     public class GuildInfoRequest : PacketHandler
     {
+        #region implemented abstract members of PacketHandler
+
         public override void HandlePacket(Client context, byte[] data, uint position, uint size)
         {
             PacketReader reader = new PacketReader(data);
@@ -81,20 +95,28 @@ namespace PolarisServer.Packets.Handlers
                 }
             }
         }
+
+        #endregion
     }
     
     [PacketHandlerAttr(0x11, 0x2B)]
     public class LogOutRequest : PacketHandler
     {
+        #region implemented abstract members of PacketHandler
+
         public override void HandlePacket(Client context, byte[] data, uint position, uint size)
         {
             context.Socket.Close();
         }
+
+        #endregion
     }
 
     [PacketHandlerAttr(0x11, 0x41)]
     public class CreateCharacterOne : PacketHandler
     {
+        #region implemented abstract members of PacketHandler
+
         public override void HandlePacket(Client context, byte[] data, uint position, uint size)
         {
             PacketWriter writer = new PacketWriter();
@@ -105,11 +127,15 @@ namespace PolarisServer.Packets.Handlers
 
             context.SendPacket(0x11, 0x42, 0x0, writer.ToArray());
         }
+
+        #endregion
     }
 
     [PacketHandlerAttr(0x11, 0x54)]
     public class CreateCharacterTwo : PacketHandler
     {
+        #region implemented abstract members of PacketHandler
+
         public override void HandlePacket(Client context, byte[] data, uint position, uint size)
         {
             PacketWriter writer = new PacketWriter();
@@ -117,5 +143,7 @@ namespace PolarisServer.Packets.Handlers
 
             context.SendPacket(0x11, 0x55, 0x0, writer.ToArray());
         }
+        
+        #endregion
     }
 }

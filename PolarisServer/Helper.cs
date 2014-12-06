@@ -47,6 +47,7 @@ namespace PolarisServer
         }
         
         #region Float Manipulation
+
         public static unsafe float UIntToFloat(uint input)
         {
             float* fp = (float*)(&input);
@@ -57,7 +58,6 @@ namespace PolarisServer
             uint* ip = (uint*)(&input);
             return *ip;
         }
-
 
         public static float FloatFromHalfPrecision(ushort value)
         {
@@ -73,6 +73,7 @@ namespace PolarisServer
                 return 0;
             }
         }
+
         public static ushort FloatToHalfPrecision(float value)
         {
             uint ivalue = FloatToUInt(value);
@@ -96,6 +97,7 @@ namespace PolarisServer
                 return (ushort)(ivalue >> 16);
             }
         }
+
         #endregion
 
         public static int FindPlayerByUsername(string name)
@@ -111,7 +113,6 @@ namespace PolarisServer
         {
             return (ushort)((type << 8) | subtype);
         }
-
 
         #region Timestamps
 

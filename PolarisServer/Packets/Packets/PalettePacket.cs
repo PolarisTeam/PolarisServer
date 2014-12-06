@@ -10,7 +10,7 @@ namespace PolarisServer.Packets
 
         public override byte[] Build()
         {
-            var writer = new PacketWriter();
+            PacketWriter writer = new PacketWriter();
 
             // Enable flag
             writer.Write((byte)1);

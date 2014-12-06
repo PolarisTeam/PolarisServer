@@ -28,7 +28,7 @@ namespace PolarisServer.Packets
 
         public override byte[] Build()
         {
-            var writer = new PacketWriter();
+            PacketWriter writer = new PacketWriter();
 
             // Player header
             writer.WritePlayerHeader((uint)character.Player.PlayerID);

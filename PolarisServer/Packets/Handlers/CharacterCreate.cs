@@ -8,6 +8,8 @@ namespace PolarisServer.Packets.Handlers
     [PacketHandlerAttr(0x11, 0x05)]
     public class CharacterCreate : PacketHandler
     {
+        #region implemented abstract members of PacketHandler
+
         public override void HandlePacket(Client context, byte[] data, uint position, uint size)
         {
             if (context.User == null)
@@ -50,6 +52,8 @@ namespace PolarisServer.Packets.Handlers
             // Spawn
             context.SendPacket(new NoPayloadPacket(0x11, 0x3E));
         }
+
+        #endregion
     }
 }
 

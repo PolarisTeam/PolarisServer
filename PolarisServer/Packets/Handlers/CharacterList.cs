@@ -6,6 +6,8 @@ namespace PolarisServer.Packets.Handlers
     [PacketHandlerAttr(0x11, 0x02)]
     public class RequestCharacterList : PacketHandler
     {
+        #region implemented abstract members of PacketHandler
+
         public override void HandlePacket(Client context, byte[] data, uint position, uint size)
         {
             if (context.User == null)
@@ -42,8 +44,10 @@ namespace PolarisServer.Packets.Handlers
             // CK note: Extra data is likely current equipment, playtime, etc.
             // All of that data is currently unaccounted for at the moment.
 
-            context.SendPacket(0x11, 0x3, 0x0, writer.ToArray());
+            context.SendPacket(0x11, 0x03, 0, writer.ToArray());
         }
+
+        #endregion
     }
 }
 

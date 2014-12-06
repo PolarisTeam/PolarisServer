@@ -7,13 +7,11 @@ namespace PolarisServer.Packets.Handlers
     [PacketHandlerAttr(0x11, 0x0)]
     public class Login : PacketHandler
     {
-        public Login()
-        {
-        }
-
+        #region implemented abstract members of PacketHandler
+        
         public override void HandlePacket(Client context, byte[] data, uint position, uint size)
         {
-            var reader = new Packets.PacketReader(data, position, size);
+            PacketReader reader = new Packets.PacketReader(data, position, size);
 
             reader.BaseStream.Seek(0x2C, SeekOrigin.Current);
 
@@ -22,8 +20,8 @@ namespace PolarisServer.Packets.Handlers
 
             reader.BaseStream.Seek(0x114, SeekOrigin.Current);
 
-            var username = reader.ReadFixedLengthASCII(64);
-            var password = reader.ReadFixedLengthASCII(64);
+            string username = reader.ReadFixedLengthASCII(64);
+            string password = reader.ReadFixedLengthASCII(64);
 
             // What am I doing here even
             var db = PolarisApp.Instance.Database;
@@ -75,12 +73,12 @@ namespace PolarisServer.Packets.Handlers
             }
 
             // Mystery packet
-            var mystery = new PacketWriter();
+            PacketWriter mystery = new PacketWriter();
             mystery.Write((uint)100);
             // SendPacket(0x11, 0x49, 0, mystery.ToArray());
 
             // Login response packet
-            var resp = new Packets.PacketWriter();
+            PacketWriter resp = new PacketWriter();
             resp.Write((uint)((user == null) ? 1 : 0)); // Status flag: 0=success, 1=error
             resp.WriteUTF16(error, 0x8BA4, 0xB6);
 
@@ -102,7 +100,7 @@ namespace PolarisServer.Packets.Handlers
             context.SendPacket(0x11, 1, 4, resp.ToArray());
 
             // Settings packet
-            var settings = new Packets.PacketWriter();
+            PacketWriter settings = new PacketWriter();
             settings.WriteASCII(user.SettingsINI, 0x54AF, 0x100);
             context.SendPacket(0x2B, 2, 4, settings.ToArray());
 
@@ -110,6 +108,8 @@ namespace PolarisServer.Packets.Handlers
 
             // context.SendPacket(new SystemMessagePacket("I looooooove my Raxxy <3", SystemMessagePacket.MessageType.AdminMessage));
         }
+
+        #endregion
     }
 }
 

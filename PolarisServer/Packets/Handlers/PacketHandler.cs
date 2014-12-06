@@ -30,9 +30,11 @@ namespace PolarisServer.Packets.Handlers
             var classes = from t in Assembly.GetExecutingAssembly().GetTypes()
                           where t.IsClass && t.Namespace == "PolarisServer.Packets.Handlers" && t.IsSubclassOf(typeof(PacketHandler))
                           select t;
+            
             foreach (Type t in classes.ToList())
             {
                 Attribute[] attrs = (Attribute[])t.GetCustomAttributes(typeof(PacketHandlerAttr), false);
+                
                 if (attrs.Length > 0)
                 {
                     PacketHandlerAttr attr = (PacketHandlerAttr)attrs[0];
@@ -53,10 +55,11 @@ namespace PolarisServer.Packets.Handlers
         {
             ushort packetCode = Helper.PacketTypeToUShort(type, subtype);
             PacketHandler handler = null;
+            
             if (handlers.ContainsKey(packetCode))
                 handlers.TryGetValue(packetCode, out handler);
+            
             return handler;
-
         }
 
         public static PacketHandler[] GetLoadedHandlers()

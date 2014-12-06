@@ -5,10 +5,12 @@ namespace PolarisServer.Packets.Handlers
     [PacketHandlerAttr(0x11, 0x4)]
     public class StartGame : PacketHandler
     {
+        #region implemented abstract members of PacketHandler
+
         public override void HandlePacket(Client context, byte[] data, uint position, uint size)
         {
-            var reader = new PacketReader(data, position, size);
-            var charID = reader.ReadUInt32();
+            PacketReader reader = new PacketReader(data, position, size);
+            uint charID = reader.ReadUInt32();
 
             if (context.User == null)
                 return;
@@ -28,6 +30,8 @@ namespace PolarisServer.Packets.Handlers
 
             // TODO Set area, Set character, possibly more. See PolarisLegacy for more.
         }
+
+        #endregion
     }
 
     [PacketHandlerAttr(0x03, 0x03)]
@@ -43,27 +47,36 @@ namespace PolarisServer.Packets.Handlers
         // Just insantiate a new CharacterSpawn and push it through until then
         // - Kyle
 
+        #region implemented abstract members of PacketHandler
+
         public override void HandlePacket(Client context, byte[] data, uint position, uint size)
         {
             // Set Player ID
-            var setPlayerID = new PacketWriter();
+            PacketWriter setPlayerID = new PacketWriter();
             setPlayerID.WritePlayerHeader((uint)context.User.PlayerID);
             context.SendPacket(6, 0, 0, setPlayerID.ToArray());
 
             // Spawn Player
             new CharacterSpawn().HandlePacket(context, data, position, size);
         }
+
+        #endregion
     }
 
     [PacketHandlerAttr(0x03, 0x10)]
     public class DoItMaybe : PacketHandler
     {
+        #region implemented abstract members of PacketHandler
+
         public override void HandlePacket(Client context, byte[] data, uint position, uint size)
         {
             if (context.User == null || context.Character == null)
                 return;
-            context.SendPacket(new NoPayloadPacket(3, 0x23));
+            
+            context.SendPacket(new NoPayloadPacket(0x03, 0x23));
         }
+
+        #endregion
     }
 }
 

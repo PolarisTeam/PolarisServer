@@ -3,6 +3,8 @@ using System.IO;
 using System.Text;
 using System.Runtime.InteropServices;
 
+using PolarisServer.Models;
+
 namespace PolarisServer.Packets
 {
     public class PacketWriter : BinaryWriter
@@ -110,7 +112,7 @@ namespace PolarisServer.Packets
             }
         }
 
-        public void Write(Models.MysteryPositions s)
+        public void Write(MysteryPositions s)
         {
             Write(Helper.FloatToHalfPrecision(s.a));
             Write(Helper.FloatToHalfPrecision(s.b));
@@ -143,7 +145,7 @@ namespace PolarisServer.Packets
 
         public byte[] ToArray()
         {
-            var ms = (MemoryStream)BaseStream;
+            MemoryStream ms = (MemoryStream)BaseStream;
             return ms.ToArray();
         }
     }

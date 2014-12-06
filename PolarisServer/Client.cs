@@ -11,7 +11,7 @@ namespace PolarisServer
 {
     public class Client
     {
-        internal static RSACryptoServiceProvider _rsaCsp = null;
+        internal static RSACryptoServiceProvider rsaCsp = null;
 
         private bool isClosed = false;
         public bool IsClosed { get { return isClosed; } }
@@ -45,12 +45,12 @@ namespace PolarisServer
             inputARC4 = null;
             outputARC4 = null;
 
-            var welcome = new Packets.PacketWriter();
+            PacketWriter welcome = new PacketWriter();
             welcome.Write((ushort)3);
             welcome.Write((ushort)201);
             welcome.Write((ushort)0);
             welcome.Write((ushort)0);
-            SendPacket(3, 8, 0, welcome.ToArray());
+            SendPacket(0x03, 0x08, 0, welcome.ToArray());
         }
 
         void HandleDataReceived(byte[] data, int size)
@@ -155,7 +155,7 @@ namespace PolarisServer
 
         public void SendPacket(byte typeA, byte typeB, byte flags, byte[] data)
         {
-            var packet = new byte[8 + data.Length];
+            byte[] packet = new byte[8 + data.Length];
 
             // TODO: Use BinaryWriter here maybe?
             uint dataLen = (uint)data.Length + 8;
@@ -216,7 +216,7 @@ namespace PolarisServer
             if (!Directory.Exists(packetPath))
                 Directory.CreateDirectory(packetPath);
 
-            var filename = string.Format("{0}/{1}.{2:X}.{3:X}.{4}.bin", packetPath, packetID++, typeA, typeB, fromClient ? "C" : "S");
+            string filename = string.Format("{0}/{1}.{2:X}.{3:X}.{4}.bin", packetPath, packetID++, typeA, typeB, fromClient ? "C" : "S");
 
             using (var stream = File.OpenWrite(filename))
             {

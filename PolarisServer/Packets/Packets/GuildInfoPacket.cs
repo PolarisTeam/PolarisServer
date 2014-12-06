@@ -18,7 +18,7 @@ namespace PolarisServer.Packets
 
         public override byte[] Build()
         {
-            var writer = new PacketWriter();
+            PacketWriter writer = new PacketWriter();
 
             writer.Write((byte)1); // Always 1?
 

@@ -63,9 +63,9 @@ namespace PolarisServer
             }
         }
 
-        private unsafe void DoShipList(Socket s)
+        private unsafe void DoShipList(Socket socket)
         {
-            PacketWriter w = new PacketWriter();
+            PacketWriter writer = new PacketWriter();
             List<ShipEntry> entries = new List<ShipEntry>();
 
             for (int i = 1; i < 11; i++)
@@ -78,30 +78,30 @@ namespace PolarisServer
 				entry.ip = PolarisApp.BindAddress.GetAddressBytes();
                 entries.Add(entry);
             }
-            w.WriteStruct(new PacketHeader(Marshal.SizeOf(typeof(ShipEntry)) * entries.Count + 12, 0x11, 0x3D, 0x4, 0x0));
-            w.WriteMagic((uint)entries.Count, 0xE418, 81);
+            writer.WriteStruct(new PacketHeader(Marshal.SizeOf(typeof(ShipEntry)) * entries.Count + 12, 0x11, 0x3D, 0x4, 0x0));
+            writer.WriteMagic((uint)entries.Count, 0xE418, 81);
             foreach (ShipEntry entry in entries)
-                w.WriteStruct(entry);
+                writer.WriteStruct(entry);
 
-            w.Write((Int32)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds);
-            w.Write((Int32)1);
+            writer.Write((Int32)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds);
+            writer.Write((Int32)1);
 
-            s.Send(w.ToArray());
-            s.Close();
+            socket.Send(writer.ToArray());
+            socket.Close();
 
         }
 
-        private void DoBlockBalance(Socket s)
+        private void DoBlockBalance(Socket socket)
         {
-            PacketWriter w = new PacketWriter();
-            w.WriteStruct(new PacketHeader(0x90, 0x11, 0x2C, 0x0, 0x0));
-            w.Write(new byte[0x64 - 8]);
-            w.Write(PolarisApp.BindAddress.GetAddressBytes());
-            w.Write((UInt16)12205);
-            w.Write(new byte[0x90 - 0x6A]);
+            PacketWriter writer = new PacketWriter();
+            writer.WriteStruct(new PacketHeader(0x90, 0x11, 0x2C, 0x0, 0x0));
+            writer.Write(new byte[0x64 - 8]);
+            writer.Write(PolarisApp.BindAddress.GetAddressBytes());
+            writer.Write((UInt16)12205);
+            writer.Write(new byte[0x90 - 0x6A]);
 
-            s.Send(w.ToArray());
-            s.Close();
+            socket.Send(writer.ToArray());
+            socket.Close();
         }
     }
 }

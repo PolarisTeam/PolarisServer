@@ -14,7 +14,7 @@ namespace PolarisServer.Packets
 
         public override byte[] Build()
         {
-            var writer = new PacketWriter();
+            PacketWriter writer = new PacketWriter();
 
             // AC
             writer.Write(newACAmount);
