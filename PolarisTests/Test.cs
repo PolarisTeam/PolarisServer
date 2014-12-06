@@ -41,19 +41,20 @@ namespace PolarisTests
         {
             unsafe
             {
+                var size = Marshal.SizeOf(typeof(Character.JobParam));
                 Assert.IsNotNull(jp);
-                byte[] jpArr = new byte[sizeof(Character.JobParam)];
-                IntPtr ptr = Marshal.AllocHGlobal(sizeof(Character.JobParam));
+                byte[] jpArr = new byte[size];
+                IntPtr ptr = Marshal.AllocHGlobal(size);
 
                 Marshal.StructureToPtr(jp, ptr, true);
-                Marshal.Copy(ptr, jpArr, 0, sizeof(Character.JobParam));
+                Marshal.Copy(ptr, jpArr, 0, size);
                 Marshal.FreeHGlobal(ptr);
 
                 foreach (byte b in jpArr)
                 {
                     Assert.AreEqual(0, b);
                 }
-                Assert.AreEqual(sizeof(Character.JobParam), jpArr.Length);
+                Assert.AreEqual(size, jpArr.Length);
             }
         }
 
@@ -73,7 +74,7 @@ namespace PolarisTests
         [Test]
         public unsafe void TestStructureWrite()
         {
-            var structureSize = sizeof(Character.JobParam);
+            var structureSize = Marshal.SizeOf(typeof(Character.JobParam));
             Character.JobParam jp = new Character.JobParam();
             jp.entries.hunter.level = 7;
             writer.WriteStruct(jp);
