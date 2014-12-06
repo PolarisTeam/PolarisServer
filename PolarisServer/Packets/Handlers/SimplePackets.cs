@@ -103,4 +103,19 @@ namespace PolarisServer.Packets.Handlers
             context.SendPacket(0x11, 0x55, 0x0, writer.ToArray());
         }
     }
+
+    [PacketHandlerAttr(0x11, 0xD)]
+    public class PingHandler : PacketHandler
+    {
+        public override void HandlePacket(Client context, byte[] data, uint position, uint size)
+        {
+            var reader = new PacketReader(data, position, size);
+            ulong clientTime = reader.ReadUInt64();
+
+            var writer = new PacketWriter();
+            writer.Write(clientTime);
+            writer.Write(Helper.Timestamp(DateTime.UtcNow));
+            context.SendPacket(0x11, 0xE, 0, writer.ToArray());
+        }
+    }
 }

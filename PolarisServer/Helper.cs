@@ -111,5 +111,17 @@ namespace PolarisServer
         {
             return (ushort)((type << 8) | subtype);
         }
+
+
+        #region Timestamps
+        public static long Timestamp(DateTime time)
+        {
+            return time.ToFileTimeUtc() / 10000;
+        }
+        public static DateTime Timestamp(long stamp)
+        {
+            return DateTime.FromFileTimeUtc(stamp * 10000);
+        }
+        #endregion
     }
 }
