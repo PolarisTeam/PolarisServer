@@ -108,7 +108,7 @@ namespace PolarisServer
             else
             {
                 //If it doesn't exist, throw an error and quit [AIDA]
-                Logger.WriteInternal("Error: Failed to load settings.txt. Press any key to quit.");
+                Logger.WriteInternal("[ERR] Failed to load settings.txt. Press any key to quit.");
                 Console.ReadKey();
                 Environment.Exit(0);
             }
