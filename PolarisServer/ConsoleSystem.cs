@@ -93,8 +93,8 @@ namespace PolarisServer
         List<string> history = new List<string>();
         int historyIndex = 0;
 
-        public int width = 120;
-        public int height = 35;
+        public int width = 80;
+        public int height = 24;
 
         int commandIndex = 0;
         string commandLine = string.Empty;
