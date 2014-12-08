@@ -37,7 +37,7 @@ namespace PolarisServer
         [ConfigComment("Name of the database which contains the Polaris data")]
         public string DatabaseName = "polaris";
         [ConfigComment("Address of the database server")]
-        public string DatabaseAddress = "localhost";
+        public string DatabaseAddress = "127.0.0.1";
         [ConfigComment("Username for logging into the database server")]
         public string DatabaseUsername = "polaris";
         [ConfigComment("Password for logging into the database server")]
