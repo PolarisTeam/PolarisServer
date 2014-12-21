@@ -4,7 +4,7 @@ namespace PolarisServer.Zone
 {
     public class Zone
     {
-        enum ZoneType
+        public enum ZoneType
         {
             Lobby,
             MyRoom,
