@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace PolarisServer
+namespace PolarisServer.Zone
 {
     public class ZoneManager
     {

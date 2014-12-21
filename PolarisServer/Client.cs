@@ -6,6 +6,7 @@ using PolarisServer.Database;
 using PolarisServer.Models;
 using PolarisServer.Network;
 using PolarisServer.Packets;
+using PolarisServer.Zone;
 
 namespace PolarisServer
 {
