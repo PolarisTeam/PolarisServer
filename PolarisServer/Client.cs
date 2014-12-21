@@ -21,8 +21,10 @@ namespace PolarisServer
 
         public SocketClient Socket { get { return socket; } }
 
+        // Game properties, TODO Consider moving these somewhere else
         public Player User { get; set; }
         public Character Character { get; set; }
+        public Zone CurrentZone { get; set; }
 
         private byte[] readBuffer;
         private uint readBufferSize;
