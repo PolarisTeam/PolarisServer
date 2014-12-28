@@ -48,7 +48,7 @@ namespace PolarisServer.Packets.Handlers
                 Logger.Write("[CHT] <{0}> <{1}>", context.Character.Name, message);
 
                 PacketWriter writer = new PacketWriter();
-                writer.WritePlayerHeader((uint)context.Character.CharacterID);
+                writer.WritePlayerHeader((uint)context.User.PlayerID);
                 writer.Write((uint)channel);
                 writer.WriteUTF16(message, 0x9D3F, 0x44);
 
