@@ -50,7 +50,7 @@ namespace PolarisServer.Database
                     this.ServerInfos.Add(revision);
 
                     //TODO Possibly move this somewhere else?
-                    this.Database.SqlQuery("ALTER TABLE Players AUTO_INCREMENT=@p0", 100000000);
+                    this.Database.ExecuteSqlCommand("ALTER TABLE Players AUTO_INCREMENT=100000000");
                 }
                 this.SaveChanges();
 
