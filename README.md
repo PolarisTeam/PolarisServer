@@ -1,7 +1,4 @@
-Polaris Private Server
-====
-
-# Table of Contents
+## Table of Contents
  
 * [What Is It?](#what-is-it)
 * [Installation](#installation)
@@ -9,6 +6,9 @@ Polaris Private Server
   * [Downloading The Latest Version](#downloading-the-latest-version)
 * [Documentation](#documentation)
 * [Licensing](#licensing)
+  * [Third Party Licenses](#third-party-licenses)
+* [Contributing and Feedback](#contributing-and-feedback)
+  * [Core Maintainers](#core-maintainers)
 
 ## What is it?
 `Polaris Private Server` is an open source game private server for the Japanese MMORPG Phantasy Star Online 2. It is currently work-in-progress alpha, under heavy development and is not yet recommended for production use.
@@ -17,8 +17,9 @@ Polaris Private Server
 As `Polaris Private Server` is a work-in-progress there is no set way of installaing and running, in future releases we hope to have this information stored in an INSTALL file. Until then you can either build or download and run the latest version.
 
 ### Building The Latest Version
-For the time being, we only support using mono in order to build Polaris. You need to have MonoDevelop 4 / Xamarin studio installed. You also need the Mono runtime, even on Windows!
-After installing MD / Xamarin and setting up the Mono runtime, open the solution and build!
+For the time being, we only support using mono in order to build Polaris.  
+You need to have MonoDevelop 4 / Xamarin studio installed. You also need the Mono runtime, even on Windows!  
+After installing MD / Xamarin and setting up the Mono runtime, open the solution and build!  
 In the future we will hopefully have a buildserver, xbuild / msbuild support and other fancy things.
 
 ### Downloading The Latest Version 
@@ -55,6 +56,10 @@ There is an IRC channel `#pso2` on BadnikNET(irc.badniknet.net:6667), for talkin
 with testers and developers (when awake and present, etc.). However any questions pertaining to the release dates or asking for hacks will be ignored, and you may be banned from the channel.
 
 ### Core Maintainers
- 
-# <a name="team-members"></a>Team Members
-* "J. Jesus. P. Aguinaga" <admin@listforks.com> 
+
+* "cyberkitsune" <https://github.com/cyberkitsune>
+* "KeyPhact" <https://github.com/KeyPhact>
+* "Kyle873" <https://github.com/Kyle873> 
+* "Lighting Dragon" <https://github.com/LightningDragon>
+* "SonicFreak94" <https://github.com/SonicFreak94>
+* "Treeki" <https://github.com/Treeki>
