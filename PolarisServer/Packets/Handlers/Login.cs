@@ -59,14 +59,6 @@ namespace PolarisServer.Packets.Handlers
                     db.Players.Add(user);
                     db.SaveChanges();
 
-                    //FIXME: This seems too much like a hack. Investiagte correct ways of setting the initial ID.
-                    int lastID = user.PlayerID;
-                    if (lastID < 10000000)
-                    {
-                        user.PlayerID = lastID + 10000000;
-                        db.SaveChanges();
-                    }
-
                     // context.SendPacket(0x11, 0x1e, 0x0, new byte[0x44]); // Request nickname
                 }
             }

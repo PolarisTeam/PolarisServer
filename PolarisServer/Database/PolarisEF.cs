@@ -48,6 +48,9 @@ namespace PolarisServer.Database
                 {
                     revision = new ServerInfo { key = "Revision", value = "0" };
                     this.ServerInfos.Add(revision);
+
+                    //TODO Possibly move this somewhere else?
+                    this.Database.SqlQuery("ALTER TABLE Players AUTO_INCREMENT=100000000");
                 }
                 this.SaveChanges();
 
