@@ -1,0 +1,4 @@
+[submodule "DOCS"]
+path = DOCS
+url = https://github.com/PolarisTeam/PolarisServer.wiki.git
+branch = master

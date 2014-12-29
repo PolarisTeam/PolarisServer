@@ -1,6 +1,8 @@
+[![AGPL License](http://img.shields.io/badge/license-AGPL%20v3-red.svg?style=flat-square)](http://opensource.org/licenses/AGPL-3.0) [![Build Status](https://img.shields.io/jenkins/s/http/build.polaris-server.net/PolarisServer.svg?style=flat-square)](http://build.polaris-server.net)
+
 ## Table of Contents
- 
-* [What Is It?](#what-is-it)
+
+* [What is it?](#what-is-it)
 * [Installation](#installation)
   * [Building The Latest Version](#building-the-latest-version)
   * [Downloading The Latest Version](#downloading-the-latest-version)
@@ -17,25 +19,25 @@
 As `Polaris Private Server` is a work-in-progress there is no set way of installaing and running, in future releases we hope to have this information stored in an INSTALL file. Until then you can either build or download and run the latest version.
 
 ### Building The Latest Version
-For the time being, we only support using mono in order to build Polaris.  
-You need to have MonoDevelop 4 / Xamarin studio installed. You also need the Mono runtime, even on Windows!  
-After installing MD / Xamarin and setting up the Mono runtime, open the solution and build!  
+For the time being, we only support using mono in order to build Polaris.
+You need to have MonoDevelop 4 / Xamarin studio installed. You also need the Mono runtime, even on Windows!
+After installing MD / Xamarin and setting up the Mono runtime, open the solution and build!
 In the future we will hopefully have a buildserver, xbuild / msbuild support and other fancy things.
 
-### Downloading The Latest Version 
+### Downloading The Latest Version
 As the `Polaris Private Server` is a work-in-progress alpha, you can find the latest unstable built version here @ [build.polaris-server.net](http://build.polaris-server.net/job/PolarisServer/lastSuccessfulBuild/artifact/PolarisServer/bin/Debug/PolarisServer-Bundle.zip)
 
 ### Documentation
-All available documentation for the server can be found on the project wiki @ [wiki.polaris-server.net](wiki.polaris-server.net)
+All available documentation for the server can be found on the project wiki @ [wiki.polaris-server.net](http://wiki.polaris-server.net)
 
 ## Licensing
 All code is licensed under the
 [AGPL](https://github.com/PolarisTeam/PolarisServer/blob/master/LICENSE), v3 or later.
 
 ### Third Party Licenses
-    Copyright (c) 2006 Damien Miller <djm@mindrot.org> (jBCrypt)  
-    Copyright (c) 2013 Ryan D. Emerle (.Net port)  
-    
+    Copyright (c) 2006 Damien Miller <djm@mindrot.org> (jBCrypt)
+    Copyright (c) 2013 Ryan D. Emerle (.Net port)
+
     Permission to use, copy, modify, and distribute this software for any
     purpose with or without fee is hereby granted, provided that the above
     copyright notice and this permission notice appear in all copies.
@@ -59,7 +61,7 @@ with testers and developers (when awake and present, etc.). However any question
 
 * "cyberkitsune" <https://github.com/cyberkitsune>
 * "KeyPhact" <https://github.com/KeyPhact>
-* "Kyle873" <https://github.com/Kyle873> 
+* "Kyle873" <https://github.com/Kyle873>
 * "Lighting Dragon" <https://github.com/LightningDragon>
 * "SonicFreak94" <https://github.com/SonicFreak94>
 * "Treeki" <https://github.com/Treeki>

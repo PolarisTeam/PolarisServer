@@ -4,3 +4,8 @@ PolarisServer/obj
 PolarisTests/bin
 PolarisTests/obj
 *.userprefs
+*~
+.*deps
+.DS_Store
+.vagrant
+.coverage
