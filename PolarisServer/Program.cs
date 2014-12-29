@@ -99,7 +99,8 @@ namespace PolarisServer
                 Environment.Exit(0);
             }
 
-            Logger.Write("Arf. Polaris Server version GIT.\nCreated by PolarisTeam (http://github.com/PolarisTeam) and licenced under AGPL.");
+            Logger.Write("Polaris Server v0.1.0-pre \"Corsac Fox\".\nCreated by PolarisTeam (http://github.com/PolarisTeam) and licenced under AGPL."); // also, arf.
+            Thread.Sleep(1000);
             System.Data.Entity.Database.SetInitializer(new DropCreateDatabaseIfModelChanges<PolarisEF>());
             instance = new PolarisApp();
             instance.Start();
