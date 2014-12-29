@@ -7,6 +7,7 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>PolarisServer</RootNamespace>
     <AssemblyName>PolarisServer</AssemblyName>
+    <ReleaseVersion>0.1.0-pre</ReleaseVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DebugSymbols>true</DebugSymbols>

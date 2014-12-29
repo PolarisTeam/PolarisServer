@@ -29,6 +29,6 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = PolarisServer\PolarisServer.csproj
+		version = 0.1.0-pre
 	EndGlobalSection
 EndGlobal
