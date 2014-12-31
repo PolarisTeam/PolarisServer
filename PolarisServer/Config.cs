@@ -35,7 +35,7 @@ namespace PolarisServer
         public string CommandPrefix = "|";
 
         [ConfigComment("Enable foreground colors for console text (NB: Not working on Linux)")]
-        public bool UseConsoleColors = true;
+        public bool UseConsoleColors = false;
 
         [ConfigComment("Name of the database which contains the Polaris data")]
         public string DatabaseName = "polaris";

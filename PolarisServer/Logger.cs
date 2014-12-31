@@ -36,6 +36,12 @@ namespace PolarisServer
             // Return if we don't have a ConsoleSystem created yet
             if (PolarisApp.ConsoleSystem == null) return;
 
+            // Detect if we should be using console colors, it's broken on Linux [KeyPhact]
+            if (!PolarisApp.Config.UseConsoleColors)
+            {
+                Console.ResetColor();
+            }
+
             // Split the lines and append it into new lines if it's too big
             if (line.text.Length >= PolarisApp.ConsoleSystem.width)
             {
@@ -65,7 +71,7 @@ namespace PolarisServer
             // Push old lines off the buffer
             try
             {
-                while (lines.Count > PolarisApp.ConsoleSystem.height - 4)
+                while (lines.Count > PolarisApp.ConsoleSystem.height - 2)
                     lines.RemoveAt(0);
             }
             catch (Exception ex)

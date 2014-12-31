@@ -15,6 +15,7 @@ namespace PolarisServer
         internal static RSACryptoServiceProvider rsaCsp = null;
 
         private bool isClosed = false;
+
         public bool IsClosed { get { return isClosed; } }
 
         private Server server;
@@ -24,7 +25,9 @@ namespace PolarisServer
 
         // Game properties, TODO Consider moving these somewhere else
         public Player User { get; set; }
+
         public Character Character { get; set; }
+
         public Zone.Zone CurrentZone { get; set; }
 
         private byte[] readBuffer;
