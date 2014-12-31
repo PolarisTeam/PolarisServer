@@ -35,7 +35,7 @@ namespace PolarisServer
         public string CommandPrefix = "|";
 
         [ConfigComment("Name of the database which contains the Polaris data")]
-        public string DatabaseName = "polaris";
+        public string DatabaseName = "polaris2";
         [ConfigComment("Address of the database server")]
         public string DatabaseAddress = "127.0.0.1";
         [ConfigComment("Username for logging into the database server")]

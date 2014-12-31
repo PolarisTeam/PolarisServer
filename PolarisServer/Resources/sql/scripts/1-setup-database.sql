@@ -1,3 +1,1 @@
---- What needs to be done here?
---- CREATE DATABASE IF NOT EXISTS `polaris` DEFAULT CHARACTER SET latin1 COLLATE latin1_swedish_ci;
---- That I guess? But the DB name? It could be different...
+/* What needs to be done here? */
