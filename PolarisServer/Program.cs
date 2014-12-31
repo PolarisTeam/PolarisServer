@@ -82,7 +82,7 @@ namespace PolarisServer
             }
 
             // Check for settings.txt [AIDA]
-            if (!File.Exists("settings.txt"))
+            if (!File.Exists("Resources/settings.txt"))
             {
                 // If it doesn't exist, throw an error and quit [AIDA]
                 Logger.WriteError("[ERR] Failed to load settings.txt. Press any key to quit.");
@@ -101,7 +101,7 @@ namespace PolarisServer
 
             Logger.Write("Polaris Server v0.1.0-pre \"Corsac Fox\".\nCreated by PolarisTeam (http://github.com/PolarisTeam) and licenced under AGPL."); // also, arf.
             Thread.Sleep(1000);
-            System.Data.Entity.Database.SetInitializer(new DropCreateDatabaseIfModelChanges<PolarisEF>());
+            //System.Data.Entity.Database.SetInitializer(new DropCreateDatabaseIfModelChanges<PolarisEF>());
             instance = new PolarisApp();
             instance.Start();
         }
