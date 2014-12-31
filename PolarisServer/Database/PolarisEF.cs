@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data.Entity;
 using System.ComponentModel.DataAnnotations;
+using System.IO;
 
 using MySql.Data.Entity;
 
@@ -42,7 +43,16 @@ namespace PolarisServer.Database
         {
             try
             {
-                this.Database.CreateIfNotExists();
+
+                foreach(string f in Directory.EnumerateFiles(Directory.GetCurrentDirectory() + "resources/sql/scripts/", "*.sql"))
+                {
+                    using (StreamReader sr = new StreamReader(f))
+                    {
+                        Logger.WriteInternal("[DB ] Executing database script {0}", f);
+                        string sql = sr.ReadToEnd();
+                        this.Database.ExecuteSqlCommand(sql);
+                    }
+                }
                 ServerInfo revision = this.ServerInfos.Find("Revision");
                 if (revision == null)
                 {
