@@ -14,9 +14,11 @@ namespace PolarisServer
     class PolarisApp
     {
         private static PolarisApp instance;
+
         public static PolarisApp Instance { get { return instance; } }
 
         public PolarisEF Database { get { return database; } }
+
         private PolarisEF database;
 
         public static IPAddress BindAddress = IPAddress.Parse("127.0.0.1");
@@ -26,6 +28,16 @@ namespace PolarisServer
 
         public static Config Config;
         public static ConsoleSystem ConsoleSystem;
+
+        // Will be using these around the app later [KeyPhact]
+        public const string POLARIS_NAME = "Polaris Server";
+        public const string POLARIS_SHORT_NAME = "Polaris";
+        public const string POLARIS_AUTHOR = "PolarisTeam (http://github.com/PolarisTeam)";
+        public const string POLARIS_COPYRIGHT = "(C) 2014 PolarisTeam.";
+        public const string POLARIS_LICENSE = "All licenced under AGPL.";
+        public const string POLARIS_VERSION = "v0.1.0-pre";
+        public const string POLARIS_VERSION_NAME = "Corsac Fox";
+
 
         public static void Main(string[] args)
         {
@@ -99,7 +111,11 @@ namespace PolarisServer
                 Environment.Exit(0);
             }
 
-            Logger.Write("Polaris Server v0.1.0-pre \"Corsac Fox\".\nCreated by PolarisTeam (http://github.com/PolarisTeam) and licenced under AGPL."); // also, arf.
+            // Fix up startup message [KeyPhact]
+            Logger.Write(POLARIS_NAME + " - " + POLARIS_VERSION + " (" + POLARIS_VERSION_NAME + ")");
+            Logger.Write("By " + POLARIS_AUTHOR);
+            Logger.Write(POLARIS_LICENSE);
+
             Thread.Sleep(1000);
             //System.Data.Entity.Database.SetInitializer(new DropCreateDatabaseIfModelChanges<PolarisEF>());
             instance = new PolarisApp();

@@ -12,13 +12,14 @@ using PolarisServer.Packets.Handlers;
 
 namespace PolarisServer
 {
-    public delegate void ConsoleCommandDelegate(string[] args, int length, string full, Client client);
+    public delegate void ConsoleCommandDelegate(string[] args,int length,string full,Client client);
 
     public class ConsoleCommandArgument
     {
         public string Name { get; set; }
+
         public bool Optional { get; set; }
-        
+
         public ConsoleCommandArgument(string name, bool optional)
         {
             this.Name = name;
@@ -29,8 +30,11 @@ namespace PolarisServer
     public class ConsoleCommand
     {
         public ConsoleCommandDelegate Command { get; set; }
+
         public List<string> Names { get; set; }
+
         public List<ConsoleCommandArgument> Arguments { get; set; }
+
         public string Help { get; set; }
 
         public ConsoleCommand(ConsoleCommandDelegate cmd, params string[] cmdNames)
@@ -239,7 +243,7 @@ namespace PolarisServer
                 {
                     try
                     {
-                        // Currently broken on Linux but keeping this for the color lovers --keyphact
+                        // Detect if we should be using console colors, it is broken on Linux [KeyPhact]
                         if (PolarisApp.Config.UseConsoleColors)
                             Console.ForegroundColor = Logger.lines[i].color;
 
