@@ -28,7 +28,7 @@ namespace PolarisServer.Packets.Handlers
             }
 
             // Set Area
-            byte[] setAreaPacket = File.ReadAllBytes("testSetAreaPacket.bin");
+            byte[] setAreaPacket = File.ReadAllBytes("Resources/testSetAreaPacket.bin");
             context.SendPacket(0x03, 0x24, 4, setAreaPacket);
 
             // Set Player ID
@@ -37,9 +37,9 @@ namespace PolarisServer.Packets.Handlers
             context.SendPacket(0x06, 0x00, 0, setPlayerID.ToArray());
 
             // Spawn Lobby Objects
-            if (Directory.Exists("objects/lobby"))
+            if (Directory.Exists("Resources/objects/lobby"))
             {
-                string[] objectPaths = Directory.GetFiles("objects/lobby");
+                string[] objectPaths = Directory.GetFiles("Resources/objects/lobby");
                 Array.Sort(objectPaths);
                 foreach (var path in objectPaths)
                 {
@@ -48,7 +48,7 @@ namespace PolarisServer.Packets.Handlers
             }
             else
             {
-                Logger.WriteWarning("Directory 'objects/lobby' not found!");
+                Logger.WriteWarning("Directory 'Resources/objects/lobby' not found!");
             }
 
             // Spawn Character
@@ -77,7 +77,7 @@ namespace PolarisServer.Packets.Handlers
 
             // memset packet - Enables menus
             // Also holds event items and likely other stuff too
-            byte[] memSetPacket = File.ReadAllBytes("setMemoryPacket.bin");
+            byte[] memSetPacket = File.ReadAllBytes("Resources/setMemoryPacket.bin");
             context.SendPacket(0x23, 0x07, 0, memSetPacket);
 
             // Give a blank palette
