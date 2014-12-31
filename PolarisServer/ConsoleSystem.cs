@@ -239,7 +239,10 @@ namespace PolarisServer
                 {
                     try
                     {
-                        Console.ForegroundColor = Logger.lines[i].color;
+                        // Currently broken on Linux but keeping this for the color lovers --keyphact
+                        if (PolarisApp.Config.UseConsoleColors)
+                            Console.ForegroundColor = Logger.lines[i].color;
+
                         if (Logger.lines[i].text.Length >= width)
                             Console.Write(Logger.lines[i].text);
                         else
