@@ -25,7 +25,8 @@ CREATE TABLE IF NOT EXISTS `characters` (
   `JobsBinary` longblob,
   `Player_PlayerID` int(11) DEFAULT NULL,
   PRIMARY KEY (`CharacterID`),
-  KEY `IX_Player_PlayerID` (`Player_PlayerID`) USING HASH
+  KEY `IX_Player_PlayerID` (`Player_PlayerID`) USING HASH,
+  FOREIGN KEY (`Player_PlayerID`) REFERENCES `players` (`PlayerID`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 
@@ -38,10 +39,3 @@ CREATE TABLE IF NOT EXISTS `serverinfoes` (
   `setting` longtext,
   PRIMARY KEY (`info`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
-/*
--- Constraints for table `characters`
-*/
-
-ALTER TABLE `characters`
-  ADD CONSTRAINT `FK_Characters_Players_Player_PlayerID` FOREIGN KEY (`Player_PlayerID`) REFERENCES `players` (`PlayerID`);
