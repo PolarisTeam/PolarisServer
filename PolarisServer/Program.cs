@@ -14,9 +14,11 @@ namespace PolarisServer
     class PolarisApp
     {
         private static PolarisApp instance;
+
         public static PolarisApp Instance { get { return instance; } }
 
         public PolarisEF Database { get { return database; } }
+
         private PolarisEF database;
 
         public static IPAddress BindAddress = IPAddress.Parse("127.0.0.1");
@@ -26,6 +28,16 @@ namespace PolarisServer
 
         public static Config Config;
         public static ConsoleSystem ConsoleSystem;
+
+        // Will be using these around the app later [KeyPhact]
+        public const string POLARIS_NAME = "Polaris Server";
+        public const string POLARIS_SHORT_NAME = "Polaris";
+        public const string POLARIS_AUTHOR = "PolarisTeam (http://github.com/PolarisTeam)";
+        public const string POLARIS_COPYRIGHT = "(C) 2014 PolarisTeam.";
+        public const string POLARIS_LICENSE = "All licenced under AGPL.";
+        public const string POLARIS_VERSION = "v0.1.0-pre";
+        public const string POLARIS_VERSION_NAME = "Corsac Fox";
+
 
         public static void Main(string[] args)
         {
@@ -59,19 +71,17 @@ namespace PolarisServer
                             string[] splitArgs = args[++i].Split(',');
                             int width = int.Parse(splitArgs[0]);
                             int height = int.Parse(splitArgs[1]);
-                            if (width < ConsoleSystem.width)
+                            if (width < ConsoleSystem.Width)
                             {
-                                Logger.WriteWarning("[ARG] Capping console width to {0} columns", ConsoleSystem.width);
-                                width = ConsoleSystem.width;
+                                Logger.WriteWarning("[ARG] Capping console width to {0} columns", ConsoleSystem.Width);
+                                width = ConsoleSystem.Width;
                             }
-                            if (height < ConsoleSystem.height)
+                            if (height < ConsoleSystem.Height)
                             {
-                                Logger.WriteWarning("[ARG] Capping console height to {0} rows", ConsoleSystem.height);
-                                height = ConsoleSystem.height;
+                                Logger.WriteWarning("[ARG] Capping console height to {0} rows", ConsoleSystem.Height);
+                                height = ConsoleSystem.Height;
                             }
-                            ConsoleSystem.width = width;
-                            ConsoleSystem.height = height;
-                            Console.SetWindowSize(ConsoleSystem.width, ConsoleSystem.height);
+                            ConsoleSystem.SetSize(width, height);
                             break;
                     }
                 }
@@ -82,7 +92,7 @@ namespace PolarisServer
             }
 
             // Check for settings.txt [AIDA]
-            if (!File.Exists("settings.txt"))
+            if (!File.Exists("Resources/settings.txt"))
             {
                 // If it doesn't exist, throw an error and quit [AIDA]
                 Logger.WriteError("[ERR] Failed to load settings.txt. Press any key to quit.");
@@ -99,9 +109,13 @@ namespace PolarisServer
                 Environment.Exit(0);
             }
 
-            Logger.Write("Polaris Server v0.1.0-pre \"Corsac Fox\".\nCreated by PolarisTeam (http://github.com/PolarisTeam) and licenced under AGPL."); // also, arf.
+            // Fix up startup message [KeyPhact]
+            Logger.Write(POLARIS_NAME + " - " + POLARIS_VERSION + " (" + POLARIS_VERSION_NAME + ")");
+            Logger.Write("By " + POLARIS_AUTHOR);
+            Logger.Write(POLARIS_LICENSE);
+
             Thread.Sleep(1000);
-            System.Data.Entity.Database.SetInitializer(new DropCreateDatabaseIfModelChanges<PolarisEF>());
+            //System.Data.Entity.Database.SetInitializer(new DropCreateDatabaseIfModelChanges<PolarisEF>());
             instance = new PolarisApp();
             instance.Start();
         }

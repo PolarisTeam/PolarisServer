@@ -12,13 +12,14 @@ using PolarisServer.Packets.Handlers;
 
 namespace PolarisServer
 {
-    public delegate void ConsoleCommandDelegate(string[] args, int length, string full, Client client);
+    public delegate void ConsoleCommandDelegate(string[] args,int length,string full,Client client);
 
     public class ConsoleCommandArgument
     {
         public string Name { get; set; }
+
         public bool Optional { get; set; }
-        
+
         public ConsoleCommandArgument(string name, bool optional)
         {
             this.Name = name;
@@ -29,8 +30,11 @@ namespace PolarisServer
     public class ConsoleCommand
     {
         public ConsoleCommandDelegate Command { get; set; }
+
         public List<string> Names { get; set; }
+
         public List<ConsoleCommandArgument> Arguments { get; set; }
+
         public string Help { get; set; }
 
         public ConsoleCommand(ConsoleCommandDelegate cmd, params string[] cmdNames)
@@ -93,26 +97,34 @@ namespace PolarisServer
         List<string> history = new List<string>();
         int historyIndex = 0;
 
-        public int width = 80;
-        public int height = 24;
+        int _width, _height;
+        public int Width { get { return _width; } }
+        public int Height { get { return _height; } }
+
+        int commandRowInConsole = 0;
 
         int commandIndex = 0;
         string commandLine = string.Empty;
+        int maxCommandLineSize = -1;
+        int lastDrawnCommandLineSize = 0;
 
         string info = string.Empty;
+        int lastDrawnInfoSize = 0;
         string prompt = string.Empty;
 
         int prevCount = 0;
 
         public System.Timers.Timer timer;
-        public bool refreshDraw = false;
-        public bool refreshPrompt = false;
+
+        object consoleLock = new object();
 
         public ConsoleSystem()
         {
             Console.Title = "Polaris";
             Console.CursorVisible = true;
-            Console.SetWindowSize(width, height);
+            SetSize(80, 24);
+
+            prompt = "Polaris> ";
 
             timer = new System.Timers.Timer(1000);
             timer.Elapsed += TimerRefresh;
@@ -121,9 +133,114 @@ namespace PolarisServer
             CreateCommands();
         }
 
+        public void SetSize(int width, int height)
+        {
+            _width = width;
+            _height = height;
+            maxCommandLineSize = width - prompt.Length;
+            Console.SetWindowSize(width, height);
+        }
+
+        public void AddLine(ConsoleColor color, string text)
+        {
+            lock (consoleLock)
+            {
+                BlankDrawnInfoBar();
+                BlankDrawnCommandLine();
+
+                bool useColors = PolarisApp.Config.UseConsoleColors;
+                ConsoleColor saveColor = Console.ForegroundColor;
+
+                Console.SetCursorPosition(0, commandRowInConsole);
+                if (useColors)
+                    Console.ForegroundColor = color;
+                Console.WriteLine(text);
+
+                if (useColors)
+                    Console.ForegroundColor = saveColor;
+
+                // Write one more line to reserve space for the info bar
+                Console.WriteLine();
+                commandRowInConsole = Console.CursorTop - 1;
+
+                RefreshInfoBar();
+                RefreshCommandLine();
+                FixCursorPosition();
+            }
+        }
+
+        private void BlankDrawnCommandLine()
+        {
+            if (lastDrawnCommandLineSize > 0)
+            {
+                Console.SetCursorPosition(0, commandRowInConsole);
+                for (int i = 0; i < lastDrawnCommandLineSize; i++)
+                    Console.Write(' ');
+
+                lastDrawnCommandLineSize = 0;
+            }
+        }
+
+        private void RefreshCommandLine()
+        {
+            BlankDrawnCommandLine();
+
+            Console.SetCursorPosition(0, commandRowInConsole);
+            Console.Write(prompt);
+            Console.Write(commandLine);
+
+            lastDrawnCommandLineSize = prompt.Length + commandLine.Length;
+        }
+
+        private void BlankDrawnInfoBar()
+        {
+            if (lastDrawnInfoSize > 0)
+            {
+                Console.SetCursorPosition(0, commandRowInConsole + 1);
+                for (int i = 0; i < lastDrawnInfoSize; i++)
+                    Console.Write(' ');
+
+                lastDrawnInfoSize = 0;
+            }
+        }
+
+        private void RefreshInfoBar()
+        {
+            BlankDrawnInfoBar();
+
+            Console.SetCursorPosition(0, commandRowInConsole + 1);
+            Console.Write(info);
+
+            lastDrawnInfoSize = info.Length;
+        }
+
+        private void FixCursorPosition()
+        {
+            Console.SetCursorPosition(prompt.Length + commandIndex, commandRowInConsole);
+        }
+
+        private string AssembleInfoBar()
+        {
+            if (PolarisApp.Instance != null && PolarisApp.Instance.server != null)
+            {
+                int clients = PolarisApp.Instance.server.Clients.Count;
+                float usage = Process.GetCurrentProcess().PrivateMemorySize64 / 1024 / 1024;
+                string time = DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToLongTimeString();
+
+                return string.Format("Clients: {0} | Memory: {1} MB | {2}", clients, usage, time);
+            }
+            else
+                return "Initializing...";
+        }
+
         private void TimerRefresh(object sender, System.Timers.ElapsedEventArgs e)
         {
-            refreshPrompt = true;
+            lock (consoleLock)
+            {
+                info = AssembleInfoBar();
+                RefreshInfoBar();
+                FixCursorPosition();
+            }
         }
 
         public static void StartThread()
@@ -132,7 +249,6 @@ namespace PolarisServer
             {
                 try
                 {
-                    PolarisApp.ConsoleSystem.Draw();
                     PolarisApp.ConsoleSystem.CheckInput();
                 }
                 catch (ThreadInterruptedException ex)
@@ -227,178 +343,112 @@ namespace PolarisServer
             commands.Add(exit);
         }
 
-        public void Draw()
-        {
-            // Draw log
-            if (Logger.lines.Count > prevCount || refreshDraw)
-            {
-                Console.Clear();
-                Console.SetCursorPosition(0, 1);
-
-                for (int i = 0; i < Logger.lines.Count; i++)
-                {
-                    try
-                    {
-                        Console.ForegroundColor = Logger.lines[i].color;
-                        if (Logger.lines[i].text.Length >= width)
-                            Console.Write(Logger.lines[i].text);
-                        else
-                            Console.WriteLine(Logger.lines[i].text);
-                        Console.ResetColor();
-                    }
-                    catch (ArgumentOutOfRangeException ex)
-                    {
-                        Logger.WriteException("Tried to draw past the log buffer", ex);
-                    }
-                }
-
-                refreshDraw = false;
-                refreshPrompt = true;
-            }
-
-            if (refreshPrompt)
-            {
-                // Build info string
-                if (PolarisApp.Instance != null && PolarisApp.Instance.server != null)
-                {
-                    int clients = PolarisApp.Instance.server.Clients.Count;
-                    float usage = Process.GetCurrentProcess().PrivateMemorySize64 / 1024 / 1024;
-                    string time = DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToLongTimeString();
-
-                    info = string.Format("Clients: {0} | Memory: {1} MB | {2}", clients, usage, time);
-                }
-                else
-                    info = "Initializing...";
-
-                // Build prompt string
-                prompt = "Polaris> ";
-
-                // Draw info
-                Console.SetCursorPosition(0, height - 2);
-                Console.Write(info);
-                for (int i = 0; i < width - info.Length; i++)
-                    Console.Write(" ");
-
-                // Draw Prompt
-                Console.SetCursorPosition(0, height - 1);
-                Console.Write(prompt);
-                Console.Write(commandLine);
-                for (int i = 0; i < width - prompt.Length; i++)
-                    Console.Write(" ");
-                Console.SetCursorPosition(prompt.Length + commandIndex, height - 1);
-
-                refreshPrompt = false;
-            }
-
-            prevCount = Logger.lines.Count;
-        }
-
         public void CheckInput()
         {
-            if (Console.KeyAvailable)
+            // Read key
+            bool validKey = true;
+            key = Console.ReadKey(true);
+
+            // Check to make sure this is a valid key to append to the command line
+            foreach (ConsoleKey controlKey in controlKeys)
             {
-                // Need to refresh the display
-                refreshPrompt = true;
-
-                // Read key
-                bool validKey = true;
-                key = Console.ReadKey(true);
-
-                // Check to make sure this is a valid key to append to the command line
-                foreach (ConsoleKey controlKey in controlKeys)
+                if (key.Key == controlKey)
                 {
-                    if (key.Key == controlKey)
+                    validKey = false;
+                    break;
+                }
+            }
+
+            // Append key to the command line
+            if (validKey && (commandLine.Length + 1) < maxCommandLineSize)
+            {
+                commandLine = commandLine.Insert(commandIndex, key.KeyChar.ToString());
+                commandIndex++;
+            }
+
+            // Backspace
+            if (key.Key == ConsoleKey.Backspace && commandLine.Length > 0 && commandIndex > 0)
+            {
+                commandLine = commandLine.Remove(commandIndex - 1, 1);
+                commandIndex--;
+            }
+
+            // Cursor movement
+            if (key.Key == ConsoleKey.LeftArrow && commandLine.Length > 0 && commandIndex > 0)
+                commandIndex--;
+            if (key.Key == ConsoleKey.RightArrow && commandLine.Length > 0 && commandIndex <= commandLine.Length - 1)
+                commandIndex++;
+            if (key.Key == ConsoleKey.Home)
+                commandIndex = 0;
+            if (key.Key == ConsoleKey.End)
+                commandIndex = commandLine.Length;
+
+            // History
+            if (key.Key == ConsoleKey.UpArrow && history.Count > 0)
+            {
+                historyIndex--;
+
+                if (historyIndex < 0)
+                    historyIndex = history.Count - 1;
+
+                commandLine = history[historyIndex];
+                commandIndex = history[historyIndex].Length;
+            }
+            if (key.Key == ConsoleKey.DownArrow && history.Count > 0)
+            {
+                historyIndex++;
+
+                if (historyIndex > history.Count - 1)
+                    historyIndex = 0;
+
+                commandLine = history[historyIndex];
+                commandIndex = history[historyIndex].Length;
+            }
+
+            // Run Command
+            if (key.Key == ConsoleKey.Enter)
+            {
+                bool valid = false;
+
+                // Stop if the command line is blank
+                if (string.IsNullOrEmpty(commandLine))
+                    Logger.WriteWarning("[CMD] No command specified");
+                else
+                {
+                    // Iterate commands
+                    foreach (ConsoleCommand command in commands)
                     {
-                        validKey = false;
-                        break;
-                    }
-                }
+                        string full = commandLine;
+                        string[] args = full.Split(' ');
 
-                // Append key to the command line
-                if (validKey)
-                {
-                    commandLine = commandLine.Insert(commandIndex, key.KeyChar.ToString());
-                    commandIndex++;
-                }
-
-                // Backspace
-                if (key.Key == ConsoleKey.Backspace && commandLine.Length > 0 && commandIndex > 0)
-                {
-                    commandLine = commandLine.Remove(commandIndex - 1, 1);
-                    commandIndex--;
-                }
-
-                // Cursor movement
-                if (key.Key == ConsoleKey.LeftArrow && commandLine.Length > 0 && commandIndex > 0)
-                    commandIndex--;
-                if (key.Key == ConsoleKey.RightArrow && commandLine.Length > 0 && commandIndex <= commandLine.Length - 1)
-                    commandIndex++;
-                if (key.Key == ConsoleKey.Home)
-                    commandIndex = 0;
-                if (key.Key == ConsoleKey.End)
-                    commandIndex = commandLine.Length;
-
-                // History
-                if (key.Key == ConsoleKey.UpArrow && history.Count > 0)
-                {
-                    historyIndex--;
-
-                    if (historyIndex < 0)
-                        historyIndex = history.Count - 1;
-
-                    commandLine = history[historyIndex];
-                    commandIndex = history[historyIndex].Length;
-                }
-                if (key.Key == ConsoleKey.DownArrow && history.Count > 0)
-                {
-                    historyIndex++;
-
-                    if (historyIndex > history.Count - 1)
-                        historyIndex = 0;
-
-                    commandLine = history[historyIndex];
-                    commandIndex = history[historyIndex].Length;
-                }
-
-                // Run Command
-                if (key.Key == ConsoleKey.Enter)
-                {
-                    bool valid = false;
-
-                    // Stop if the command line is blank
-                    if (string.IsNullOrEmpty(commandLine))
-                        Logger.WriteWarning("[CMD] No command specified");
-                    else
-                    {
-                        // Iterate commands
-                        foreach (ConsoleCommand command in commands)
-                        {
-                            string full = commandLine;
-                            string[] args = full.Split(' ');
-
-                            foreach (string name in command.Names)
-                                if (args[0].ToLower() == name.ToLower())
-                                {
-                                    command.Run(args, args.Length, full, null);
-                                    valid = true;
-                                    break;
-                                }
-
-                            if (valid)
+                        foreach (string name in command.Names)
+                            if (args[0].ToLower() == name.ToLower())
+                            {
+                                command.Run(args, args.Length, full, null);
+                                valid = true;
                                 break;
-                        }
+                            }
 
-                        if (!valid)
-                            Logger.WriteError("[CMD] {0} - Command not found", commandLine.Split(' ')[0].Trim('\r'));
-
-                        // Add the command line to history and wipe it
-                        history.Add(commandLine);
-                        historyIndex = history.Count;
-                        commandLine = string.Empty;
+                        if (valid)
+                            break;
                     }
 
-                    commandIndex = 0;
+                    if (!valid)
+                        Logger.WriteError("[CMD] {0} - Command not found", commandLine.Split(' ')[0].Trim('\r'));
+
+                    // Add the command line to history and wipe it
+                    history.Add(commandLine);
+                    historyIndex = history.Count;
+                    commandLine = string.Empty;
                 }
+
+                commandIndex = 0;
+            }
+
+            lock (consoleLock)
+            {
+                RefreshCommandLine();
+                FixCursorPosition();
             }
         }
 
@@ -479,8 +529,7 @@ namespace PolarisServer
 
         private void ClearLog(string[] args, int length, string full, Client client)
         {
-            Logger.lines.Clear();
-            refreshDraw = true;
+            // What do, how do we deal with this now --Ninji
         }
 
         private void Config(string[] args, int length, string full, Client client)

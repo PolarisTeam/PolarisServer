@@ -54,7 +54,7 @@ namespace PolarisServer.Packets.Handlers
                         Username = username,
                         Password = BCrypt.Net.BCrypt.HashPassword(password),
                         Nickname = username, // Since we can't display the nickname prompt yet, just default it to the username
-                        SettingsINI = System.IO.File.ReadAllText("settings.txt")
+                        SettingsINI = System.IO.File.ReadAllText("Resources/settings.txt")
                     };
                     db.Players.Add(user);
                     db.SaveChanges();

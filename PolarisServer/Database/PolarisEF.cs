@@ -15,9 +15,9 @@ namespace PolarisServer.Database
     public class ServerInfo
     {
         [Key, MaxLength(255)]
-        public string key { get; set; }
+        public string info { get; set; }
 
-        public string value { get; set; }
+        public string setting { get; set; }
     }
 
     public class Player
@@ -44,19 +44,16 @@ namespace PolarisServer.Database
             try
             {
 
-                foreach(string f in Directory.EnumerateFiles(Directory.GetCurrentDirectory() + "resources/sql/scripts/", "*.sql"))
+                foreach(string f in Directory.EnumerateFiles(Directory.GetCurrentDirectory() + "/Resources/sql/scripts/", "*.sql"))
                 {
-                    using (StreamReader sr = new StreamReader(f))
-                    {
-                        Logger.WriteInternal("[DB ] Executing database script {0}", f);
-                        string sql = sr.ReadToEnd();
-                        this.Database.ExecuteSqlCommand(sql);
-                    }
+                    Logger.WriteInternal("[DB ] Executing database script {0}", f);
+                    this.Database.ExecuteSqlCommand(File.ReadAllText(f));
+                    
                 }
                 ServerInfo revision = this.ServerInfos.Find("Revision");
                 if (revision == null)
                 {
-                    revision = new ServerInfo { key = "Revision", value = "0" };
+                    revision = new ServerInfo { info = "Revision", setting = "0" };
                     this.ServerInfos.Add(revision);
 
                     //TODO Possibly move this somewhere else?
@@ -64,7 +61,7 @@ namespace PolarisServer.Database
                 }
                 this.SaveChanges();
 
-                Logger.WriteInternal("[DB ] Loaded database with dataset revision {0}", revision.value);
+                Logger.WriteInternal("[DB ] Loaded database with dataset revision {0}", revision.setting);
             }
             catch (Exception ex)
             {
