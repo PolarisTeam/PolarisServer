@@ -71,19 +71,17 @@ namespace PolarisServer
                             string[] splitArgs = args[++i].Split(',');
                             int width = int.Parse(splitArgs[0]);
                             int height = int.Parse(splitArgs[1]);
-                            if (width < ConsoleSystem.width)
+                            if (width < ConsoleSystem.Width)
                             {
-                                Logger.WriteWarning("[ARG] Capping console width to {0} columns", ConsoleSystem.width);
-                                width = ConsoleSystem.width;
+                                Logger.WriteWarning("[ARG] Capping console width to {0} columns", ConsoleSystem.Width);
+                                width = ConsoleSystem.Width;
                             }
-                            if (height < ConsoleSystem.height)
+                            if (height < ConsoleSystem.Height)
                             {
-                                Logger.WriteWarning("[ARG] Capping console height to {0} rows", ConsoleSystem.height);
-                                height = ConsoleSystem.height;
+                                Logger.WriteWarning("[ARG] Capping console height to {0} rows", ConsoleSystem.Height);
+                                height = ConsoleSystem.Height;
                             }
-                            ConsoleSystem.width = width;
-                            ConsoleSystem.height = height;
-                            Console.SetWindowSize(ConsoleSystem.width, ConsoleSystem.height);
+                            ConsoleSystem.SetSize(width, height);
                             break;
                     }
                 }
