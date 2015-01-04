@@ -1,0 +1,3 @@
+[submodule "PolarisServer/Resources"]
+	path = PolarisServer/Resources
+	url = https://github.com/PolarisTeam/PolarisResources.git
