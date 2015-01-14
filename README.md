@@ -62,6 +62,6 @@ with testers and developers (when awake and present, etc.). However any question
 * "cyberkitsune" <https://github.com/cyberkitsune>
 * "KeyPhact" <https://github.com/KeyPhact>
 * "Kyle873" <https://github.com/Kyle873>
-* "Lighting Dragon" <https://github.com/LightningDragon>
+* "LightningDragon" <https://github.com/LightningDragon>
 * "SonicFreak94" <https://github.com/SonicFreak94>
 * "Treeki" <https://github.com/Treeki>
