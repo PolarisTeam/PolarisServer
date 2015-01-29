@@ -4,6 +4,7 @@ using PolarisServer.Packets;
 using NUnit.Framework;
 using System;
 using System.Runtime.InteropServices;
+using Newtonsoft.Json;
 
 namespace PolarisTests
 {
@@ -81,6 +82,19 @@ namespace PolarisTests
             byte[] structArray = writer.ToArray();
             Assert.AreEqual(structureSize, structArray.Length);
             Assert.AreEqual(7, structArray[12]);
+        }
+    }
+
+    [TestFixture]
+    public class JSONTests
+    {
+        [Test]
+        public void TestObjectSerialize()
+        {
+            PSOObject TestObject = new PSOObject();
+            string Output = JsonConvert.SerializeObject(TestObject);
+            Console.Out.WriteLine(Output);
+
         }
     }
 }

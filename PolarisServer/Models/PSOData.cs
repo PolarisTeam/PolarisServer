@@ -5,7 +5,7 @@ using System.Text;
 
 namespace PolarisServer.Models
 {
-    struct EntityHeader
+    public struct EntityHeader
     {
         public UInt32 ID;
         public UInt32 Unknown_4;

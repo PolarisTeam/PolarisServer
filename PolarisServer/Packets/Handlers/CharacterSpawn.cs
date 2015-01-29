@@ -47,10 +47,12 @@ namespace PolarisServer.Packets.Handlers
                     {
                         Logger.WriteWarning("Object {0} is still in BIN format and should be migrated to JSON!", path);
                         context.SendPacket(File.ReadAllBytes(path));    
-                    } else if (Path.GetExtension(path) == "json")
+                    } 
+                    else if (Path.GetExtension(path) == "json")
                     {
                         PSOObject new_object = JsonConvert.DeserializeObject<PSOObject>(File.ReadAllText(path));
                         context.SendPacket(0x08, 0x0B, 0x0, new_object.GenerateSpawnBlob());
+
                     }
                     
                 }

@@ -7,18 +7,18 @@ using PolarisServer.Packets;
 
 namespace PolarisServer.Models
 {
-    class PSOObject
+    public class PSOObject
     {
-        struct PSOObjectThing
+        public struct PSOObjectThing
         {
             public UInt32 data;
         }
 
-        EntityHeader Header { get; set; }
-        MysteryPositions Position { get; set; }
-        string Name { get; set; }
-        UInt32 ThingFlag { get; set; }
-        PSOObjectThing[] things { get; set; }
+        public EntityHeader Header { get; set; }
+        public MysteryPositions Position { get; set; }
+        public string Name { get; set; }
+        public UInt32 ThingFlag { get; set; }
+        public PSOObjectThing[] things { get; set; }
 
         public byte[] GenerateSpawnBlob()
         {
