@@ -9,7 +9,7 @@ namespace PolarisServer.Packets.Handlers
 
         public override void HandlePacket(Client context, byte[] data, uint position, uint size)
         {
-            var bytes = BitConverter.GetBytes((uint) context.User.PlayerID);
+            var bytes = BitConverter.GetBytes((uint) context.User.PlayerId);
 
             data[0] = bytes[0];
             data[1] = bytes[1];
@@ -38,7 +38,7 @@ namespace PolarisServer.Packets.Handlers
 
         public override void HandlePacket(Client context, byte[] data, uint position, uint size)
         {
-            var bytes = BitConverter.GetBytes((uint) context.User.PlayerID);
+            var bytes = BitConverter.GetBytes((uint) context.User.PlayerId);
 
             data[0] = bytes[0];
             data[1] = bytes[1];
@@ -66,7 +66,7 @@ namespace PolarisServer.Packets.Handlers
 
         public override void HandlePacket(Client context, byte[] data, uint position, uint size)
         {
-            var bytes = BitConverter.GetBytes((uint) context.User.PlayerID);
+            var bytes = BitConverter.GetBytes((uint) context.User.PlayerId);
 
             data[0] = bytes[0];
             data[1] = bytes[1];

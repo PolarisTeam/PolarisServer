@@ -9,17 +9,17 @@ namespace PolarisServer
 {
     public class ConfigComment : Attribute
     {
-        public string comment;
+        public string Comment;
 
         public ConfigComment(string comment)
         {
-            this.comment = comment;
+            this.Comment = comment;
         }
     }
 
     public class Config
     {
-        private readonly string configFile = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) +
+        private readonly string _configFile = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) +
                                              Path.DirectorySeparatorChar + "PolarisServer.cfg";
 
         // Settings
@@ -46,14 +46,14 @@ namespace PolarisServer
             try
             {
                 // No config exists, save a default one
-                if (!File.Exists(configFile))
+                if (!File.Exists(_configFile))
                 {
                     Save(true);
                     return;
                 }
 
                 var fields = GetType().GetFields();
-                var lines = File.ReadAllLines(configFile);
+                var lines = File.ReadAllLines(_configFile);
 
                 foreach (var option in lines)
                 {
@@ -104,7 +104,7 @@ namespace PolarisServer
                 foreach (var field in fields)
                     SaveField(field, data);
 
-                File.WriteAllLines(configFile, data);
+                File.WriteAllLines(_configFile, data);
             }
             catch (Exception ex)
             {
@@ -119,7 +119,7 @@ namespace PolarisServer
         {
             PolarisApp.BindAddress = BindAddress;
             Logger.VerbosePackets = VerbosePackets;
-            PolarisApp.Instance.server.pingTimer.Interval = 1000*PingTime;
+            PolarisApp.Instance.Server.PingTimer.Interval = 1000*PingTime;
         }
 
         public bool SetField(string name, string value)
@@ -171,7 +171,7 @@ namespace PolarisServer
             if (attributes.Length > 0)
             {
                 var commentAttr = (ConfigComment) attributes[0];
-                data.Add("// " + commentAttr.comment);
+                data.Add("// " + commentAttr.Comment);
             }
 
             // IP Address

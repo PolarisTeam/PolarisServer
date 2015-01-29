@@ -14,13 +14,13 @@ namespace PolarisServer.Packets
             GenericMessage
         }
 
-        private readonly string message;
-        private readonly MessageType type;
+        private readonly string _message;
+        private readonly MessageType _type;
 
         public SystemMessagePacket(string message, MessageType type)
         {
-            this.message = message;
-            this.type = type;
+            this._message = message;
+            this._type = type;
         }
 
         #region implemented abstract members of Packet
@@ -28,8 +28,8 @@ namespace PolarisServer.Packets
         public override byte[] Build()
         {
             var writer = new PacketWriter();
-            writer.WriteUTF16(message, 0x78F7, 0xA2);
-            writer.Write((UInt32) type);
+            writer.WriteUtf16(_message, 0x78F7, 0xA2);
+            writer.Write((UInt32) _type);
 
             return writer.ToArray();
         }
@@ -38,9 +38,9 @@ namespace PolarisServer.Packets
         {
             return new PacketHeader
             {
-                type = 0x19,
-                subtype = 0x01,
-                flags1 = 0x04
+                Type = 0x19,
+                Subtype = 0x01,
+                Flags1 = 0x04
             };
         }
 

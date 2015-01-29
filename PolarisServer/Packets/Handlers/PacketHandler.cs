@@ -7,12 +7,12 @@ namespace PolarisServer.Packets.Handlers
 {
     public class PacketHandlerAttr : Attribute
     {
-        public uint type, subtype;
+        public uint Type, Subtype;
 
         public PacketHandlerAttr(uint type, uint subtype)
         {
-            this.type = type;
-            this.subtype = subtype;
+            this.Type = type;
+            this.Subtype = subtype;
         }
     }
 
@@ -23,7 +23,7 @@ namespace PolarisServer.Packets.Handlers
 
     public static class PacketHandlers
     {
-        private static readonly Dictionary<ushort, PacketHandler> handlers = new Dictionary<ushort, PacketHandler>();
+        private static readonly Dictionary<ushort, PacketHandler> Handlers = new Dictionary<ushort, PacketHandler>();
 
         public static void LoadPacketHandlers()
         {
@@ -40,10 +40,10 @@ namespace PolarisServer.Packets.Handlers
                 if (attrs.Length > 0)
                 {
                     var attr = (PacketHandlerAttr) attrs[0];
-                    Logger.WriteInternal("[PKT] Loaded PacketHandler {0} for packet {1:X}-{2:X}.", t.Name, attr.type,
-                        attr.subtype);
-                    if (!handlers.ContainsKey(Helper.PacketTypeToUShort(attr.type, attr.subtype)))
-                        handlers.Add(Helper.PacketTypeToUShort(attr.type, attr.subtype),
+                    Logger.WriteInternal("[PKT] Loaded PacketHandler {0} for packet {1:X}-{2:X}.", t.Name, attr.Type,
+                        attr.Subtype);
+                    if (!Handlers.ContainsKey(Helper.PacketTypeToUShort(attr.Type, attr.Subtype)))
+                        Handlers.Add(Helper.PacketTypeToUShort(attr.Type, attr.Subtype),
                             (PacketHandler) Activator.CreateInstance(t));
                 }
             }
@@ -60,15 +60,15 @@ namespace PolarisServer.Packets.Handlers
             var packetCode = Helper.PacketTypeToUShort(type, subtype);
             PacketHandler handler = null;
 
-            if (handlers.ContainsKey(packetCode))
-                handlers.TryGetValue(packetCode, out handler);
+            if (Handlers.ContainsKey(packetCode))
+                Handlers.TryGetValue(packetCode, out handler);
 
             return handler;
         }
 
         public static PacketHandler[] GetLoadedHandlers()
         {
-            return handlers.Values.ToArray();
+            return Handlers.Values.ToArray();
         }
     }
 }

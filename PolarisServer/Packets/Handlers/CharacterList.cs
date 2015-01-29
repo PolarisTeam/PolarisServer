@@ -14,7 +14,7 @@ namespace PolarisServer.Packets.Handlers
 
             var db = PolarisApp.Instance.Database;
             var chars = from c in db.Characters
-                where c.Player.PlayerID == context.User.PlayerID
+                where c.Player.PlayerId == context.User.PlayerId
                 select c;
 
             var writer = new PacketWriter();
@@ -22,12 +22,12 @@ namespace PolarisServer.Packets.Handlers
 
             foreach (var ch in chars)
             {
-                writer.Write((uint) ch.CharacterID);
-                writer.Write((uint) context.User.PlayerID);
+                writer.Write((uint) ch.CharacterId);
+                writer.Write((uint) context.User.PlayerId);
                 for (var i = 0; i < 0xC; i++)
                     writer.Write((byte) 0);
 
-                writer.WriteFixedLengthUTF16(ch.Name, 16);
+                writer.WriteFixedLengthUtf16(ch.Name, 16);
                 writer.Write((uint) 0);
 
                 writer.WriteStruct(ch.Looks);

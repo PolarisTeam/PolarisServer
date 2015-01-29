@@ -15,14 +15,14 @@ namespace PolarisServer.Packets.Handlers
             var reader = new PacketReader(data, position, size);
             reader.BaseStream.Seek(0xC, SeekOrigin.Begin);
             var channel = reader.ReadUInt32();
-            var message = reader.ReadUTF16(0x9D3F, 0x44);
+            var message = reader.ReadUtf16(0x9D3F, 0x44);
 
             if (message.StartsWith(PolarisApp.Config.CommandPrefix))
             {
                 var valid = false;
 
                 // Iterate commands
-                foreach (var command in PolarisApp.ConsoleSystem.commands)
+                foreach (var command in PolarisApp.ConsoleSystem.Commands)
                 {
                     var full = message.Substring(1); // Strip the command chars
                     var args = full.Split(' ');
@@ -48,9 +48,9 @@ namespace PolarisServer.Packets.Handlers
                 Logger.Write("[CHT] <{0}> <{1}>", context.Character.Name, message);
 
                 var writer = new PacketWriter();
-                writer.WritePlayerHeader((uint) context.User.PlayerID);
+                writer.WritePlayerHeader((uint) context.User.PlayerId);
                 writer.Write(channel);
-                writer.WriteUTF16(message, 0x9D3F, 0x44);
+                writer.WriteUtf16(message, 0x9D3F, 0x44);
 
                 data = writer.ToArray();
 

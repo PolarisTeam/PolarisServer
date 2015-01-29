@@ -4,22 +4,22 @@ namespace PolarisServer.Packets
 {
     public class CharacterSpawnPacket : Packet
     {
-        private readonly Character character;
+        private readonly Character _character;
         public bool IsItMe = true;
         public MysteryPositions Position;
 
         public CharacterSpawnPacket(Character character)
         {
-            this.character = character;
+            this._character = character;
 
-            Position.a = 0.000031f;
-            Position.b = 1.0f;
-            Position.c = 0.000031f;
-            Position.facingAngle = -0.000031f;
+            Position.A = 0.000031f;
+            Position.B = 1.0f;
+            Position.C = 0.000031f;
+            Position.FacingAngle = -0.000031f;
 
-            Position.x = -0.417969f;
-            Position.y = 0.000031f;
-            Position.z = 134.375f;
+            Position.X = -0.417969f;
+            Position.Y = 0.000031f;
+            Position.Z = 134.375f;
         }
 
         #region implemented abstract members of Packet
@@ -29,13 +29,13 @@ namespace PolarisServer.Packets
             var writer = new PacketWriter();
 
             // Player header
-            writer.WritePlayerHeader((uint) character.Player.PlayerID);
+            writer.WritePlayerHeader((uint) _character.Player.PlayerId);
 
             // Spawn position
             writer.Write(Position);
 
             writer.Write((ushort) 0); // padding?
-            writer.WriteFixedLengthASCII("Character", 32);
+            writer.WriteFixedLengthAscii("Character", 32);
             writer.Write((ushort) 1); // 0x44
             writer.Write((ushort) 0); // 0x46
             writer.Write((uint) 602); // 0x48
@@ -45,18 +45,18 @@ namespace PolarisServer.Packets
             writer.Write((uint) (IsItMe ? 47 : 39)); // 0x58
             writer.Write((ushort) 559); // 0x5C
             writer.Write((ushort) 306); // 0x5E
-            writer.Write((uint) character.Player.PlayerID); // player ID copy
+            writer.Write((uint) _character.Player.PlayerId); // player ID copy
             writer.Write((uint) 0); // "char array ugggghhhhh" according to PolarisLegacy
             writer.Write((uint) 0); // "voiceParam_unknown4"
             writer.Write((uint) 0); // "voiceParam_unknown8"
-            writer.WriteFixedLengthUTF16(character.Name, 16);
+            writer.WriteFixedLengthUtf16(_character.Name, 16);
             writer.Write((uint) 0); // 0x90
-            writer.WriteStruct(character.Looks);
-            writer.WriteStruct(character.Jobs);
-            writer.WriteFixedLengthUTF16("", 32); // title?
+            writer.WriteStruct(_character.Looks);
+            writer.WriteStruct(_character.Jobs);
+            writer.WriteFixedLengthUtf16("", 32); // title?
             writer.Write((uint) 0); // 0x204
             writer.Write((uint) 0); // gmflag?
-            writer.WriteFixedLengthUTF16(character.Player.Nickname, 16); // nickname, maybe not 16 chars?
+            writer.WriteFixedLengthUtf16(_character.Player.Nickname, 16); // nickname, maybe not 16 chars?
             for (var i = 0; i < 64; i++)
                 writer.Write((byte) 0);
 

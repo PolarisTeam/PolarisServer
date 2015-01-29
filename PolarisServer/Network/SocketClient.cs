@@ -8,15 +8,15 @@ namespace PolarisServer.Network
 
         public delegate void DataReceivedDelegate(byte[] data, int size);
 
-        private readonly byte[] readBuffer;
-        private readonly SocketServer server;
+        private readonly byte[] _readBuffer;
+        private readonly SocketServer _server;
 
         public SocketClient(SocketServer server, TcpClient socket)
         {
-            this.server = server;
+            this._server = server;
             Socket = socket;
 
-            readBuffer = new byte[1024*16];
+            _readBuffer = new byte[1024*16];
         }
 
         public TcpClient Socket { get; private set; }
@@ -27,23 +27,23 @@ namespace PolarisServer.Network
         {
             try
             {
-                var read = Socket.Client.Receive(readBuffer);
+                var read = Socket.Client.Receive(_readBuffer);
                 if (read == 0)
                 {
                     // Connection failed, presumably
                     ConnectionLost();
-                    server.NotifyConnectionClosed(this);
+                    _server.NotifyConnectionClosed(this);
                     return false;
                 }
 
-                DataReceived(readBuffer, read);
+                DataReceived(_readBuffer, read);
 
                 return true;
             }
             catch (SocketException)
             {
                 ConnectionLost();
-                server.NotifyConnectionClosed(this);
+                _server.NotifyConnectionClosed(this);
                 return false;
             }
         }
@@ -51,7 +51,7 @@ namespace PolarisServer.Network
         public void Close()
         {
             ConnectionLost();
-            server.NotifyConnectionClosed(this);
+            _server.NotifyConnectionClosed(this);
             Socket.Close();
         }
     }

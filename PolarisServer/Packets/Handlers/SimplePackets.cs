@@ -26,13 +26,13 @@ namespace PolarisServer.Packets.Handlers
         public override void HandlePacket(Client context, byte[] data, uint position, uint size)
         {
             var reader = new PacketReader(data);
-            var ID = reader.ReadInt32();
+            var id = reader.ReadInt32();
 
-            Logger.Write("[CHR] {0} is deleting character with ID {1}", context.User.Username, ID);
+            Logger.Write("[CHR] {0} is deleting character with ID {1}", context.User.Username, id);
 
             // Delete Character
             foreach (var character in PolarisApp.Instance.Database.Characters)
-                if (character.CharacterID == ID)
+                if (character.CharacterId == id)
                 {
                     PolarisApp.Instance.Database.Characters.Remove(character);
                     PolarisApp.Instance.Database.ChangeTracker.DetectChanges();
@@ -79,15 +79,15 @@ namespace PolarisServer.Packets.Handlers
         {
             var reader = new PacketReader(data);
             reader.BaseStream.Seek(0xC, SeekOrigin.Begin);
-            var ID = reader.ReadUInt32();
+            var id = reader.ReadUInt32();
 
-            foreach (var client in PolarisApp.Instance.server.Clients)
+            foreach (var client in PolarisApp.Instance.Server.Clients)
             {
-                if (client.Character.CharacterID == ID)
+                if (client.Character.CharacterId == id)
                 {
                     var infoPacket = new GuildInfoPacket(context.Character);
                     context.SendPacket(infoPacket);
-                    Logger.Write("[NFO] Sent guild info to " + client.Character.CharacterID);
+                    Logger.Write("[NFO] Sent guild info to " + client.Character.CharacterId);
                     break;
                 }
             }

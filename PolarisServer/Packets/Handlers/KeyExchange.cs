@@ -12,7 +12,7 @@ namespace PolarisServer.Packets.Handlers
 
         public override void HandlePacket(Client context, byte[] data, uint position, uint size)
         {
-            if (context.inputARC4 != null)
+            if (context.InputArc4 != null)
                 return;
 
             if (size < 0x80)
@@ -24,14 +24,14 @@ namespace PolarisServer.Packets.Handlers
             Array.Reverse(cryptedBlob);
 
             // FIXME
-            if (Client.rsaCsp == null)
+            if (Client.RsaCsp == null)
             {
-                Client.rsaCsp = new RSACryptoServiceProvider();
+                Client.RsaCsp = new RSACryptoServiceProvider();
                 var rsaBlob = File.ReadAllBytes("privateKey.blob");
-                Client.rsaCsp.ImportCspBlob(rsaBlob);
+                Client.RsaCsp.ImportCspBlob(rsaBlob);
             }
 
-            var pkcs = new RSAPKCS1KeyExchangeDeformatter(Client.rsaCsp);
+            var pkcs = new RSAPKCS1KeyExchangeDeformatter(Client.RsaCsp);
             byte[] decryptedBlob = null;
 
             try
@@ -54,15 +54,15 @@ namespace PolarisServer.Packets.Handlers
             Array.Copy(decryptedBlob, 0x10, arc4Key, 0, 0x10);
 
             // Create three RC4 mungers
-            var arc4 = new ARC4Managed();
+            var arc4 = new Arc4Managed();
             arc4.Key = arc4Key;
-            context.inputARC4 = arc4.CreateDecryptor();
+            context.InputArc4 = arc4.CreateDecryptor();
 
-            arc4 = new ARC4Managed();
+            arc4 = new Arc4Managed();
             arc4.Key = arc4Key;
-            context.outputARC4 = arc4.CreateEncryptor();
+            context.OutputArc4 = arc4.CreateEncryptor();
 
-            arc4 = new ARC4Managed();
+            arc4 = new Arc4Managed();
             arc4.Key = arc4Key;
             var tempDecryptor = arc4.CreateDecryptor();
 

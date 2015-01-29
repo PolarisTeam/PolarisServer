@@ -19,7 +19,7 @@ namespace PolarisServer.Packets.Handlers
             reader.ReadByte(); // VoiceType
             reader.ReadBytes(5); // 5 unknown bytes
             reader.ReadUInt16(); // VoiceData
-            var name = reader.ReadFixedLengthUTF16(16);
+            var name = reader.ReadFixedLengthUtf16(16);
 
             reader.BaseStream.Seek(0x4, SeekOrigin.Current); // Padding
             var looks = reader.ReadStruct<Character.LooksParam>();
@@ -44,7 +44,7 @@ namespace PolarisServer.Packets.Handlers
             // Set Player ID
             var writer = new PacketWriter();
             writer.Write(0);
-            writer.Write((uint) context.User.PlayerID);
+            writer.Write((uint) context.User.PlayerId);
             context.SendPacket(0x11, 0x07, 0, writer.ToArray());
 
             // Spawn

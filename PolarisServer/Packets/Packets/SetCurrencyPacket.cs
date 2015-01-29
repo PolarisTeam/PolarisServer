@@ -4,8 +4,8 @@ namespace PolarisServer.Packets
 {
     public class SetCurrencyPacket : Packet
     {
-        public int newACAmount = 0;
-        public int newFUNAmount = 0;
+        public int NewAcAmount = 0;
+        public int NewFunAmount = 0;
 
         #region implemented abstract members of Packet
 
@@ -14,14 +14,14 @@ namespace PolarisServer.Packets
             var writer = new PacketWriter();
 
             // AC
-            writer.Write(newACAmount);
+            writer.Write(NewAcAmount);
 
             // Padding?
             for (var i = 0; i < 20; i++)
                 writer.Write((byte) 0);
 
             // FUN
-            writer.Write(newFUNAmount);
+            writer.Write(NewFunAmount);
 
             // Padding?
             for (var i = 0; i < 4; i++)

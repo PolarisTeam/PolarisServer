@@ -30,6 +30,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System;
 using System.Security.Cryptography;
 
 namespace PolarisServer.Crypto
@@ -49,7 +50,7 @@ namespace PolarisServer.Crypto
             new KeySizes(40, 2048, 8)
         };
 
-        public RC4()
+        protected RC4()
         {
             KeySizeValue = 128;
             BlockSizeValue = 64;
@@ -62,7 +63,10 @@ namespace PolarisServer.Crypto
         public override byte[] IV
         {
             get { return new byte[0]; }
-            set { ; }
+            set
+            {
+                if (value == null) throw new ArgumentNullException("value");
+            }
         }
 
         public new static RC4 Create()

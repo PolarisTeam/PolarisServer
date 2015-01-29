@@ -24,7 +24,7 @@ namespace PolarisServer.Packets
             return (ReadUInt32() ^ xor) - sub;
         }
 
-        public string ReadASCII(uint xor, uint sub)
+        public string ReadAscii(uint xor, uint sub)
         {
             var magic = ReadMagic(xor, sub);
 
@@ -42,7 +42,7 @@ namespace PolarisServer.Packets
             return Encoding.ASCII.GetString(data);
         }
 
-        public string ReadFixedLengthASCII(uint charCount)
+        public string ReadFixedLengthAscii(uint charCount)
         {
             var data = ReadBytes((int) charCount);
             var str = Encoding.ASCII.GetString(data);
@@ -53,7 +53,7 @@ namespace PolarisServer.Packets
             return str.Substring(0, endAt);
         }
 
-        public string ReadUTF16(uint xor, uint sub)
+        public string ReadUtf16(uint xor, uint sub)
         {
             var magic = ReadMagic(xor, sub);
 
@@ -72,7 +72,7 @@ namespace PolarisServer.Packets
             return Encoding.GetEncoding("UTF-16").GetString(data);
         }
 
-        public string ReadFixedLengthUTF16(int charCount)
+        public string ReadFixedLengthUtf16(int charCount)
         {
             var data = ReadBytes(charCount*2);
             var str = Encoding.GetEncoding("UTF-16").GetString(data);

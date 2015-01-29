@@ -5,7 +5,7 @@ namespace PolarisServer.Packets
 {
     public class SetMesetaPacket : Packet
     {
-        public Int64 newAmount = 0;
+        public Int64 NewAmount = 0;
 
         #region implemented abstract members of Packet
 
@@ -13,7 +13,7 @@ namespace PolarisServer.Packets
         {
             var writer = new PacketWriter();
 
-            writer.Write(newAmount);
+            writer.Write(NewAmount);
 
             return writer.ToArray();
         }
@@ -22,9 +22,9 @@ namespace PolarisServer.Packets
         {
             return new PacketHeader
             {
-                type = 0x0F,
-                subtype = 0x14,
-                flags1 = 0
+                Type = 0x0F,
+                Subtype = 0x14,
+                Flags1 = 0
             };
         }
 

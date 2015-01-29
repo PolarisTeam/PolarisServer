@@ -17,9 +17,9 @@ namespace PolarisServer
 
         public static byte[] StringToByteArray(String hex)
         {
-            var NumberChars = hex.Length;
-            var bytes = new byte[NumberChars/2];
-            for (var i = 0; i < NumberChars; i += 2)
+            var numberChars = hex.Length;
+            var bytes = new byte[numberChars/2];
+            for (var i = 0; i < numberChars; i += 2)
                 bytes[i/2] = Convert.ToByte(hex.Substring(i, 2), 16);
             return bytes;
         }
@@ -48,8 +48,8 @@ namespace PolarisServer
 
         public static int FindPlayerByUsername(string name)
         {
-            for (var i = 0; i < PolarisApp.Instance.server.Clients.Count; i++)
-                if (name.ToLower() == PolarisApp.Instance.server.Clients[i].User.Username.ToLower())
+            for (var i = 0; i < PolarisApp.Instance.Server.Clients.Count; i++)
+                if (name.ToLower() == PolarisApp.Instance.Server.Clients[i].User.Username.ToLower())
                     return i;
 
             return -1;

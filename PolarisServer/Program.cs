@@ -11,28 +11,28 @@ namespace PolarisServer
     internal class PolarisApp
     {
         // Will be using these around the app later [KeyPhact]
-        public const string POLARIS_NAME = "Polaris Server";
-        public const string POLARIS_SHORT_NAME = "Polaris";
-        public const string POLARIS_AUTHOR = "PolarisTeam (http://github.com/PolarisTeam)";
-        public const string POLARIS_COPYRIGHT = "(C) 2014 PolarisTeam.";
-        public const string POLARIS_LICENSE = "All licenced under AGPL.";
-        public const string POLARIS_VERSION = "v0.1.0-pre";
-        public const string POLARIS_VERSION_NAME = "Corsac Fox";
+        public const string PolarisName = "Polaris Server";
+        public const string PolarisShortName = "Polaris";
+        public const string PolarisAuthor = "PolarisTeam (http://github.com/PolarisTeam)";
+        public const string PolarisCopyright = "(C) 2014 PolarisTeam.";
+        public const string PolarisLicense = "All licenced under AGPL.";
+        public const string PolarisVersion = "v0.1.0-pre";
+        public const string PolarisVersionName = "Corsac Fox";
         public static IPAddress BindAddress = IPAddress.Parse("127.0.0.1");
         public static Config Config;
         public static ConsoleSystem ConsoleSystem;
-        public List<QueryServer> queryServers = new List<QueryServer>();
-        public Server server;
+        public List<QueryServer> QueryServers = new List<QueryServer>();
+        public Server Server;
         public static PolarisApp Instance { get; private set; }
-        public PolarisEF Database { get; private set; }
+        public PolarisEf Database { get; private set; }
 
         public static void Main(string[] args)
         {
             Config = new Config();
 
             ConsoleSystem = new ConsoleSystem();
-            ConsoleSystem.thread = new Thread(ConsoleSystem.StartThread);
-            ConsoleSystem.thread.Start();
+            ConsoleSystem.Thread = new Thread(ConsoleSystem.StartThread);
+            ConsoleSystem.Thread.Start();
 
             // Setup function exit handlers to guarentee Exit() is run before closing
             Console.CancelKeyPress += Exit;
@@ -97,9 +97,9 @@ namespace PolarisServer
             }
 
             // Fix up startup message [KeyPhact]
-            Logger.Write(POLARIS_NAME + " - " + POLARIS_VERSION + " (" + POLARIS_VERSION_NAME + ")");
-            Logger.Write("By " + POLARIS_AUTHOR);
-            Logger.Write(POLARIS_LICENSE);
+            Logger.Write(PolarisName + " - " + PolarisVersion + " (" + PolarisVersionName + ")");
+            Logger.Write("By " + PolarisAuthor);
+            Logger.Write(PolarisLicense);
 
             Thread.Sleep(1000);
             //System.Data.Entity.Database.SetInitializer(new DropCreateDatabaseIfModelChanges<PolarisEF>());
@@ -111,19 +111,19 @@ namespace PolarisServer
         {
             Logger.WriteInternal("Server starting at " + DateTime.Now);
 
-            server = new Server();
+            Server = new Server();
 
             Config.Load();
 
             PacketHandlers.LoadPacketHandlers();
 
             Logger.WriteInternal("[DB ] Loading database...");
-            Database = new PolarisEF();
+            Database = new PolarisEf();
 
             for (var i = 0; i < 10; i++)
-                queryServers.Add(new QueryServer(QueryMode.ShipList, 12099 + (100*i)));
+                QueryServers.Add(new QueryServer(QueryMode.ShipList, 12099 + (100*i)));
 
-            server.Run();
+            Server.Run();
         }
 
         private static void Exit(object sender, EventArgs e)

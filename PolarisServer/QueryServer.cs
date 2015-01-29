@@ -17,24 +17,24 @@ namespace PolarisServer
 
     public class QueryServer
     {
-        public static List<Thread> runningServers = new List<Thread>();
-        private readonly QueryMode mode;
-        private readonly int port;
+        public static List<Thread> RunningServers = new List<Thread>();
+        private readonly QueryMode _mode;
+        private readonly int _port;
 
         public QueryServer(QueryMode mode, int port)
         {
-            this.mode = mode;
-            this.port = port;
+            this._mode = mode;
+            this._port = port;
             var queryThread = new Thread(Run);
             queryThread.Start();
-            runningServers.Add(queryThread);
+            RunningServers.Add(queryThread);
             Logger.WriteInternal("[---] Started a new QueryServer on port " + port);
         }
 
         private void Run()
         {
             OnConnection c;
-            switch (mode)
+            switch (_mode)
             {
                 default:
                     c = DoShipList;
@@ -49,7 +49,7 @@ namespace PolarisServer
 
             var serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             serverSocket.Blocking = true;
-            var ep = new IPEndPoint(IPAddress.Any, port);
+            var ep = new IPEndPoint(IPAddress.Any, _port);
             serverSocket.Bind(ep); // TODO: Custom bind address.
             serverSocket.Listen(5);
             while (true)

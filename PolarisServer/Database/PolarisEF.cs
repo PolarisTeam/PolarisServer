@@ -10,26 +10,26 @@ namespace PolarisServer.Database
     public class ServerInfo
     {
         [Key, MaxLength(255)]
-        public string info { get; set; }
+        public string Info { get; set; }
 
-        public string setting { get; set; }
+        public string Setting { get; set; }
     }
 
     public class Player
     {
         [Key]
-        public int PlayerID { get; set; }
+        public int PlayerId { get; set; }
 
         public string Username { get; set; }
         public string Password { get; set; }
         public string Nickname { get; set; }
-        public string SettingsINI { get; set; }
+        public string SettingsIni { get; set; }
     }
 
     [DbConfigurationType(typeof (MySqlEFConfiguration))]
-    public class PolarisEF : DbContext
+    public class PolarisEf : DbContext
     {
-        public PolarisEF()
+        public PolarisEf()
             : base(
                 string.Format("server={0};database={1};username={2};password={3}", PolarisApp.Config.DatabaseAddress,
                     PolarisApp.Config.DatabaseName, PolarisApp.Config.DatabaseUsername,
@@ -47,7 +47,7 @@ namespace PolarisServer.Database
                 var revision = ServerInfos.Find("Revision");
                 if (revision == null)
                 {
-                    revision = new ServerInfo {info = "Revision", setting = "0"};
+                    revision = new ServerInfo {Info = "Revision", Setting = "0"};
                     ServerInfos.Add(revision);
 
                     //TODO Possibly move this somewhere else?
@@ -55,7 +55,7 @@ namespace PolarisServer.Database
                 }
                 SaveChanges();
 
-                Logger.WriteInternal("[DB ] Loaded database with dataset revision {0}", revision.setting);
+                Logger.WriteInternal("[DB ] Loaded database with dataset revision {0}", revision.Setting);
             }
             catch (Exception ex)
             {

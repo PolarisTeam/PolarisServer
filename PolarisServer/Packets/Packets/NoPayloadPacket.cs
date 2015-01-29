@@ -4,13 +4,13 @@ namespace PolarisServer.Packets
 {
     public class NoPayloadPacket : Packet
     {
-        private readonly byte subtype;
-        private readonly byte type;
+        private readonly byte _subtype;
+        private readonly byte _type;
 
         public NoPayloadPacket(byte type, byte subtype)
         {
-            this.type = type;
-            this.subtype = subtype;
+            this._type = type;
+            this._subtype = subtype;
         }
 
         #region implemented abstract members of Packet
@@ -24,8 +24,8 @@ namespace PolarisServer.Packets
         {
             return new PacketHeader
             {
-                type = type,
-                subtype = subtype
+                Type = _type,
+                Subtype = _subtype
             };
         }
 

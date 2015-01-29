@@ -8,20 +8,20 @@ namespace PolarisServer
 {
     public class Server
     {
-        private readonly SocketServer server;
-        public Timer pingTimer;
+        private readonly SocketServer _server;
+        public Timer PingTimer;
 
         public Server()
         {
             Clients = new List<Client>();
-            server = new SocketServer(12205);
-            server.NewClient += HandleNewClient;
+            _server = new SocketServer(12205);
+            _server.NewClient += HandleNewClient;
             Instance = this;
             StartTime = DateTime.Now;
 
-            pingTimer = new Timer(1000*PolarisApp.Config.PingTime); // 1 Minute default
-            pingTimer.Elapsed += PingClients;
-            pingTimer.Start();
+            PingTimer = new Timer(1000*PolarisApp.Config.PingTime); // 1 Minute default
+            PingTimer.Elapsed += PingClients;
+            PingTimer.Start();
 
             new QueryServer(QueryMode.BlockBalance, 12200);
         }
@@ -35,7 +35,7 @@ namespace PolarisServer
             while (true)
             {
                 // Run the underlying SocketServer
-                server.Run();
+                _server.Run();
 
                 // Check Clients to make sure they still exist
                 foreach (var client in Clients)

@@ -4,11 +4,11 @@ namespace PolarisServer.Packets
 {
     internal class GuildInfoPacket : Packet
     {
-        private readonly Character character;
+        private readonly Character _character;
 
         public GuildInfoPacket(Character character)
         {
-            this.character = character;
+            this._character = character;
         }
 
         #region implemented abstract members of Packet
@@ -24,7 +24,7 @@ namespace PolarisServer.Packets
                 writer.Write((byte) 0);
 
             // Character ID
-            writer.Write((uint) character.CharacterID);
+            writer.Write((uint) _character.CharacterId);
 
             // Padding?
             for (var i = 0; i < 4; i++)
@@ -32,14 +32,14 @@ namespace PolarisServer.Packets
 
             // Nickname
             // TODO: The above and below may be switched around, need more data
-            writer.WriteFixedLengthUTF16(character.Player.Nickname, 16);
+            writer.WriteFixedLengthUtf16(_character.Player.Nickname, 16);
 
             // Padding?
             for (var i = 0; i < 36; i++)
                 writer.Write((byte) 0);
 
             // Player name
-            writer.WriteFixedLengthUTF16(character.Name, 16);
+            writer.WriteFixedLengthUtf16(_character.Name, 16);
 
             // Unknown?
             for (var i = 0; i < 24; i++)
@@ -47,7 +47,7 @@ namespace PolarisServer.Packets
 
             // Team Name
             // We don't actually have team names anywhere, just dump a test here
-            writer.WriteFixedLengthUTF16("Polaris Team", 16);
+            writer.WriteFixedLengthUtf16("Polaris Team", 16);
 
             // Unknown
             // Somewhere in here is likely a Team ID
