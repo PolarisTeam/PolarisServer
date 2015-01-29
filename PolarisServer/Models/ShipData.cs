@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 using System.Runtime.InteropServices;
 
 namespace PolarisServer.Models
@@ -14,15 +13,13 @@ namespace PolarisServer.Models
     }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-    public unsafe struct ShipEntry
+    public struct ShipEntry
     {
         public UInt32 number;
 
-        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 16)]
-        public string name;
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 16)] public string name;
 
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
-        public byte[] ip;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)] public byte[] ip;
 
         public UInt32 zero;
         public ShipStatus status;

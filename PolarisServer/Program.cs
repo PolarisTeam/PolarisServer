@@ -1,34 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.Entity;
-using System.Net;
-using System.Net.Sockets;
-using System.Threading;
 using System.IO;
-
+using System.Net;
+using System.Threading;
 using PolarisServer.Database;
 using PolarisServer.Packets.Handlers;
 
 namespace PolarisServer
 {
-    class PolarisApp
+    internal class PolarisApp
     {
-        private static PolarisApp instance;
-
-        public static PolarisApp Instance { get { return instance; } }
-
-        public PolarisEF Database { get { return database; } }
-
-        private PolarisEF database;
-
-        public static IPAddress BindAddress = IPAddress.Parse("127.0.0.1");
-        public List<QueryServer> queryServers = new List<QueryServer>();
-
-        public Server server;
-
-        public static Config Config;
-        public static ConsoleSystem ConsoleSystem;
-
         // Will be using these around the app later [KeyPhact]
         public const string POLARIS_NAME = "Polaris Server";
         public const string POLARIS_SHORT_NAME = "Polaris";
@@ -37,14 +18,20 @@ namespace PolarisServer
         public const string POLARIS_LICENSE = "All licenced under AGPL.";
         public const string POLARIS_VERSION = "v0.1.0-pre";
         public const string POLARIS_VERSION_NAME = "Corsac Fox";
-
+        public static IPAddress BindAddress = IPAddress.Parse("127.0.0.1");
+        public static Config Config;
+        public static ConsoleSystem ConsoleSystem;
+        public List<QueryServer> queryServers = new List<QueryServer>();
+        public Server server;
+        public static PolarisApp Instance { get; private set; }
+        public PolarisEF Database { get; private set; }
 
         public static void Main(string[] args)
         {
             Config = new Config();
 
             ConsoleSystem = new ConsoleSystem();
-            ConsoleSystem.thread = new Thread(new ThreadStart(ConsoleSystem.StartThread));
+            ConsoleSystem.thread = new Thread(ConsoleSystem.StartThread);
             ConsoleSystem.thread.Start();
 
             // Setup function exit handlers to guarentee Exit() is run before closing
@@ -53,7 +40,7 @@ namespace PolarisServer
 
             try
             {
-                for (int i = 0; i < args.Length; i++)
+                for (var i = 0; i < args.Length; i++)
                 {
                     switch (args[i].ToLower())
                     {
@@ -68,9 +55,9 @@ namespace PolarisServer
 
                         case "-s":
                         case "--size":
-                            string[] splitArgs = args[++i].Split(',');
-                            int width = int.Parse(splitArgs[0]);
-                            int height = int.Parse(splitArgs[1]);
+                            var splitArgs = args[++i].Split(',');
+                            var width = int.Parse(splitArgs[0]);
+                            var height = int.Parse(splitArgs[1]);
                             if (width < ConsoleSystem.Width)
                             {
                                 Logger.WriteWarning("[ARG] Capping console width to {0} columns", ConsoleSystem.Width);
@@ -116,13 +103,13 @@ namespace PolarisServer
 
             Thread.Sleep(1000);
             //System.Data.Entity.Database.SetInitializer(new DropCreateDatabaseIfModelChanges<PolarisEF>());
-            instance = new PolarisApp();
-            instance.Start();
+            Instance = new PolarisApp();
+            Instance.Start();
         }
 
         public void Start()
         {
-            Logger.WriteInternal("Server starting at " + DateTime.Now.ToString());
+            Logger.WriteInternal("Server starting at " + DateTime.Now);
 
             server = new Server();
 
@@ -131,22 +118,22 @@ namespace PolarisServer
             PacketHandlers.LoadPacketHandlers();
 
             Logger.WriteInternal("[DB ] Loading database...");
-            database = new PolarisEF();
+            Database = new PolarisEF();
 
-            for (int i = 0; i < 10; i++)
-                queryServers.Add(new QueryServer(QueryMode.ShipList, 12099 + (100 * i)));
+            for (var i = 0; i < 10; i++)
+                queryServers.Add(new QueryServer(QueryMode.ShipList, 12099 + (100*i)));
 
             server.Run();
         }
 
-        static void Exit(object sender, EventArgs e)
+        private static void Exit(object sender, EventArgs e)
         {
             // Save the configuration
             Config.Save();
 
             // Save the database
-            if (instance != null && instance.database != null)
-                instance.database.SaveChanges();
+            if (Instance != null && Instance.Database != null)
+                Instance.Database.SaveChanges();
         }
     }
 }

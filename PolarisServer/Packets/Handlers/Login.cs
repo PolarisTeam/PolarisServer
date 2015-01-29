@@ -1,6 +1,7 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
+using PolarisServer.Database;
 
 namespace PolarisServer.Packets.Handlers
 {
@@ -8,29 +9,29 @@ namespace PolarisServer.Packets.Handlers
     public class Login : PacketHandler
     {
         #region implemented abstract members of PacketHandler
-        
+
         public override void HandlePacket(Client context, byte[] data, uint position, uint size)
         {
-            PacketReader reader = new Packets.PacketReader(data, position, size);
+            var reader = new PacketReader(data, position, size);
 
             reader.BaseStream.Seek(0x2C, SeekOrigin.Current);
 
-            uint macCount = reader.ReadMagic(0x5E6, 107);
-            reader.BaseStream.Seek(0x1C * macCount, SeekOrigin.Current);
+            var macCount = reader.ReadMagic(0x5E6, 107);
+            reader.BaseStream.Seek(0x1C*macCount, SeekOrigin.Current);
 
             reader.BaseStream.Seek(0x114, SeekOrigin.Current);
 
-            string username = reader.ReadFixedLengthASCII(64);
-            string password = reader.ReadFixedLengthASCII(64);
+            var username = reader.ReadFixedLengthASCII(64);
+            var password = reader.ReadFixedLengthASCII(64);
 
             // What am I doing here even
             var db = PolarisApp.Instance.Database;
             var users = from u in db.Players
-                        where u.Username == username
-                        select u;
+                where u.Username == username
+                select u;
 
-            string error = "";
-            Database.Player user = null;
+            var error = "";
+            Player user = null;
 
             if (users.Count() == 0)
             {
@@ -41,7 +42,7 @@ namespace PolarisServer.Packets.Handlers
                     user = null;
                 }
                 // Check for special characters
-                else if (!System.Text.RegularExpressions.Regex.IsMatch(username, "^[a-zA-Z0-9 ]*$", System.Text.RegularExpressions.RegexOptions.IgnoreCase))
+                else if (!Regex.IsMatch(username, "^[a-zA-Z0-9 ]*$", RegexOptions.IgnoreCase))
                 {
                     error = "Username must not contain special characters.\nPlease use letters and numbers only.";
                     user = null;
@@ -49,12 +50,13 @@ namespace PolarisServer.Packets.Handlers
                 else // We're all good!
                 {
                     // Insert new player into database
-                    user = new Database.Player
+                    user = new Player
                     {
                         Username = username,
                         Password = BCrypt.Net.BCrypt.HashPassword(password),
-                        Nickname = username, // Since we can't display the nickname prompt yet, just default it to the username
-                        SettingsINI = System.IO.File.ReadAllText("Resources/settings.txt")
+                        Nickname = username,
+                        // Since we can't display the nickname prompt yet, just default it to the username
+                        SettingsINI = File.ReadAllText("Resources/settings.txt")
                     };
                     db.Players.Add(user);
                     db.SaveChanges();
@@ -73,34 +75,34 @@ namespace PolarisServer.Packets.Handlers
             }
 
             // Mystery packet
-            PacketWriter mystery = new PacketWriter();
-            mystery.Write((uint)100);
+            var mystery = new PacketWriter();
+            mystery.Write((uint) 100);
             // SendPacket(0x11, 0x49, 0, mystery.ToArray());
 
             // Login response packet
-            PacketWriter resp = new PacketWriter();
-            resp.Write((uint)((user == null) ? 1 : 0)); // Status flag: 0=success, 1=error
+            var resp = new PacketWriter();
+            resp.Write((uint) ((user == null) ? 1 : 0)); // Status flag: 0=success, 1=error
             resp.WriteUTF16(error, 0x8BA4, 0xB6);
 
             if (user == null)
             {
-                for (int i = 0; i < 0xEC; i++)
-                    resp.Write((byte)0);
+                for (var i = 0; i < 0xEC; i++)
+                    resp.Write((byte) 0);
                 context.SendPacket(0x11, 1, 4, resp.ToArray());
                 return;
             }
 
-            resp.Write((uint)user.PlayerID); // Player ID
-            resp.Write((uint)0); // Unknown
-            resp.Write((uint)0); // Unknown
+            resp.Write((uint) user.PlayerID); // Player ID
+            resp.Write((uint) 0); // Unknown
+            resp.Write((uint) 0); // Unknown
             resp.WriteFixedLengthUTF16("B001-DarkFox", 0x20);
-            for (int i = 0; i < 0xBC; i++)
-                resp.Write((byte)0);
+            for (var i = 0; i < 0xBC; i++)
+                resp.Write((byte) 0);
 
             context.SendPacket(0x11, 1, 4, resp.ToArray());
 
             // Settings packet
-            PacketWriter settings = new PacketWriter();
+            var settings = new PacketWriter();
             settings.WriteASCII(user.SettingsINI, 0x54AF, 0x100);
             context.SendPacket(0x2B, 2, 4, settings.ToArray());
 
@@ -112,4 +114,3 @@ namespace PolarisServer.Packets.Handlers
         #endregion
     }
 }
-

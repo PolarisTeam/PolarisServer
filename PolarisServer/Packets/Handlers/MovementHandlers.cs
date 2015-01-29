@@ -9,14 +9,14 @@ namespace PolarisServer.Packets.Handlers
 
         public override void HandlePacket(Client context, byte[] data, uint position, uint size)
         {
-            byte[] bytes = BitConverter.GetBytes((uint)context.User.PlayerID);
+            var bytes = BitConverter.GetBytes((uint) context.User.PlayerID);
 
             data[0] = bytes[0];
             data[1] = bytes[1];
             data[2] = bytes[2];
             data[3] = bytes[3];
 
-            foreach (Client c in Server.Instance.Clients)
+            foreach (var c in Server.Instance.Clients)
             {
                 if (c == context)
                     continue;
@@ -38,14 +38,14 @@ namespace PolarisServer.Packets.Handlers
 
         public override void HandlePacket(Client context, byte[] data, uint position, uint size)
         {
-            byte[] bytes = BitConverter.GetBytes((uint)context.User.PlayerID);
+            var bytes = BitConverter.GetBytes((uint) context.User.PlayerID);
 
             data[0] = bytes[0];
             data[1] = bytes[1];
             data[2] = bytes[2];
             data[3] = bytes[3];
 
-            foreach (Client c in Server.Instance.Clients)
+            foreach (var c in Server.Instance.Clients)
             {
                 if (c == context)
                     continue;
@@ -66,14 +66,14 @@ namespace PolarisServer.Packets.Handlers
 
         public override void HandlePacket(Client context, byte[] data, uint position, uint size)
         {
-            byte[] bytes = BitConverter.GetBytes((uint)context.User.PlayerID);
+            var bytes = BitConverter.GetBytes((uint) context.User.PlayerID);
 
             data[0] = bytes[0];
             data[1] = bytes[1];
             data[2] = bytes[2];
             data[3] = bytes[3];
 
-            foreach (Client c in Server.Instance.Clients)
+            foreach (var c in Server.Instance.Clients)
             {
                 if (c.Character == null)
                     continue;
@@ -84,5 +84,4 @@ namespace PolarisServer.Packets.Handlers
 
         #endregion
     }
-
 }

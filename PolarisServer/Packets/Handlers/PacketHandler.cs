@@ -23,42 +23,46 @@ namespace PolarisServer.Packets.Handlers
 
     public static class PacketHandlers
     {
-        private static Dictionary<ushort, PacketHandler> handlers = new Dictionary<ushort, PacketHandler>();
+        private static readonly Dictionary<ushort, PacketHandler> handlers = new Dictionary<ushort, PacketHandler>();
 
         public static void LoadPacketHandlers()
         {
             var classes = from t in Assembly.GetExecutingAssembly().GetTypes()
-                          where t.IsClass && t.Namespace == "PolarisServer.Packets.Handlers" && t.IsSubclassOf(typeof(PacketHandler))
-                          select t;
-            
-            foreach (Type t in classes.ToList())
+                where
+                    t.IsClass && t.Namespace == "PolarisServer.Packets.Handlers" &&
+                    t.IsSubclassOf(typeof (PacketHandler))
+                select t;
+
+            foreach (var t in classes.ToList())
             {
-                Attribute[] attrs = (Attribute[])t.GetCustomAttributes(typeof(PacketHandlerAttr), false);
-                
+                var attrs = (Attribute[]) t.GetCustomAttributes(typeof (PacketHandlerAttr), false);
+
                 if (attrs.Length > 0)
                 {
-                    PacketHandlerAttr attr = (PacketHandlerAttr)attrs[0];
-                    Logger.WriteInternal("[PKT] Loaded PacketHandler {0} for packet {1:X}-{2:X}.", t.Name, attr.type, attr.subtype);
+                    var attr = (PacketHandlerAttr) attrs[0];
+                    Logger.WriteInternal("[PKT] Loaded PacketHandler {0} for packet {1:X}-{2:X}.", t.Name, attr.type,
+                        attr.subtype);
                     if (!handlers.ContainsKey(Helper.PacketTypeToUShort(attr.type, attr.subtype)))
-                        handlers.Add(Helper.PacketTypeToUShort(attr.type, attr.subtype), (PacketHandler)Activator.CreateInstance(t));
+                        handlers.Add(Helper.PacketTypeToUShort(attr.type, attr.subtype),
+                            (PacketHandler) Activator.CreateInstance(t));
                 }
             }
         }
 
         /// <summary>
-        /// Gets and creates a PacketHandler for a given packet type and subtype.
+        ///     Gets and creates a PacketHandler for a given packet type and subtype.
         /// </summary>
         /// <returns>An instance of a PacketHandler or null</returns>
         /// <param name="type">Type a.</param>
         /// <param name="subtype">Type b.</param>
         public static PacketHandler GetHandlerFor(uint type, uint subtype)
         {
-            ushort packetCode = Helper.PacketTypeToUShort(type, subtype);
+            var packetCode = Helper.PacketTypeToUShort(type, subtype);
             PacketHandler handler = null;
-            
+
             if (handlers.ContainsKey(packetCode))
                 handlers.TryGetValue(packetCode, out handler);
-            
+
             return handler;
         }
 
@@ -68,4 +72,3 @@ namespace PolarisServer.Packets.Handlers
         }
     }
 }
-

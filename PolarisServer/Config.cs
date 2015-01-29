@@ -19,32 +19,27 @@ namespace PolarisServer
 
     public class Config
     {
-        private string configFile = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + Path.DirectorySeparatorChar + "PolarisServer.cfg";
+        private readonly string configFile = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) +
+                                             Path.DirectorySeparatorChar + "PolarisServer.cfg";
 
         // Settings
-        [ConfigComment("The address to bind to")]
-        public IPAddress BindAddress = IPAddress.Loopback;
+        [ConfigComment("The address to bind to")] public IPAddress BindAddress = IPAddress.Loopback;
 
-        [ConfigComment("Log the data sent and recieved from packets")]
-        public bool VerbosePackets = false;
+        [ConfigComment("The prefix to check for to send a command from the client to the server")] public string
+            CommandPrefix = "|";
 
-        [ConfigComment("Time in seconds to perform a ping of all connected clients to the server")]
-        public double PingTime = 60;
+        [ConfigComment("Address of the database server")] public string DatabaseAddress = "127.0.0.1";
+        [ConfigComment("Name of the database which contains the Polaris data")] public string DatabaseName = "polaris";
+        [ConfigComment("Password for logging into the database server")] public string DatabasePassword = "polaris";
+        [ConfigComment("Username for logging into the database server")] public string DatabaseUsername = "polaris";
 
-        [ConfigComment("The prefix to check for to send a command from the client to the server")]
-        public string CommandPrefix = "|";
+        [ConfigComment("Time in seconds to perform a ping of all connected clients to the server")] public double
+            PingTime = 60;
 
-        [ConfigComment("Enable foreground colors for console text (Unstable on linux)")]
-        public bool UseConsoleColors = true;
+        [ConfigComment("Enable foreground colors for console text (Unstable on linux)")] public bool UseConsoleColors =
+            true;
 
-        [ConfigComment("Name of the database which contains the Polaris data")]
-        public string DatabaseName = "polaris";
-        [ConfigComment("Address of the database server")]
-        public string DatabaseAddress = "127.0.0.1";
-        [ConfigComment("Username for logging into the database server")]
-        public string DatabaseUsername = "polaris";
-        [ConfigComment("Password for logging into the database server")]
-        public string DatabasePassword = "polaris";
+        [ConfigComment("Log the data sent and recieved from packets")] public bool VerbosePackets = false;
 
         public void Load()
         {
@@ -57,10 +52,10 @@ namespace PolarisServer
                     return;
                 }
 
-                FieldInfo[] fields = this.GetType().GetFields();
-                string[] lines = File.ReadAllLines(configFile);
+                var fields = GetType().GetFields();
+                var lines = File.ReadAllLines(configFile);
 
-                foreach (string option in lines)
+                foreach (var option in lines)
                 {
                     // Blank Line
                     if (option.Length == 0)
@@ -70,10 +65,10 @@ namespace PolarisServer
                     if (option.StartsWith("//"))
                         continue;
 
-                    string[] split = option.Split('=');
+                    var split = option.Split('=');
 
                     // Trim trailing/leading space
-                    for (int i = 0; i < split.Length; i++)
+                    for (var i = 0; i < split.Length; i++)
                         split[i] = split[i].Trim();
 
                     // Check length
@@ -83,7 +78,7 @@ namespace PolarisServer
                         continue;
                     }
 
-                    FieldInfo field = fields.FirstOrDefault(o => o.Name == split[0]);
+                    var field = fields.FirstOrDefault(o => o.Name == split[0]);
                     if (field != null)
                         ParseField(field, split[1]);
                 }
@@ -103,10 +98,10 @@ namespace PolarisServer
         {
             try
             {
-                List<string> data = new List<string>();
-                FieldInfo[] fields = this.GetType().GetFields();
+                var data = new List<string>();
+                var fields = GetType().GetFields();
 
-                foreach (FieldInfo field in fields)
+                foreach (var field in fields)
                     SaveField(field, data);
 
                 File.WriteAllLines(configFile, data);
@@ -124,47 +119,46 @@ namespace PolarisServer
         {
             PolarisApp.BindAddress = BindAddress;
             Logger.VerbosePackets = VerbosePackets;
-            PolarisApp.Instance.server.pingTimer.Interval = 1000 * PingTime;
+            PolarisApp.Instance.server.pingTimer.Interval = 1000*PingTime;
         }
 
         public bool SetField(string name, string value)
         {
-            FieldInfo[] fields = this.GetType().GetFields();
-            FieldInfo field = fields.FirstOrDefault(o => o.Name == name);
+            var fields = GetType().GetFields();
+            var field = fields.FirstOrDefault(o => o.Name == name);
 
             if (field != null)
             {
                 ParseField(field, value);
                 return true;
             }
-            else
-                return false;
+            return false;
         }
 
         private void ParseField(FieldInfo field, string value)
         {
             // Bool
-            if (field.GetValue(this).GetType() == typeof(bool))
+            if (field.GetValue(this).GetType() == typeof (bool))
                 field.SetValue(this, bool.Parse(value));
 
             // Int32
-            if (field.GetValue(this).GetType() == typeof(Int32))
+            if (field.GetValue(this).GetType() == typeof (Int32))
                 field.SetValue(this, int.Parse(value));
 
             // Float
-            if (field.GetValue(this).GetType() == typeof(float))
+            if (field.GetValue(this).GetType() == typeof (float))
                 field.SetValue(this, float.Parse(value));
 
             // Double
-            if (field.GetValue(this).GetType() == typeof(double))
+            if (field.GetValue(this).GetType() == typeof (double))
                 field.SetValue(this, double.Parse(value));
 
             // String
-            if (field.GetValue(this).GetType() == typeof(string))
+            if (field.GetValue(this).GetType() == typeof (string))
                 field.SetValue(this, value);
-            
+
             // IPAddress
-            if (field.GetValue(this).GetType() == typeof(IPAddress))
+            if (field.GetValue(this).GetType() == typeof (IPAddress))
                 field.SetValue(this, IPAddress.Parse(value));
 
             // Add more handling for special/custom types as needed
@@ -173,18 +167,18 @@ namespace PolarisServer
         private void SaveField(FieldInfo field, List<string> data)
         {
             // Comment
-            Attribute[] attributes = (Attribute[])field.GetCustomAttributes(typeof(ConfigComment), false);
+            var attributes = (Attribute[]) field.GetCustomAttributes(typeof (ConfigComment), false);
             if (attributes.Length > 0)
             {
-                ConfigComment commentAttr = (ConfigComment)attributes[0];
+                var commentAttr = (ConfigComment) attributes[0];
                 data.Add("// " + commentAttr.comment);
             }
 
             // IP Address
-            if (field.GetValue(this).GetType() == typeof(IPAddress))
+            if (field.GetValue(this).GetType() == typeof (IPAddress))
             {
-                IPAddress address = (IPAddress)field.GetValue(this);
-                data.Add(field.Name + " = " + address.ToString());
+                var address = (IPAddress) field.GetValue(this);
+                data.Add(field.Name + " = " + address);
             }
             else // Basic field
                 data.Add(field.Name + " = " + field.GetValue(this));

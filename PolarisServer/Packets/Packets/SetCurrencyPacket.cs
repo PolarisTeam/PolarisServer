@@ -1,7 +1,4 @@
-﻿using System;
-using System.IO;
-
-using PolarisServer.Models;
+﻿using PolarisServer.Models;
 
 namespace PolarisServer.Packets
 {
@@ -14,21 +11,21 @@ namespace PolarisServer.Packets
 
         public override byte[] Build()
         {
-            PacketWriter writer = new PacketWriter();
+            var writer = new PacketWriter();
 
             // AC
             writer.Write(newACAmount);
 
             // Padding?
-            for (int i = 0; i < 20; i++)
-                writer.Write((byte)0);
+            for (var i = 0; i < 20; i++)
+                writer.Write((byte) 0);
 
             // FUN
             writer.Write(newFUNAmount);
 
             // Padding?
-            for (int i = 0; i < 4; i++)
-                writer.Write((byte)0);
+            for (var i = 0; i < 4; i++)
+                writer.Write((byte) 0);
 
             return writer.ToArray();
         }

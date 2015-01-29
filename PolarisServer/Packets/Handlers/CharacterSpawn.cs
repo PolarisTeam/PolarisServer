@@ -18,7 +18,7 @@ namespace PolarisServer.Packets.Handlers
             // Looks/Jobs
             if (size > 0)
             {
-                PacketReader reader = new PacketReader(data);
+                var reader = new PacketReader(data);
 
                 reader.BaseStream.Seek(0x38, SeekOrigin.Begin);
                 context.Character.Looks = reader.ReadStruct<Character.LooksParam>();
@@ -28,33 +28,31 @@ namespace PolarisServer.Packets.Handlers
             }
 
             // Set Area
-            byte[] setAreaPacket = File.ReadAllBytes("Resources/testSetAreaPacket.bin");
+            var setAreaPacket = File.ReadAllBytes("Resources/testSetAreaPacket.bin");
             context.SendPacket(0x03, 0x24, 4, setAreaPacket);
 
             // Set Player ID
-            PacketWriter setPlayerID = new PacketWriter();
-            setPlayerID.WritePlayerHeader((uint)context.User.PlayerID);
+            var setPlayerID = new PacketWriter();
+            setPlayerID.WritePlayerHeader((uint) context.User.PlayerID);
             context.SendPacket(0x06, 0x00, 0, setPlayerID.ToArray());
 
             // Spawn Lobby Objects
             if (Directory.Exists("Resources/objects/lobby"))
             {
-                string[] objectPaths = Directory.GetFiles("Resources/objects/lobby");
+                var objectPaths = Directory.GetFiles("Resources/objects/lobby");
                 Array.Sort(objectPaths);
                 foreach (var path in objectPaths)
                 {
                     if (Path.GetExtension(path) == "bin")
                     {
                         Logger.WriteWarning("Object {0} is still in BIN format and should be migrated to JSON!", path);
-                        context.SendPacket(File.ReadAllBytes(path));    
-                    } 
+                        context.SendPacket(File.ReadAllBytes(path));
+                    }
                     else if (Path.GetExtension(path) == "json")
                     {
-                        PSOObject new_object = JsonConvert.DeserializeObject<PSOObject>(File.ReadAllText(path));
+                        var new_object = JsonConvert.DeserializeObject<PSOObject>(File.ReadAllText(path));
                         context.SendPacket(0x08, 0x0B, 0x0, new_object.GenerateSpawnBlob());
-
                     }
-                    
                 }
             }
             else
@@ -69,9 +67,9 @@ namespace PolarisServer.Packets.Handlers
             context.SendPacket(new NoPayloadPacket(0x03, 0x2B));
 
             // Spawn on other player's clients
-            CharacterSpawnPacket spawnPacket = new CharacterSpawnPacket(context.Character);
+            var spawnPacket = new CharacterSpawnPacket(context.Character);
             spawnPacket.IsItMe = false;
-            foreach (Client c in Server.Instance.Clients)
+            foreach (var c in Server.Instance.Clients)
             {
                 if (c == context)
                     continue;
@@ -81,14 +79,14 @@ namespace PolarisServer.Packets.Handlers
 
                 c.SendPacket(spawnPacket);
 
-                CharacterSpawnPacket remoteChar = new CharacterSpawnPacket(c.Character);
+                var remoteChar = new CharacterSpawnPacket(c.Character);
                 remoteChar.IsItMe = false;
                 context.SendPacket(remoteChar);
             }
 
             // memset packet - Enables menus
             // Also holds event items and likely other stuff too
-            byte[] memSetPacket = File.ReadAllBytes("Resources/setMemoryPacket.bin");
+            var memSetPacket = File.ReadAllBytes("Resources/setMemoryPacket.bin");
             context.SendPacket(0x23, 0x07, 0, memSetPacket);
 
             // Give a blank palette

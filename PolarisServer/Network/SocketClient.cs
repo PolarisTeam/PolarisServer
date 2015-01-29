@@ -1,36 +1,33 @@
-﻿using System;
-using System.Net.Sockets;
+﻿using System.Net.Sockets;
 
 namespace PolarisServer.Network
 {
     public class SocketClient
     {
-        private SocketServer server;
-        private TcpClient socket;
-
-        public TcpClient Socket { get { return socket; } }
-
-        private byte[] readBuffer;
+        public delegate void ConnectionLostDelegate();
 
         public delegate void DataReceivedDelegate(byte[] data, int size);
-        public event DataReceivedDelegate DataReceived;
 
-        public delegate void ConnectionLostDelegate();
-        public event ConnectionLostDelegate ConnectionLost;
+        private readonly byte[] readBuffer;
+        private readonly SocketServer server;
 
         public SocketClient(SocketServer server, TcpClient socket)
         {
             this.server = server;
-            this.socket = socket;
+            Socket = socket;
 
-            readBuffer = new byte[1024 * 16];
+            readBuffer = new byte[1024*16];
         }
+
+        public TcpClient Socket { get; private set; }
+        public event DataReceivedDelegate DataReceived;
+        public event ConnectionLostDelegate ConnectionLost;
 
         public bool OnReadable()
         {
             try
             {
-                int read = socket.Client.Receive(readBuffer);
+                var read = Socket.Client.Receive(readBuffer);
                 if (read == 0)
                 {
                     // Connection failed, presumably
@@ -55,8 +52,7 @@ namespace PolarisServer.Network
         {
             ConnectionLost();
             server.NotifyConnectionClosed(this);
-            socket.Close();
+            Socket.Close();
         }
     }
 }
-

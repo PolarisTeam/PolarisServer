@@ -1,5 +1,4 @@
 ﻿using System;
-
 using PolarisServer.Models;
 
 namespace PolarisServer.Packets
@@ -7,12 +6,12 @@ namespace PolarisServer.Packets
     public class SetMesetaPacket : Packet
     {
         public Int64 newAmount = 0;
-        
+
         #region implemented abstract members of Packet
 
         public override byte[] Build()
         {
-            PacketWriter writer = new PacketWriter();
+            var writer = new PacketWriter();
 
             writer.Write(newAmount);
 
@@ -28,7 +27,7 @@ namespace PolarisServer.Packets
                 flags1 = 0
             };
         }
-        
+
         #endregion
     }
 }

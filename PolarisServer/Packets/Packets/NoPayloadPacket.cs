@@ -1,12 +1,11 @@
-﻿using System;
-
-using PolarisServer.Models;
+﻿using PolarisServer.Models;
 
 namespace PolarisServer.Packets
 {
     public class NoPayloadPacket : Packet
     {
-        byte type, subtype;
+        private readonly byte subtype;
+        private readonly byte type;
 
         public NoPayloadPacket(byte type, byte subtype)
         {
@@ -33,4 +32,3 @@ namespace PolarisServer.Packets
         #endregion
     }
 }
-

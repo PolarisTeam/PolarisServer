@@ -1,5 +1,4 @@
 ﻿using System;
-
 using PolarisServer.Models;
 
 namespace PolarisServer.Packets
@@ -15,8 +14,8 @@ namespace PolarisServer.Packets
             GenericMessage
         }
 
-        string message;
-        MessageType type;
+        private readonly string message;
+        private readonly MessageType type;
 
         public SystemMessagePacket(string message, MessageType type)
         {
@@ -28,9 +27,9 @@ namespace PolarisServer.Packets
 
         public override byte[] Build()
         {
-            PacketWriter writer = new PacketWriter();
+            var writer = new PacketWriter();
             writer.WriteUTF16(message, 0x78F7, 0xA2);
-            writer.Write((UInt32)type);
+            writer.Write((UInt32) type);
 
             return writer.ToArray();
         }
@@ -44,8 +43,7 @@ namespace PolarisServer.Packets
                 flags1 = 0x04
             };
         }
-        
+
         #endregion
     }
 }
-

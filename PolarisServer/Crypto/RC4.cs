@@ -30,26 +30,23 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.Security.Cryptography;
 
 namespace PolarisServer.Crypto
 {
-
 #if !INSIDE_CORLIB
     public
 #endif
- abstract class RC4 : SymmetricAlgorithm
+        abstract class RC4 : SymmetricAlgorithm
     {
-
-        private static KeySizes[] s_legalBlockSizes =
+        private static readonly KeySizes[] s_legalBlockSizes =
         {
-            new KeySizes (64, 64, 0)
+            new KeySizes(64, 64, 0)
         };
 
-        private static KeySizes[] s_legalKeySizes =
+        private static readonly KeySizes[] s_legalKeySizes =
         {
-            new KeySizes (40, 2048, 8)  
+            new KeySizes(40, 2048, 8)
         };
 
         public RC4()
@@ -68,7 +65,7 @@ namespace PolarisServer.Crypto
             set { ; }
         }
 
-        new static public RC4 Create()
+        public new static RC4 Create()
         {
 #if FULL_AOT_RUNTIME
             return new ARC4Managed ();
@@ -77,16 +74,16 @@ namespace PolarisServer.Crypto
 #endif
         }
 
-        new static public RC4 Create(string algName)
+        public new static RC4 Create(string algName)
         {
-            object o = CryptoConfig.CreateFromName(algName);
+            var o = CryptoConfig.CreateFromName(algName);
             // in case machine.config isn't configured to use 
             // any RC4 implementation
             if (o == null)
             {
                 o = new ARC4Managed();
             }
-            return (RC4)o;
+            return (RC4) o;
         }
     }
 }

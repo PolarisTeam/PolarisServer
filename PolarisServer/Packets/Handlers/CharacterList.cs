@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 
 namespace PolarisServer.Packets.Handlers
 {
@@ -15,26 +14,26 @@ namespace PolarisServer.Packets.Handlers
 
             var db = PolarisApp.Instance.Database;
             var chars = from c in db.Characters
-                        where c.Player.PlayerID == context.User.PlayerID
-                        select c;
+                where c.Player.PlayerID == context.User.PlayerID
+                select c;
 
-            PacketWriter writer = new PacketWriter();
-            writer.Write((uint)chars.Count());
+            var writer = new PacketWriter();
+            writer.Write((uint) chars.Count());
 
             foreach (var ch in chars)
             {
-                writer.Write((uint)ch.CharacterID);
-                writer.Write((uint)context.User.PlayerID);
-                for (int i = 0; i < 0xC; i++)
-                    writer.Write((byte)0);
+                writer.Write((uint) ch.CharacterID);
+                writer.Write((uint) context.User.PlayerID);
+                for (var i = 0; i < 0xC; i++)
+                    writer.Write((byte) 0);
 
                 writer.WriteFixedLengthUTF16(ch.Name, 16);
-                writer.Write((uint)0);
+                writer.Write((uint) 0);
 
                 writer.WriteStruct(ch.Looks);
                 writer.WriteStruct(ch.Jobs);
-                for (int i = 0; i < 0x44; i++)
-                    writer.Write((byte)0);
+                for (var i = 0; i < 0x44; i++)
+                    writer.Write((byte) 0);
             }
 
             // Ninji note: This packet may be followed by extra data,
@@ -50,4 +49,3 @@ namespace PolarisServer.Packets.Handlers
         #endregion
     }
 }
-

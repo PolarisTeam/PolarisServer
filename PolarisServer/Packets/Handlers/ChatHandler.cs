@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.IO;
 
 namespace PolarisServer.Packets.Handlers
 {
@@ -11,23 +11,23 @@ namespace PolarisServer.Packets.Handlers
         {
             if (context.Character == null)
                 return;
-            
-            PacketReader reader = new PacketReader(data, position, size);
-            reader.BaseStream.Seek(0xC, System.IO.SeekOrigin.Begin);
-            UInt32 channel = reader.ReadUInt32();
-            string message = reader.ReadUTF16(0x9D3F, 0x44);
+
+            var reader = new PacketReader(data, position, size);
+            reader.BaseStream.Seek(0xC, SeekOrigin.Begin);
+            var channel = reader.ReadUInt32();
+            var message = reader.ReadUTF16(0x9D3F, 0x44);
 
             if (message.StartsWith(PolarisApp.Config.CommandPrefix))
             {
-                bool valid = false;
+                var valid = false;
 
                 // Iterate commands
-                foreach (ConsoleCommand command in PolarisApp.ConsoleSystem.commands)
+                foreach (var command in PolarisApp.ConsoleSystem.commands)
                 {
-                    string full = message.Substring(1); // Strip the command chars
-                    string[] args = full.Split(' ');
+                    var full = message.Substring(1); // Strip the command chars
+                    var args = full.Split(' ');
 
-                    foreach (string name in command.Names)
+                    foreach (var name in command.Names)
                         if (args[0].ToLower() == name.ToLower())
                         {
                             command.Run(args, args.Length, full, context);
@@ -39,7 +39,7 @@ namespace PolarisServer.Packets.Handlers
                     if (valid)
                         break;
                 }
-                
+
                 if (!valid)
                     Logger.WriteClient(context, "[CMD] {0} - Command not found", message.Split(' ')[0].Trim('\r'));
             }
@@ -47,14 +47,14 @@ namespace PolarisServer.Packets.Handlers
             {
                 Logger.Write("[CHT] <{0}> <{1}>", context.Character.Name, message);
 
-                PacketWriter writer = new PacketWriter();
-                writer.WritePlayerHeader((uint)context.User.PlayerID);
-                writer.Write((uint)channel);
+                var writer = new PacketWriter();
+                writer.WritePlayerHeader((uint) context.User.PlayerID);
+                writer.Write(channel);
                 writer.WriteUTF16(message, 0x9D3F, 0x44);
 
                 data = writer.ToArray();
 
-                foreach (Client c in Server.Instance.Clients)
+                foreach (var c in Server.Instance.Clients)
                 {
                     if (c.Character == null)
                         continue;
@@ -67,4 +67,3 @@ namespace PolarisServer.Packets.Handlers
         #endregion
     }
 }
-

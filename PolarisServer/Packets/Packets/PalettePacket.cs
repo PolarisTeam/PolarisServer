@@ -1,6 +1,4 @@
-﻿using System;
-
-using PolarisServer.Models;
+﻿using PolarisServer.Models;
 
 namespace PolarisServer.Packets
 {
@@ -10,14 +8,14 @@ namespace PolarisServer.Packets
 
         public override byte[] Build()
         {
-            PacketWriter writer = new PacketWriter();
+            var writer = new PacketWriter();
 
             // Enable flag
-            writer.Write((byte)1);
+            writer.Write((byte) 1);
 
             // Blank out the rest (skills)
-            for (int i = 0; i < 1091; i++)
-                writer.Write((byte)0);
+            for (var i = 0; i < 1091; i++)
+                writer.Write((byte) 0);
 
             return writer.ToArray();
         }

@@ -1,7 +1,6 @@
-﻿using System;
-using System.IO;
-using System.Text;
+﻿using System.IO;
 using System.Runtime.InteropServices;
+using System.Text;
 
 namespace PolarisServer.Packets
 {
@@ -15,7 +14,8 @@ namespace PolarisServer.Packets
         {
         }
 
-        public PacketReader(byte[] bytes, uint position, uint size) : base(new MemoryStream(bytes, (int)position, (int)size))
+        public PacketReader(byte[] bytes, uint position, uint size)
+            : base(new MemoryStream(bytes, (int) position, (int) size))
         {
         }
 
@@ -26,78 +26,69 @@ namespace PolarisServer.Packets
 
         public string ReadASCII(uint xor, uint sub)
         {
-            uint magic = ReadMagic(xor, sub);
+            var magic = ReadMagic(xor, sub);
 
             if (magic == 0)
             {
                 return "";
             }
-            else
-            {
-                uint charCount = magic - 1;
-                uint padding = 4 - (charCount & 3);
+            var charCount = magic - 1;
+            var padding = 4 - (charCount & 3);
 
-                byte[] data = ReadBytes((int)charCount);
-                for (int i = 0; i < padding; i++)
-                    ReadByte();
+            var data = ReadBytes((int) charCount);
+            for (var i = 0; i < padding; i++)
+                ReadByte();
 
-                return Encoding.ASCII.GetString(data);
-            }
+            return Encoding.ASCII.GetString(data);
         }
 
         public string ReadFixedLengthASCII(uint charCount)
         {
-            byte[] data = ReadBytes((int)charCount);
-            string str = Encoding.ASCII.GetString(data);
+            var data = ReadBytes((int) charCount);
+            var str = Encoding.ASCII.GetString(data);
 
-            int endAt = str.IndexOf('\0');
+            var endAt = str.IndexOf('\0');
             if (endAt == -1)
                 return str;
-            else
-                return str.Substring(0, endAt);
+            return str.Substring(0, endAt);
         }
 
         public string ReadUTF16(uint xor, uint sub)
         {
-            uint magic = ReadMagic(xor, sub);
+            var magic = ReadMagic(xor, sub);
 
             if (magic == 0)
             {
                 return "";
             }
-            else
-            {
-                uint charCount = magic - 1;
-                uint padding = (magic & 1);
+            var charCount = magic - 1;
+            var padding = (magic & 1);
 
-                byte[] data = ReadBytes((int)(charCount * 2));
+            var data = ReadBytes((int) (charCount*2));
+            ReadUInt16();
+            if (padding != 0)
                 ReadUInt16();
-                if (padding != 0)
-                    ReadUInt16();
 
-                return Encoding.GetEncoding("UTF-16").GetString(data);
-            }
+            return Encoding.GetEncoding("UTF-16").GetString(data);
         }
 
         public string ReadFixedLengthUTF16(int charCount)
         {
-            byte[] data = ReadBytes(charCount * 2);
-            string str = Encoding.GetEncoding("UTF-16").GetString(data);
+            var data = ReadBytes(charCount*2);
+            var str = Encoding.GetEncoding("UTF-16").GetString(data);
 
-            int endAt = str.IndexOf('\0');
+            var endAt = str.IndexOf('\0');
             if (endAt == -1)
                 return str;
-            else
-                return str.Substring(0, endAt);
+            return str.Substring(0, endAt);
         }
 
-        public unsafe T ReadStruct<T>() where T : struct
+        public T ReadStruct<T>() where T : struct
         {
-            byte[] structBytes = new byte[Marshal.SizeOf(typeof(T))];
+            var structBytes = new byte[Marshal.SizeOf(typeof (T))];
             Read(structBytes, 0, structBytes.Length);
 
             return Helper.ByteArrayToStructure<T>(structBytes);
         }
     }
 }
-

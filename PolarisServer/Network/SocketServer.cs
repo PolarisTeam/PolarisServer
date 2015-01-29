@@ -7,16 +7,13 @@ namespace PolarisServer.Network
 {
     public class SocketServer
     {
-        private int port;
-        private List<SocketClient> clients = new List<SocketClient>();
-        private List<Socket> readableSockets = new List<Socket>();
-        private Dictionary<Socket, SocketClient> socketMap = new Dictionary<Socket, SocketClient>();
-        private TcpListener listener;
-
-        public IList<SocketClient> Clients { get { return clients.AsReadOnly(); } }
-
         public delegate void NewClientDelegate(SocketClient client);
-        public event NewClientDelegate NewClient;
+
+        private readonly List<SocketClient> clients = new List<SocketClient>();
+        private readonly TcpListener listener;
+        private readonly List<Socket> readableSockets = new List<Socket>();
+        private readonly Dictionary<Socket, SocketClient> socketMap = new Dictionary<Socket, SocketClient>();
+        private int port;
 
         public SocketServer(int port)
         {
@@ -26,6 +23,13 @@ namespace PolarisServer.Network
             listener.Start();
         }
 
+        public IList<SocketClient> Clients
+        {
+            get { return clients.AsReadOnly(); }
+        }
+
+        public event NewClientDelegate NewClient;
+
         public void Run()
         {
             try
@@ -34,19 +38,19 @@ namespace PolarisServer.Network
                 readableSockets.Clear();
                 readableSockets.Add(listener.Server);
 
-                foreach (SocketClient client in clients)
+                foreach (var client in clients)
                     readableSockets.Add(client.Socket.Client);
 
                 Socket.Select(readableSockets, null, null, 1000000);
 
-                foreach (Socket socket in readableSockets)
+                foreach (var socket in readableSockets)
                 {
                     if (socket == listener.Server)
                     {
                         // New connection
                         Logger.WriteInternal("[HI!] New connection!");
 
-                        SocketClient c = new SocketClient(this, listener.AcceptTcpClient());
+                        var c = new SocketClient(this, listener.AcceptTcpClient());
 
                         clients.Add(c);
                         socketMap.Add(c.Socket.Client, c);
@@ -76,4 +80,3 @@ namespace PolarisServer.Network
         }
     }
 }
-

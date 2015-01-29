@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace PolarisServer.Zone
+﻿namespace PolarisServer.Zone
 {
     public class Zone
     {
@@ -15,14 +13,13 @@ namespace PolarisServer.Zone
             Other
         };
 
-        public string Name { get; set; }
-
-        private ZoneType Type { get; set; }
         public Zone(string name, ZoneType type)
         {
-            this.Name = name;
-            this.Type = type;
+            Name = name;
+            Type = type;
         }
+
+        public string Name { get; set; }
+        private ZoneType Type { get; set; }
     }
 }
-

@@ -25,7 +25,6 @@
 //
 
 using System;
-using System.Globalization;
 using System.Security.Cryptography;
 
 namespace PolarisServer.Crypto
@@ -37,20 +36,80 @@ namespace PolarisServer.Crypto
 #if !INSIDE_CORLIB
     public
 #endif
- class ARC4Managed : RC4, ICryptoTransform
+        class ARC4Managed : RC4, ICryptoTransform
     {
-
         private byte[] key;
+        private bool m_disposed;
         private byte[] state;
         private byte x;
         private byte y;
-        private bool m_disposed;
 
         public ARC4Managed()
-            : base()
         {
             state = new byte[256];
             m_disposed = false;
+        }
+
+        public override byte[] Key
+        {
+            get
+            {
+                if (KeyValue == null)
+                    GenerateKey();
+                return (byte[]) KeyValue.Clone();
+            }
+            set
+            {
+                if (value == null)
+                    throw new ArgumentNullException("Key");
+                KeyValue = key = (byte[]) value.Clone();
+                KeySetup(key);
+            }
+        }
+
+        public bool CanReuseTransform
+        {
+            get { return false; }
+        }
+
+        public bool CanTransformMultipleBlocks
+        {
+            get { return true; }
+        }
+
+        public int InputBlockSize
+        {
+            get { return 1; }
+        }
+
+        public int OutputBlockSize
+        {
+            get { return 1; }
+        }
+
+        public int TransformBlock(byte[] inputBuffer, int inputOffset, int inputCount, byte[] outputBuffer,
+            int outputOffset)
+        {
+            CheckInput(inputBuffer, inputOffset, inputCount);
+            // check output parameters
+            if (outputBuffer == null)
+                throw new ArgumentNullException("outputBuffer");
+            if (outputOffset < 0)
+                throw new ArgumentOutOfRangeException("outputOffset", "< 0");
+            // ordered to avoid possible integer overflow
+            if (outputOffset > outputBuffer.Length - inputCount)
+                throw new ArgumentException("outputBuffer overflow");
+
+            return InternalTransformBlock(inputBuffer, inputOffset, inputCount, outputBuffer, outputOffset);
+        }
+
+        public byte[] TransformFinalBlock(byte[] inputBuffer, int inputOffset, int inputCount)
+        {
+            CheckInput(inputBuffer, inputOffset, inputCount);
+
+            var output = new byte[inputCount];
+            InternalTransformBlock(inputBuffer, inputOffset, inputCount, output, 0);
+            return output;
         }
 
         ~ARC4Managed()
@@ -76,32 +135,10 @@ namespace PolarisServer.Crypto
             }
         }
 
-        public override byte[] Key
-        {
-            get
-            {
-                if (KeyValue == null)
-                    GenerateKey();
-                return (byte[])KeyValue.Clone();
-            }
-            set
-            {
-                if (value == null)
-                    throw new ArgumentNullException("Key");
-                KeyValue = key = (byte[])value.Clone();
-                KeySetup(key);
-            }
-        }
-
-        public bool CanReuseTransform
-        {
-            get { return false; }
-        }
-
         public override ICryptoTransform CreateEncryptor(byte[] rgbKey, byte[] rgvIV)
         {
             Key = rgbKey;
-            return (ICryptoTransform)this;
+            return this;
         }
 
         public override ICryptoTransform CreateDecryptor(byte[] rgbKey, byte[] rgvIV)
@@ -121,38 +158,23 @@ namespace PolarisServer.Crypto
             throw new NotImplementedException();
         }
 
-        public bool CanTransformMultipleBlocks
-        {
-            get { return true; }
-        }
-
-        public int InputBlockSize
-        {
-            get { return 1; }
-        }
-
-        public int OutputBlockSize
-        {
-            get { return 1; }
-        }
-
         private void KeySetup(byte[] key)
         {
             byte index1 = 0;
             byte index2 = 0;
 
-            for (int counter = 0; counter < 256; counter++)
-                state[counter] = (byte)counter;
+            for (var counter = 0; counter < 256; counter++)
+                state[counter] = (byte) counter;
             x = 0;
             y = 0;
-            for (int counter = 0; counter < 256; counter++)
+            for (var counter = 0; counter < 256; counter++)
             {
-                index2 = (byte)(key[index1] + state[counter] + index2);
+                index2 = (byte) (key[index1] + state[counter] + index2);
                 // swap byte
-                byte tmp = state[counter];
+                var tmp = state[counter];
                 state[counter] = state[index2];
                 state[index2] = tmp;
-                index1 = (byte)((index1 + 1) % key.Length);
+                index1 = (byte) ((index1 + 1)%key.Length);
             }
         }
 
@@ -169,46 +191,23 @@ namespace PolarisServer.Crypto
                 throw new ArgumentException("inputBuffer overflow");
         }
 
-        public int TransformBlock(byte[] inputBuffer, int inputOffset, int inputCount, byte[] outputBuffer, int outputOffset)
-        {
-            CheckInput(inputBuffer, inputOffset, inputCount);
-            // check output parameters
-            if (outputBuffer == null)
-                throw new ArgumentNullException("outputBuffer");
-            if (outputOffset < 0)
-                throw new ArgumentOutOfRangeException("outputOffset", "< 0");
-            // ordered to avoid possible integer overflow
-            if (outputOffset > outputBuffer.Length - inputCount)
-                throw new ArgumentException("outputBuffer overflow");
-
-            return InternalTransformBlock(inputBuffer, inputOffset, inputCount, outputBuffer, outputOffset);
-        }
-
-        private int InternalTransformBlock(byte[] inputBuffer, int inputOffset, int inputCount, byte[] outputBuffer, int outputOffset)
+        private int InternalTransformBlock(byte[] inputBuffer, int inputOffset, int inputCount, byte[] outputBuffer,
+            int outputOffset)
         {
             byte xorIndex;
-            for (int counter = 0; counter < inputCount; counter++)
+            for (var counter = 0; counter < inputCount; counter++)
             {
-                x = (byte)(x + 1);
-                y = (byte)(state[x] + y);
+                x = (byte) (x + 1);
+                y = (byte) (state[x] + y);
                 // swap byte
-                byte tmp = state[x];
+                var tmp = state[x];
                 state[x] = state[y];
                 state[y] = tmp;
 
-                xorIndex = (byte)(state[x] + state[y]);
-                outputBuffer[outputOffset + counter] = (byte)(inputBuffer[inputOffset + counter] ^ state[xorIndex]);
+                xorIndex = (byte) (state[x] + state[y]);
+                outputBuffer[outputOffset + counter] = (byte) (inputBuffer[inputOffset + counter] ^ state[xorIndex]);
             }
             return inputCount;
-        }
-
-        public byte[] TransformFinalBlock(byte[] inputBuffer, int inputOffset, int inputCount)
-        {
-            CheckInput(inputBuffer, inputOffset, inputCount);
-
-            byte[] output = new byte[inputCount];
-            InternalTransformBlock(inputBuffer, inputOffset, inputCount, output, 0);
-            return output;
         }
     }
 }
