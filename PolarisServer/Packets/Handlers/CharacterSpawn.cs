@@ -50,7 +50,7 @@ namespace PolarisServer.Packets.Handlers
                     } else if (Path.GetExtension(path) == "json")
                     {
                         PSOObject new_object = JsonConvert.DeserializeObject<PSOObject>(File.ReadAllText(path));
-                        //TODO: Generate Object Packet...
+                        context.SendPacket(0x08, 0x0B, 0x0, new_object.GenerateSpawnBlob());
                     }
                     
                 }
