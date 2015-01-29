@@ -24,7 +24,7 @@ namespace PolarisServer.Models
         {
             PacketWriter writer = new PacketWriter();
             writer.WriteStruct(Header);
-            writer.WriteStruct(Position);
+            writer.Write(Position);
             writer.Seek(2, SeekOrigin.Current); // Padding I guess...
             writer.WriteFixedLengthASCII(Name, 0x34);
             writer.Write(ThingFlag);
