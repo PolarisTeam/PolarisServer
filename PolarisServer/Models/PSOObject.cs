@@ -31,7 +31,7 @@ namespace PolarisServer.Models
 
         public struct PsoObjectThing
         {
-            public UInt32 Data;
+            public unsafe fixed byte Data[4];
         }
     }
 }

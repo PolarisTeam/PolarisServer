@@ -207,6 +207,7 @@ namespace PolarisServer
             if (PolarisApp.Instance != null && PolarisApp.Instance.Server != null)
             {
                 var clients = PolarisApp.Instance.Server.Clients.Count;
+                // ReSharper disable once PossibleLossOfFraction
                 float usage = Process.GetCurrentProcess().PrivateMemorySize64/1024/1024;
                 var time = DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToLongTimeString();
 
