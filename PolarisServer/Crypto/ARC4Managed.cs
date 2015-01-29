@@ -36,18 +36,18 @@ namespace PolarisServer.Crypto
 #if !INSIDE_CORLIB
     public
 #endif
-        class ARC4Managed : RC4, ICryptoTransform
+        class Arc4Managed : Rc4, ICryptoTransform
     {
-        private byte[] key;
-        private bool m_disposed;
-        private byte[] state;
-        private byte x;
-        private byte y;
+        private byte[] _key;
+        private bool _mDisposed;
+        private byte[] _state;
+        private byte _x;
+        private byte _y;
 
-        public ARC4Managed()
+        public Arc4Managed()
         {
-            state = new byte[256];
-            m_disposed = false;
+            _state = new byte[256];
+            _mDisposed = false;
         }
 
         public override byte[] Key
@@ -56,14 +56,14 @@ namespace PolarisServer.Crypto
             {
                 if (KeyValue == null)
                     GenerateKey();
-                return (byte[]) KeyValue.Clone();
+                return (byte[])KeyValue.Clone();    
             }
             set
             {
                 if (value == null)
                     throw new ArgumentNullException("Key");
-                KeyValue = key = (byte[]) value.Clone();
-                KeySetup(key);
+                KeyValue = _key = (byte[]) value.Clone();
+                KeySetup(_key);
             }
         }
 
@@ -112,36 +112,36 @@ namespace PolarisServer.Crypto
             return output;
         }
 
-        ~ARC4Managed()
+        ~Arc4Managed()
         {
             Dispose(true);
         }
 
         protected override void Dispose(bool disposing)
         {
-            if (!m_disposed)
+            if (!_mDisposed)
             {
-                x = 0;
-                y = 0;
-                if (key != null)
+                _x = 0;
+                _y = 0;
+                if (_key != null)
                 {
-                    Array.Clear(key, 0, key.Length);
-                    key = null;
+                    Array.Clear(_key, 0, _key.Length);
+                    _key = null;
                 }
-                Array.Clear(state, 0, state.Length);
-                state = null;
+                Array.Clear(_state, 0, _state.Length);
+                _state = null;
                 GC.SuppressFinalize(this);
-                m_disposed = true;
+                _mDisposed = true;
             }
         }
 
-        public override ICryptoTransform CreateEncryptor(byte[] rgbKey, byte[] rgvIV)
+        public override ICryptoTransform CreateEncryptor(byte[] rgbKey, byte[] rgvIv)
         {
             Key = rgbKey;
             return this;
         }
 
-        public override ICryptoTransform CreateDecryptor(byte[] rgbKey, byte[] rgvIV)
+        public override ICryptoTransform CreateDecryptor(byte[] rgbKey, byte[] rgvIv)
         {
             Key = rgbKey;
             return CreateEncryptor();
@@ -164,16 +164,16 @@ namespace PolarisServer.Crypto
             byte index2 = 0;
 
             for (var counter = 0; counter < 256; counter++)
-                state[counter] = (byte) counter;
-            x = 0;
-            y = 0;
+                _state[counter] = (byte) counter;
+            _x = 0;
+            _y = 0;
             for (var counter = 0; counter < 256; counter++)
             {
-                index2 = (byte) (key[index1] + state[counter] + index2);
+                index2 = (byte) (key[index1] + _state[counter] + index2);
                 // swap byte
-                var tmp = state[counter];
-                state[counter] = state[index2];
-                state[index2] = tmp;
+                var tmp = _state[counter];
+                _state[counter] = _state[index2];
+                _state[index2] = tmp;
                 index1 = (byte) ((index1 + 1)%key.Length);
             }
         }
@@ -194,18 +194,17 @@ namespace PolarisServer.Crypto
         private int InternalTransformBlock(byte[] inputBuffer, int inputOffset, int inputCount, byte[] outputBuffer,
             int outputOffset)
         {
-            byte xorIndex;
             for (var counter = 0; counter < inputCount; counter++)
             {
-                x = (byte) (x + 1);
-                y = (byte) (state[x] + y);
+                _x = (byte) (_x + 1);
+                _y = (byte) (_state[_x] + _y);
                 // swap byte
-                var tmp = state[x];
-                state[x] = state[y];
-                state[y] = tmp;
+                var tmp = _state[_x];
+                _state[_x] = _state[_y];
+                _state[_y] = tmp;
 
-                xorIndex = (byte) (state[x] + state[y]);
-                outputBuffer[outputOffset + counter] = (byte) (inputBuffer[inputOffset + counter] ^ state[xorIndex]);
+                var xorIndex = (byte) (_state[_x] + _state[_y]);
+                outputBuffer[outputOffset + counter] = (byte) (inputBuffer[inputOffset + counter] ^ _state[xorIndex]);
             }
             return inputCount;
         }

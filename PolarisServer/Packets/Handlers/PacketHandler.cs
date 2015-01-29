@@ -11,8 +11,8 @@ namespace PolarisServer.Packets.Handlers
 
         public PacketHandlerAttr(uint type, uint subtype)
         {
-            this.Type = type;
-            this.Subtype = subtype;
+            Type = type;
+            Subtype = subtype;
         }
     }
 

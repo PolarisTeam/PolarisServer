@@ -17,7 +17,7 @@ namespace PolarisServer.Network
 
         public SocketServer(int port)
         {
-            this._port = port;
+            _port = port;
 
             _listener = new TcpListener(IPAddress.Any, port);
             _listener.Start();

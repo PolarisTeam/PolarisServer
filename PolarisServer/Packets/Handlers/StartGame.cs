@@ -1,4 +1,6 @@
-﻿namespace PolarisServer.Packets.Handlers
+﻿using PolarisServer.Packets.PSOPackets;
+
+namespace PolarisServer.Packets.Handlers
 {
     [PacketHandlerAttr(0x11, 0x4)]
     public class StartGame : PacketHandler
@@ -8,16 +10,16 @@
         public override void HandlePacket(Client context, byte[] data, uint position, uint size)
         {
             var reader = new PacketReader(data, position, size);
-            var charID = reader.ReadUInt32();
+            var charId = reader.ReadUInt32();
 
             if (context.User == null)
                 return;
 
             if (context.Character == null) // On character create, this is already set.
             {
-                var character = PolarisApp.Instance.Database.Characters.Find((int) charID);
+                var character = PolarisApp.Instance.Database.Characters.Find((int) charId);
 
-                if (character == null || character.Player.PlayerID != context.User.PlayerID)
+                if (character == null || character.Player.PlayerId != context.User.PlayerId)
                     return;
 
                 context.Character = character;
@@ -50,9 +52,9 @@
         public override void HandlePacket(Client context, byte[] data, uint position, uint size)
         {
             // Set Player ID
-            var setPlayerID = new PacketWriter();
-            setPlayerID.WritePlayerHeader((uint) context.User.PlayerID);
-            context.SendPacket(6, 0, 0, setPlayerID.ToArray());
+            var setPlayerId = new PacketWriter();
+            setPlayerId.WritePlayerHeader((uint) context.User.PlayerId);
+            context.SendPacket(6, 0, 0, setPlayerId.ToArray());
 
             // Spawn Player
             new CharacterSpawn().HandlePacket(context, data, position, size);

@@ -13,7 +13,7 @@ namespace PolarisServer.Network
 
         public SocketClient(SocketServer server, TcpClient socket)
         {
-            this._server = server;
+            _server = server;
             Socket = socket;
 
             _readBuffer = new byte[1024*16];

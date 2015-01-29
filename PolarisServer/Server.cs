@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Timers;
 using PolarisServer.Network;
-using PolarisServer.Packets;
+using PolarisServer.Packets.PSOPackets;
 
 namespace PolarisServer
 {

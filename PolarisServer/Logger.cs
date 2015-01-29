@@ -1,6 +1,6 @@
 ﻿using System;
 using System.IO;
-using PolarisServer.Packets;
+using PolarisServer.Packets.PSOPackets;
 
 namespace PolarisServer
 {
@@ -10,7 +10,7 @@ namespace PolarisServer
     /// </summary>
     public static class Logger
     {
-        private static readonly StreamWriter writer = new StreamWriter("PolarisServer.log");
+        private static readonly StreamWriter Writer = new StreamWriter("PolarisServer.log");
         public static bool VerbosePackets = false;
 
         private static void AddLine(ConsoleColor color, string text)
@@ -106,7 +106,7 @@ namespace PolarisServer
 
                     hexString += string.Format("{0:X2} ", array[j + (i*16)]);
                 }
-                ;
+                
 
                 // Spacing
                 while (hexString.Length < 16*4)
@@ -125,7 +125,7 @@ namespace PolarisServer
 
                     hexString += asciiChar;
                 }
-                ;
+                
 
                 // Strip off unnecessary stuff
                 hexString = hexString.Replace('\a', ' '); // Alert beeps
@@ -141,12 +141,12 @@ namespace PolarisServer
         public static void WriteFile(string text, params object[] args)
         {
             if (args.Length > 0)
-                writer.WriteLine(DateTime.Now + " - " + text, args);
+                Writer.WriteLine(DateTime.Now + " - " + text, args);
             else
-                writer.WriteLine(DateTime.Now + " - " + text);
+                Writer.WriteLine(DateTime.Now + " - " + text);
 
             // Later we should probably only flush once every X amount of lines or on some other condition
-            writer.Flush();
+            Writer.Flush();
         }
     }
 }

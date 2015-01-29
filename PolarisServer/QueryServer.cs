@@ -23,8 +23,8 @@ namespace PolarisServer
 
         public QueryServer(QueryMode mode, int port)
         {
-            this._mode = mode;
-            this._port = port;
+            _mode = mode;
+            _port = port;
             var queryThread = new Thread(Run);
             queryThread.Start();
             RunningServers.Add(queryThread);
@@ -47,8 +47,10 @@ namespace PolarisServer
                     break;
             }
 
-            var serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            serverSocket.Blocking = true;
+            var serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)
+            {
+                Blocking = true
+            };
             var ep = new IPEndPoint(IPAddress.Any, _port);
             serverSocket.Bind(ep); // TODO: Custom bind address.
             serverSocket.Listen(5);
@@ -66,12 +68,14 @@ namespace PolarisServer
 
             for (var i = 1; i < 11; i++)
             {
-                var entry = new ShipEntry();
-                entry.order = (ushort) i;
-                entry.number = (uint) i;
-                entry.status = ShipStatus.Online;
-                entry.name = String.Format("Ship{0:0#}", i);
-                entry.ip = PolarisApp.BindAddress.GetAddressBytes();
+                var entry = new ShipEntry
+                {
+                    order = (ushort) i,
+                    number = (uint) i,
+                    status = ShipStatus.Online,
+                    name = String.Format("Ship{0:0#}", i),
+                    ip = PolarisApp.BindAddress.GetAddressBytes()
+                };
                 entries.Add(entry);
             }
             writer.WriteStruct(new PacketHeader(Marshal.SizeOf(typeof (ShipEntry))*entries.Count + 12, 0x11, 0x3D, 0x4,

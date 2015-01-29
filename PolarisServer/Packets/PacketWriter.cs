@@ -24,7 +24,7 @@ namespace PolarisServer.Packets
             Write(encoded);
         }
 
-        public void WriteASCII(string str, uint xor, uint sub)
+        public void WriteAscii(string str, uint xor, uint sub)
         {
             if (str.Length == 0)
             {
@@ -44,7 +44,7 @@ namespace PolarisServer.Packets
             }
         }
 
-        public void WriteUTF16(string str, uint xor, uint sub)
+        public void WriteUtf16(string str, uint xor, uint sub)
         {
             if (str.Length == 0)
             {
@@ -65,18 +65,14 @@ namespace PolarisServer.Packets
             }
         }
 
-        public void WriteFixedLengthASCII(string str, int charCount)
+        public void WriteFixedLengthAscii(string str, int charCount)
         {
             var writeAmount = Math.Min(str.Length, charCount);
             var paddingAmount = charCount - writeAmount;
 
             if (writeAmount > 0)
             {
-                string chopped;
-                if (writeAmount != str.Length)
-                    chopped = str.Substring(0, writeAmount);
-                else
-                    chopped = str;
+                var chopped = writeAmount != str.Length ? str.Substring(0, writeAmount) : str;
 
                 Write(Encoding.GetEncoding("ASCII").GetBytes(chopped));
             }
@@ -88,18 +84,14 @@ namespace PolarisServer.Packets
             }
         }
 
-        public void WriteFixedLengthUTF16(string str, int charCount)
+        public void WriteFixedLengthUtf16(string str, int charCount)
         {
             var writeAmount = Math.Min(str.Length, charCount);
             var paddingAmount = charCount - writeAmount;
 
             if (writeAmount > 0)
             {
-                string chopped;
-                if (writeAmount != str.Length)
-                    chopped = str.Substring(0, writeAmount);
-                else
-                    chopped = str;
+                var chopped = writeAmount != str.Length ? str.Substring(0, writeAmount) : str;
 
                 Write(Encoding.GetEncoding("UTF-16").GetBytes(chopped));
             }
@@ -113,13 +105,13 @@ namespace PolarisServer.Packets
 
         public void Write(MysteryPositions s)
         {
-            Write(Helper.FloatToHalfPrecision(s.a));
-            Write(Helper.FloatToHalfPrecision(s.b));
-            Write(Helper.FloatToHalfPrecision(s.c));
-            Write(Helper.FloatToHalfPrecision(s.facingAngle));
-            Write(Helper.FloatToHalfPrecision(s.x));
-            Write(Helper.FloatToHalfPrecision(s.y));
-            Write(Helper.FloatToHalfPrecision(s.z));
+            Write(Helper.FloatToHalfPrecision(s.A));
+            Write(Helper.FloatToHalfPrecision(s.B));
+            Write(Helper.FloatToHalfPrecision(s.C));
+            Write(Helper.FloatToHalfPrecision(s.FacingAngle));
+            Write(Helper.FloatToHalfPrecision(s.X));
+            Write(Helper.FloatToHalfPrecision(s.Y));
+            Write(Helper.FloatToHalfPrecision(s.Z));
         }
 
         public void WritePlayerHeader(uint id)

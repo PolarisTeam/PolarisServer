@@ -7,7 +7,7 @@ using System.Threading;
 using System.Timers;
 using PolarisServer.Database;
 using PolarisServer.Models;
-using PolarisServer.Packets;
+using PolarisServer.Packets.PSOPackets;
 using Timer = System.Timers.Timer;
 
 namespace PolarisServer
@@ -69,9 +69,9 @@ namespace PolarisServer
     /// </summary>
     public class ConsoleSystem
     {
-        private readonly object consoleLock = new object();
+        private readonly object _consoleLock = new object();
 
-        private readonly List<ConsoleKey> controlKeys = new List<ConsoleKey>
+        private readonly List<ConsoleKey> _controlKeys = new List<ConsoleKey>
         {
             ConsoleKey.Backspace,
             ConsoleKey.Enter,
@@ -84,20 +84,20 @@ namespace PolarisServer
             ConsoleKey.Delete
         };
 
-        private readonly List<string> history = new List<string>();
-        private readonly string prompt = string.Empty;
-        private int commandIndex;
-        private string commandLine = string.Empty;
-        private int commandRowInConsole;
-        public List<ConsoleCommand> commands = new List<ConsoleCommand>();
-        private int historyIndex;
-        private string info = string.Empty;
-        private ConsoleKeyInfo key;
-        private int lastDrawnCommandLineSize;
-        private int lastDrawnInfoSize;
-        private int maxCommandLineSize = -1;
-        private int prevCount = 0;
-        public Thread thread;
+        private readonly List<string> _history = new List<string>();
+        private const string Prompt = "Polaris> ";
+        private int _commandIndex;
+        private string _commandLine = string.Empty;
+        private int _commandRowInConsole;
+        public List<ConsoleCommand> Commands = new List<ConsoleCommand>();
+        private int _historyIndex;
+        private string _info = string.Empty;
+        private ConsoleKeyInfo _key;
+        private int _lastDrawnCommandLineSize;
+        private int _lastDrawnInfoSize;
+        private int _maxCommandLineSize = -1;
+        public Thread Thread;
+        // ReSharper disable once InconsistentNaming
         public Timer timer;
 
         public ConsoleSystem()
@@ -105,8 +105,6 @@ namespace PolarisServer
             Console.Title = "Polaris";
             Console.CursorVisible = true;
             SetSize(80, 24);
-
-            prompt = "Polaris> ";
 
             timer = new Timer(1000);
             timer.Elapsed += TimerRefresh;
@@ -122,13 +120,13 @@ namespace PolarisServer
         {
             Width = width;
             Height = height;
-            maxCommandLineSize = width - prompt.Length;
+            _maxCommandLineSize = width - Prompt.Length;
             Console.SetWindowSize(width, height);
         }
 
         public void AddLine(ConsoleColor color, string text)
         {
-            lock (consoleLock)
+            lock (_consoleLock)
             {
                 BlankDrawnInfoBar();
                 BlankDrawnCommandLine();
@@ -136,7 +134,7 @@ namespace PolarisServer
                 var useColors = PolarisApp.Config.UseConsoleColors;
                 var saveColor = Console.ForegroundColor;
 
-                Console.SetCursorPosition(0, commandRowInConsole);
+                Console.SetCursorPosition(0, _commandRowInConsole);
                 if (useColors)
                     Console.ForegroundColor = color;
                 Console.WriteLine(text);
@@ -146,7 +144,7 @@ namespace PolarisServer
 
                 // Write one more line to reserve space for the info bar
                 Console.WriteLine();
-                commandRowInConsole = Console.CursorTop - 1;
+                _commandRowInConsole = Console.CursorTop - 1;
 
                 RefreshInfoBar();
                 RefreshCommandLine();
@@ -156,13 +154,13 @@ namespace PolarisServer
 
         private void BlankDrawnCommandLine()
         {
-            if (lastDrawnCommandLineSize > 0)
+            if (_lastDrawnCommandLineSize > 0)
             {
-                Console.SetCursorPosition(0, commandRowInConsole);
-                for (var i = 0; i < lastDrawnCommandLineSize; i++)
+                Console.SetCursorPosition(0, _commandRowInConsole);
+                for (var i = 0; i < _lastDrawnCommandLineSize; i++)
                     Console.Write(' ');
 
-                lastDrawnCommandLineSize = 0;
+                _lastDrawnCommandLineSize = 0;
             }
         }
 
@@ -170,22 +168,22 @@ namespace PolarisServer
         {
             BlankDrawnCommandLine();
 
-            Console.SetCursorPosition(0, commandRowInConsole);
-            Console.Write(prompt);
-            Console.Write(commandLine);
+            Console.SetCursorPosition(0, _commandRowInConsole);
+            Console.Write(Prompt);
+            Console.Write(_commandLine);
 
-            lastDrawnCommandLineSize = prompt.Length + commandLine.Length;
+            _lastDrawnCommandLineSize = Prompt.Length + _commandLine.Length;
         }
 
         private void BlankDrawnInfoBar()
         {
-            if (lastDrawnInfoSize > 0)
+            if (_lastDrawnInfoSize > 0)
             {
-                Console.SetCursorPosition(0, commandRowInConsole + 1);
-                for (var i = 0; i < lastDrawnInfoSize; i++)
+                Console.SetCursorPosition(0, _commandRowInConsole + 1);
+                for (var i = 0; i < _lastDrawnInfoSize; i++)
                     Console.Write(' ');
 
-                lastDrawnInfoSize = 0;
+                _lastDrawnInfoSize = 0;
             }
         }
 
@@ -193,22 +191,22 @@ namespace PolarisServer
         {
             BlankDrawnInfoBar();
 
-            Console.SetCursorPosition(0, commandRowInConsole + 1);
-            Console.Write(info);
+            Console.SetCursorPosition(0, _commandRowInConsole + 1);
+            Console.Write(_info);
 
-            lastDrawnInfoSize = info.Length;
+            _lastDrawnInfoSize = _info.Length;
         }
 
         private void FixCursorPosition()
         {
-            Console.SetCursorPosition(prompt.Length + commandIndex, commandRowInConsole);
+            Console.SetCursorPosition(Prompt.Length + _commandIndex, _commandRowInConsole);
         }
 
         private string AssembleInfoBar()
         {
-            if (PolarisApp.Instance != null && PolarisApp.Instance.server != null)
+            if (PolarisApp.Instance != null && PolarisApp.Instance.Server != null)
             {
-                var clients = PolarisApp.Instance.server.Clients.Count;
+                var clients = PolarisApp.Instance.Server.Clients.Count;
                 float usage = Process.GetCurrentProcess().PrivateMemorySize64/1024/1024;
                 var time = DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToLongTimeString();
 
@@ -219,9 +217,9 @@ namespace PolarisServer
 
         private void TimerRefresh(object sender, ElapsedEventArgs e)
         {
-            lock (consoleLock)
+            lock (_consoleLock)
             {
-                info = AssembleInfoBar();
+                _info = AssembleInfoBar();
                 RefreshInfoBar();
                 FixCursorPosition();
             }
@@ -253,39 +251,36 @@ namespace PolarisServer
         public void CreateCommands()
         {
             // Help
-            var help = new ConsoleCommand(Help, "help");
-            help.Help = "Displays help for all commands";
-            commands.Add(help);
+            var help = new ConsoleCommand(Help, "help") {Help = "Displays help for all commands"};
+            Commands.Add(help);
 
             // Config
             var config = new ConsoleCommand(Config, "config", "c");
             config.Arguments.Add(new ConsoleCommandArgument("Save | Load | List | Option Name", false));
             config.Arguments.Add(new ConsoleCommandArgument("Value", true));
             config.Help = "Set a configuration variable to the specified value";
-            commands.Add(config);
+            Commands.Add(config);
 
             // Clear
-            var clearLog = new ConsoleCommand(ClearLog, "clear", "cls");
-            clearLog.Help = "Clears the current log buffer";
-            commands.Add(clearLog);
+            var clearLog = new ConsoleCommand(ClearLog, "clear", "cls") {Help = "Clears the current log buffer"};
+            Commands.Add(clearLog);
 
             // Echo
-            var echo = new ConsoleCommand(Echo, "echo");
-            echo.Help = "Echo the given text back into the Console";
+            var echo = new ConsoleCommand(Echo, "echo") {Help = "Echo the given text back into the Console"};
             echo.Arguments.Add(new ConsoleCommandArgument("text", false));
-            commands.Add(echo);
+            Commands.Add(echo);
 
             // Announce
             var announce = new ConsoleCommand(Announce, "announce", "a");
             announce.Arguments.Add(new ConsoleCommandArgument("Message", false));
             announce.Help = "Sends a message to all connected players";
-            commands.Add(announce);
+            Commands.Add(announce);
 
             // ClearPlayers
             var clearPlayers = new ConsoleCommand(ClearPlayers, "clearplayers", "cp");
             clearPlayers.Arguments.Add(new ConsoleCommandArgument("Exempt Username", true));
             clearPlayers.Help = "Disconnects all players from the server";
-            commands.Add(clearPlayers);
+            Commands.Add(clearPlayers);
 
             // SpawnClone
             var spawnClone = new ConsoleCommand(SpawnClone, "spawnclone");
@@ -295,7 +290,7 @@ namespace PolarisServer
             spawnClone.Arguments.Add(new ConsoleCommandArgument("Y", false));
             spawnClone.Arguments.Add(new ConsoleCommandArgument("Z", false));
             spawnClone.Help = "Spawns a clone of your character";
-            commands.Add(spawnClone);
+            Commands.Add(spawnClone);
 
             // SendPacket
             var sendPacket = new ConsoleCommand(SendPacket, "sendpacket", "sendp");
@@ -305,131 +300,120 @@ namespace PolarisServer
             sendPacket.Arguments.Add(new ConsoleCommandArgument("Flags", false));
             sendPacket.Arguments.Add(new ConsoleCommandArgument("Data ...", false));
             sendPacket.Help = "Sends a packet to a client";
-            commands.Add(sendPacket);
+            Commands.Add(sendPacket);
 
             // SendPacketFile
             var sendPacketFile = new ConsoleCommand(SendPacketFile, "sendpacketfile", "sendpf");
             sendPacketFile.Arguments.Add(new ConsoleCommandArgument("Username", false));
             sendPacketFile.Arguments.Add(new ConsoleCommandArgument("Filename", false));
             sendPacketFile.Help = "Sends the specified file's contents as a packet";
-            commands.Add(sendPacketFile);
+            Commands.Add(sendPacketFile);
 
             // SendPacketDirectory
             var sendPacketDirectory = new ConsoleCommand(SendPacketDirectory, "sendpacketdirectory", "sendpd");
             sendPacketDirectory.Arguments.Add(new ConsoleCommandArgument("Username", false));
             sendPacketDirectory.Arguments.Add(new ConsoleCommandArgument("Dirname", false));
             sendPacketDirectory.Help = "Sends the specified directory's contents as a packet";
-            commands.Add(sendPacketDirectory);
+            Commands.Add(sendPacketDirectory);
 
             // Exit
-            var exit = new ConsoleCommand(Exit, "exit", "quit");
-            exit.Help = "Close the Polaris Server";
-            commands.Add(exit);
+            var exit = new ConsoleCommand(Exit, "exit", "quit") {Help = "Close the Polaris Server"};
+            Commands.Add(exit);
         }
 
         public void CheckInput()
         {
             // Read key
-            var validKey = true;
-            key = Console.ReadKey(true);
+            _key = Console.ReadKey(true);
 
             // Check to make sure this is a valid key to append to the command line
-            foreach (var controlKey in controlKeys)
-            {
-                if (key.Key == controlKey)
-                {
-                    validKey = false;
-                    break;
-                }
-            }
+            var validKey = _controlKeys.All(controlKey => _key.Key != controlKey);
 
             // Append key to the command line
-            if (validKey && (commandLine.Length + 1) < maxCommandLineSize)
+            if (validKey && (_commandLine.Length + 1) < _maxCommandLineSize)
             {
-                commandLine = commandLine.Insert(commandIndex, key.KeyChar.ToString());
-                commandIndex++;
+                _commandLine = _commandLine.Insert(_commandIndex, _key.KeyChar.ToString());
+                _commandIndex++;
             }
 
             // Backspace
-            if (key.Key == ConsoleKey.Backspace && commandLine.Length > 0 && commandIndex > 0)
+            if (_key.Key == ConsoleKey.Backspace && _commandLine.Length > 0 && _commandIndex > 0)
             {
-                commandLine = commandLine.Remove(commandIndex - 1, 1);
-                commandIndex--;
+                _commandLine = _commandLine.Remove(_commandIndex - 1, 1);
+                _commandIndex--;
             }
 
             // Cursor movement
-            if (key.Key == ConsoleKey.LeftArrow && commandLine.Length > 0 && commandIndex > 0)
-                commandIndex--;
-            if (key.Key == ConsoleKey.RightArrow && commandLine.Length > 0 && commandIndex <= commandLine.Length - 1)
-                commandIndex++;
-            if (key.Key == ConsoleKey.Home)
-                commandIndex = 0;
-            if (key.Key == ConsoleKey.End)
-                commandIndex = commandLine.Length;
+            if (_key.Key == ConsoleKey.LeftArrow && _commandLine.Length > 0 && _commandIndex > 0)
+                _commandIndex--;
+            if (_key.Key == ConsoleKey.RightArrow && _commandLine.Length > 0 && _commandIndex <= _commandLine.Length - 1)
+                _commandIndex++;
+            if (_key.Key == ConsoleKey.Home)
+                _commandIndex = 0;
+            if (_key.Key == ConsoleKey.End)
+                _commandIndex = _commandLine.Length;
 
             // History
-            if (key.Key == ConsoleKey.UpArrow && history.Count > 0)
+            if (_key.Key == ConsoleKey.UpArrow && _history.Count > 0)
             {
-                historyIndex--;
+                _historyIndex--;
 
-                if (historyIndex < 0)
-                    historyIndex = history.Count - 1;
+                if (_historyIndex < 0)
+                    _historyIndex = _history.Count - 1;
 
-                commandLine = history[historyIndex];
-                commandIndex = history[historyIndex].Length;
+                _commandLine = _history[_historyIndex];
+                _commandIndex = _history[_historyIndex].Length;
             }
-            if (key.Key == ConsoleKey.DownArrow && history.Count > 0)
+            if (_key.Key == ConsoleKey.DownArrow && _history.Count > 0)
             {
-                historyIndex++;
+                _historyIndex++;
 
-                if (historyIndex > history.Count - 1)
-                    historyIndex = 0;
+                if (_historyIndex > _history.Count - 1)
+                    _historyIndex = 0;
 
-                commandLine = history[historyIndex];
-                commandIndex = history[historyIndex].Length;
+                _commandLine = _history[_historyIndex];
+                _commandIndex = _history[_historyIndex].Length;
             }
 
             // Run Command
-            if (key.Key == ConsoleKey.Enter)
+            if (_key.Key == ConsoleKey.Enter)
             {
                 var valid = false;
 
                 // Stop if the command line is blank
-                if (string.IsNullOrEmpty(commandLine))
+                if (string.IsNullOrEmpty(_commandLine))
                     Logger.WriteWarning("[CMD] No command specified");
                 else
                 {
                     // Iterate commands
-                    foreach (var command in commands)
+                    foreach (var command in Commands)
                     {
-                        var full = commandLine;
+                        var full = _commandLine;
                         var args = full.Split(' ');
 
-                        foreach (var name in command.Names)
-                            if (args[0].ToLower() == name.ToLower())
-                            {
-                                command.Run(args, args.Length, full, null);
-                                valid = true;
-                                break;
-                            }
+                        if (command.Names.Any(name => args[0].ToLower() == name.ToLower()))
+                        {
+                            command.Run(args, args.Length, full, null);
+                            valid = true;
+                        }
 
                         if (valid)
                             break;
                     }
 
                     if (!valid)
-                        Logger.WriteError("[CMD] {0} - Command not found", commandLine.Split(' ')[0].Trim('\r'));
+                        Logger.WriteError("[CMD] {0} - Command not found", _commandLine.Split(' ')[0].Trim('\r'));
 
                     // Add the command line to history and wipe it
-                    history.Add(commandLine);
-                    historyIndex = history.Count;
-                    commandLine = string.Empty;
+                    _history.Add(_commandLine);
+                    _historyIndex = _history.Count;
+                    _commandLine = string.Empty;
                 }
 
-                commandIndex = 0;
+                _commandIndex = 0;
             }
 
-            lock (consoleLock)
+            lock (_consoleLock)
             {
                 RefreshCommandLine();
                 FixCursorPosition();
@@ -443,7 +427,7 @@ namespace PolarisServer
         {
             Logger.WriteCommand(client, "[CMD] List of Commands");
 
-            foreach (var command in commands)
+            foreach (var command in Commands)
             {
                 if (command.Help != string.Empty)
                 {
@@ -542,12 +526,7 @@ namespace PolarisServer
                         Logger.WriteCommand(client, "[CMD] Too few arguments");
                     else if (field != null)
                     {
-                        var value = string.Empty;
-
-                        if (args[2].Contains('\"'))
-                            value = full.Split('"')[1].Split('"')[0].Trim('\"');
-                        else
-                            value = args[2];
+                        var value = args[2].Contains('\"') ? full.Split('"')[1].Split('"')[0].Trim('\"') : args[2];
 
                         if (!PolarisApp.Config.SetField(args[1], value))
                             Logger.WriteCommand(client, "[CMD] Config option {0} could not be changed to {1}", args[1],
@@ -572,7 +551,7 @@ namespace PolarisServer
         private void ClearPlayers(string[] args, int length, string full, Client client)
         {
             // Temporary haxifications to pull your own connection
-            var ID = -1;
+            var id = -1;
             var foundPlayer = false;
 
             if (args.Length > 1)
@@ -580,8 +559,8 @@ namespace PolarisServer
                 var name = args[1];
 
                 // Find the player
-                ID = Helper.FindPlayerByUsername(name);
-                if (ID != -1)
+                id = Helper.FindPlayerByUsername(name);
+                if (id != -1)
                     foundPlayer = true;
 
                 // Couldn't find the username
@@ -592,15 +571,15 @@ namespace PolarisServer
                 }
             }
 
-            for (var i = 0; i < PolarisApp.Instance.server.Clients.Count; i++)
+            for (var i = 0; i < PolarisApp.Instance.Server.Clients.Count; i++)
             {
-                if (ID > -1 && i == ID)
+                if (id > -1 && i == id)
                     continue;
 
                 // This is probably not the right way to do this
-                PolarisApp.Instance.server.Clients[i].Socket.Close();
+                PolarisApp.Instance.Server.Clients[i].Socket.Close();
                 Logger.WriteCommand(client,
-                    "[CMD] Logged out user " + PolarisApp.Instance.server.Clients[i].User.Username);
+                    "[CMD] Logged out user " + PolarisApp.Instance.Server.Clients[i].User.Username);
             }
 
             Logger.WriteCommand(client, "[CMD] Logged out all players successfully");
@@ -617,12 +596,11 @@ namespace PolarisServer
 
             if (client == null)
             {
-                var ID = 0;
                 var foundPlayer = false;
 
                 // Find the player
-                ID = Helper.FindPlayerByUsername(name);
-                if (ID != -1)
+                var id = Helper.FindPlayerByUsername(name);
+                if (id != -1)
                     foundPlayer = true;
 
                 // Couldn't find the username
@@ -632,7 +610,7 @@ namespace PolarisServer
                     return;
                 }
 
-                client = PolarisApp.Instance.server.Clients[ID];
+                client = PolarisApp.Instance.Server.Clients[id];
             }
 
             // Default coordinates
@@ -643,25 +621,28 @@ namespace PolarisServer
             if (z == 0)
                 z = 134.375f;
 
-            var fakePlayer = new Player();
-            fakePlayer.Username = name;
-            fakePlayer.Nickname = playerName;
-            fakePlayer.PlayerID = 12345678 + new Random().Next();
+            var fakePlayer = new Player
+            {
+                Username = name,
+                Nickname = playerName,
+                PlayerId = 12345678 + new Random().Next()
+            };
 
-            var fakeChar = new Character();
-            fakeChar.CharacterID = 12345678 + new Random().Next();
-            fakeChar.Player = fakePlayer;
-            fakeChar.Name = playerName;
+            var fakeChar = new Character
+            {
+                CharacterId = 12345678 + new Random().Next(),
+                Player = fakePlayer,
+                Name = playerName,
+                Looks = client.Character.Looks,
+                Jobs = client.Character.Jobs
+            };
 
-            fakeChar.Looks = client.Character.Looks;
-            fakeChar.Jobs = client.Character.Jobs;
 
-            var fakePacket = new CharacterSpawnPacket(fakeChar);
-            fakePacket.Position.facingAngle = 0f;
-            fakePacket.Position.x = x;
-            fakePacket.Position.y = y;
-            fakePacket.Position.z = z;
-            fakePacket.IsItMe = false;
+            var fakePacket = new CharacterSpawnPacket(fakeChar)
+            {
+                Position = {FacingAngle = 0f, X = x, Y = y, Z = z},
+                IsItMe = false
+            };
             client.SendPacket(fakePacket);
 
             Logger.WriteCommand(client, "[CMD] Spawned a clone of {0} named {1}", name, playerName);
@@ -677,9 +658,8 @@ namespace PolarisServer
             var foundPlayer = false;
 
             // Find the player
-            var ID = 0;
-            ID = Helper.FindPlayerByUsername(name);
-            if (ID != -1)
+            var id = Helper.FindPlayerByUsername(name);
+            if (id != -1)
                 foundPlayer = true;
 
             // Couldn't find the username
@@ -697,7 +677,7 @@ namespace PolarisServer
             }
 
             // Send packet
-            PolarisApp.Instance.server.Clients[ID].SendPacket(type, subType, flags, data);
+            PolarisApp.Instance.Server.Clients[id].SendPacket(type, subType, flags, data);
 
             Logger.WriteCommand(client, "[CMD] Sent packet {0:X}-{1:X} with flags {2} to {3}", type, subType, flags,
                 name);
@@ -706,13 +686,12 @@ namespace PolarisServer
         private void SendPacketDirectory(string[] args, int length, string full, Client client)
         {
             var name = args[1].Trim('\"');
-            var ID = 0;
             var dirname = args[2].Trim('\"');
             var foundPlayer = false;
 
             // Find the player
-            ID = Helper.FindPlayerByUsername(name);
-            if (ID != -1)
+            var id = Helper.FindPlayerByUsername(name);
+            if (id != -1)
                 foundPlayer = true;
 
             // Couldn't find the username
@@ -737,7 +716,7 @@ namespace PolarisServer
                     packet[index] = data[index + 8];
 
                 // Send packet
-                PolarisApp.Instance.server.Clients[ID].SendPacket(data[4], data[5], data[6], packet);
+                PolarisApp.Instance.Server.Clients[id].SendPacket(data[4], data[5], data[6], packet);
 
                 Logger.WriteCommand(client, "[CMD] Sent contents of {0} as packet {1:X}-{2:X} with flags {3} to {4}",
                     path, data[4], data[5], data[6], name);
@@ -747,13 +726,12 @@ namespace PolarisServer
         private void SendPacketFile(string[] args, int length, string full, Client client)
         {
             var name = args[1].Trim('\"');
-            var ID = 0;
             var filename = args[2].Trim('\"');
             var foundPlayer = false;
 
             // Find the player
-            ID = Helper.FindPlayerByUsername(name);
-            if (ID != -1)
+            var id = Helper.FindPlayerByUsername(name);
+            if (id != -1)
                 foundPlayer = true;
 
             // Couldn't find the username
@@ -773,7 +751,7 @@ namespace PolarisServer
                 packet[index] = data[index + 8];
 
             // Send packet
-            PolarisApp.Instance.server.Clients[ID].SendPacket(data[4], data[5], data[6], packet);
+            PolarisApp.Instance.Server.Clients[id].SendPacket(data[4], data[5], data[6], packet);
 
             Logger.WriteCommand(client, "[CMD] Sent contents of {0} as packet {1:X}-{2:X} with flags {3} to {4}",
                 filename, data[4], data[5], data[6], name);

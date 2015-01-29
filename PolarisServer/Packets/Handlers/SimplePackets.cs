@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using PolarisServer.Packets.PSOPackets;
 
 // This file is to hold all packet handlers that require no logic to respond to, or require less than 5 lines of logic.
 

@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using PolarisServer.Models;
+using PolarisServer.Packets.PSOPackets;
 
 namespace PolarisServer.Packets.Handlers
 {

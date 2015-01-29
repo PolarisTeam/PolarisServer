@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Linq;
 
 namespace PolarisServer.Packets.Handlers
 {
@@ -27,14 +28,12 @@ namespace PolarisServer.Packets.Handlers
                     var full = message.Substring(1); // Strip the command chars
                     var args = full.Split(' ');
 
-                    foreach (var name in command.Names)
-                        if (args[0].ToLower() == name.ToLower())
-                        {
-                            command.Run(args, args.Length, full, context);
-                            valid = true;
-                            Logger.WriteCommand(null, "[CMD] {0} issued command {1}", context.User.Username, full);
-                            break;
-                        }
+                    if (command.Names.Any(name => args[0].ToLower() == name.ToLower()))
+                    {
+                        command.Run(args, args.Length, full, context);
+                        valid = true;
+                        Logger.WriteCommand(null, "[CMD] {0} issued command {1}", context.User.Username, full);
+                    }
 
                     if (valid)
                         break;

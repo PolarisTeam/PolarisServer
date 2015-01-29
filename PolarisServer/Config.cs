@@ -13,7 +13,7 @@ namespace PolarisServer
 
         public ConfigComment(string comment)
         {
-            this.Comment = comment;
+            Comment = comment;
         }
     }
 
@@ -138,23 +138,23 @@ namespace PolarisServer
         private void ParseField(FieldInfo field, string value)
         {
             // Bool
-            if (field.GetValue(this).GetType() == typeof (bool))
+            if (field.GetValue(this) is bool)
                 field.SetValue(this, bool.Parse(value));
 
             // Int32
-            if (field.GetValue(this).GetType() == typeof (Int32))
+            if (field.GetValue(this) is int)
                 field.SetValue(this, int.Parse(value));
 
             // Float
-            if (field.GetValue(this).GetType() == typeof (float))
+            if (field.GetValue(this) is float)
                 field.SetValue(this, float.Parse(value));
 
             // Double
-            if (field.GetValue(this).GetType() == typeof (double))
+            if (field.GetValue(this) is double)
                 field.SetValue(this, double.Parse(value));
 
             // String
-            if (field.GetValue(this).GetType() == typeof (string))
+            if (field.GetValue(this) is string)
                 field.SetValue(this, value);
 
             // IPAddress

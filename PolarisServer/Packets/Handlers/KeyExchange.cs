@@ -32,7 +32,7 @@ namespace PolarisServer.Packets.Handlers
             }
 
             var pkcs = new RSAPKCS1KeyExchangeDeformatter(Client.RsaCsp);
-            byte[] decryptedBlob = null;
+            byte[] decryptedBlob;
 
             try
             {
@@ -54,16 +54,13 @@ namespace PolarisServer.Packets.Handlers
             Array.Copy(decryptedBlob, 0x10, arc4Key, 0, 0x10);
 
             // Create three RC4 mungers
-            var arc4 = new Arc4Managed();
-            arc4.Key = arc4Key;
+            var arc4 = new Arc4Managed {Key = arc4Key};
             context.InputArc4 = arc4.CreateDecryptor();
 
-            arc4 = new Arc4Managed();
-            arc4.Key = arc4Key;
+            arc4 = new Arc4Managed {Key = arc4Key};
             context.OutputArc4 = arc4.CreateEncryptor();
 
-            arc4 = new Arc4Managed();
-            arc4.Key = arc4Key;
+            arc4 = new Arc4Managed {Key = arc4Key};
             var tempDecryptor = arc4.CreateDecryptor();
 
             // Also, grab the init token for the client

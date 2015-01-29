@@ -21,8 +21,8 @@ namespace PolarisServer.Packets.Handlers
 
             reader.BaseStream.Seek(0x114, SeekOrigin.Current);
 
-            var username = reader.ReadFixedLengthASCII(64);
-            var password = reader.ReadFixedLengthASCII(64);
+            var username = reader.ReadFixedLengthAscii(64);
+            var password = reader.ReadFixedLengthAscii(64);
 
             // What am I doing here even
             var db = PolarisApp.Instance.Database;
@@ -31,9 +31,9 @@ namespace PolarisServer.Packets.Handlers
                 select u;
 
             var error = "";
-            Player user = null;
+            Player user;
 
-            if (users.Count() == 0)
+            if (!users.Any())
             {
                 // Check if there is an empty field
                 if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
@@ -56,7 +56,7 @@ namespace PolarisServer.Packets.Handlers
                         Password = BCrypt.Net.BCrypt.HashPassword(password),
                         Nickname = username,
                         // Since we can't display the nickname prompt yet, just default it to the username
-                        SettingsINI = File.ReadAllText("Resources/settings.txt")
+                        SettingsIni = File.ReadAllText("Resources/settings.txt")
                     };
                     db.Players.Add(user);
                     db.SaveChanges();
@@ -82,7 +82,7 @@ namespace PolarisServer.Packets.Handlers
             // Login response packet
             var resp = new PacketWriter();
             resp.Write((uint) ((user == null) ? 1 : 0)); // Status flag: 0=success, 1=error
-            resp.WriteUTF16(error, 0x8BA4, 0xB6);
+            resp.WriteUtf16(error, 0x8BA4, 0xB6);
 
             if (user == null)
             {
@@ -92,10 +92,10 @@ namespace PolarisServer.Packets.Handlers
                 return;
             }
 
-            resp.Write((uint) user.PlayerID); // Player ID
+            resp.Write((uint) user.PlayerId); // Player ID
             resp.Write((uint) 0); // Unknown
             resp.Write((uint) 0); // Unknown
-            resp.WriteFixedLengthUTF16("B001-DarkFox", 0x20);
+            resp.WriteFixedLengthUtf16("B001-DarkFox", 0x20);
             for (var i = 0; i < 0xBC; i++)
                 resp.Write((byte) 0);
 
@@ -103,7 +103,7 @@ namespace PolarisServer.Packets.Handlers
 
             // Settings packet
             var settings = new PacketWriter();
-            settings.WriteASCII(user.SettingsINI, 0x54AF, 0x100);
+            settings.WriteAscii(user.SettingsIni, 0x54AF, 0x100);
             context.SendPacket(0x2B, 2, 4, settings.ToArray());
 
             context.User = user;

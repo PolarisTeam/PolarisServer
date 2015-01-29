@@ -37,17 +37,17 @@ namespace PolarisTests
     [TestFixture]
     public class UnsafeTests
     {
-        private Character.JobParam jp;
+        private readonly Character.JobParam _jp = new Character.JobParam();
 
         [Test]
-        public void checkJobParam()
+        public void CheckJobParam()
         {
             var size = Marshal.SizeOf(typeof (Character.JobParam));
-            Assert.IsNotNull(jp);
+            Assert.IsNotNull(_jp);
             var jpArr = new byte[size];
             var ptr = Marshal.AllocHGlobal(size);
 
-            Marshal.StructureToPtr(jp, ptr, true);
+            Marshal.StructureToPtr(_jp, ptr, true);
             Marshal.Copy(ptr, jpArr, 0, size);
             Marshal.FreeHGlobal(ptr);
 
@@ -62,12 +62,12 @@ namespace PolarisTests
     [TestFixture]
     public class WriterTests
     {
-        private PacketWriter writer;
+        private PacketWriter _writer;
 
         [SetUp]
         public void Setup()
         {
-            writer = new PacketWriter();
+            _writer = new PacketWriter();
         }
 
         [Test]
@@ -76,22 +76,22 @@ namespace PolarisTests
             var structureSize = Marshal.SizeOf(typeof (Character.JobParam));
             var jp = new Character.JobParam();
             jp.entries.hunter.level = 7;
-            writer.WriteStruct(jp);
-            var structArray = writer.ToArray();
+            _writer.WriteStruct(jp);
+            var structArray = _writer.ToArray();
             Assert.AreEqual(structureSize, structArray.Length);
             Assert.AreEqual(7, structArray[12]);
         }
     }
 
     [TestFixture]
-    public class JSONTests
+    public class JsonTests
     {
         [Test]
         public void TestObjectSerialize()
         {
-            var TestObject = new PSOObject();
-            var Output = JsonConvert.SerializeObject(TestObject);
-            Console.Out.WriteLine(Output);
+            var testObject = new PsoObject();
+            var output = JsonConvert.SerializeObject(testObject);
+            Console.Out.WriteLine(output);
         }
     }
 }

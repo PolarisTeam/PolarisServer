@@ -1,7 +1,9 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using Newtonsoft.Json;
 using PolarisServer.Models;
+using PolarisServer.Packets.PSOPackets;
 
 namespace PolarisServer.Packets.Handlers
 {
@@ -32,9 +34,9 @@ namespace PolarisServer.Packets.Handlers
             context.SendPacket(0x03, 0x24, 4, setAreaPacket);
 
             // Set Player ID
-            var setPlayerID = new PacketWriter();
-            setPlayerID.WritePlayerHeader((uint) context.User.PlayerID);
-            context.SendPacket(0x06, 0x00, 0, setPlayerID.ToArray());
+            var setPlayerId = new PacketWriter();
+            setPlayerId.WritePlayerHeader((uint) context.User.PlayerId);
+            context.SendPacket(0x06, 0x00, 0, setPlayerId.ToArray());
 
             // Spawn Lobby Objects
             if (Directory.Exists("Resources/objects/lobby"))
@@ -50,8 +52,8 @@ namespace PolarisServer.Packets.Handlers
                     }
                     else if (Path.GetExtension(path) == "json")
                     {
-                        var new_object = JsonConvert.DeserializeObject<PSOObject>(File.ReadAllText(path));
-                        context.SendPacket(0x08, 0x0B, 0x0, new_object.GenerateSpawnBlob());
+                        var newObject = JsonConvert.DeserializeObject<PsoObject>(File.ReadAllText(path));
+                        context.SendPacket(0x08, 0x0B, 0x0, newObject.GenerateSpawnBlob());
                     }
                 }
             }
@@ -67,20 +69,12 @@ namespace PolarisServer.Packets.Handlers
             context.SendPacket(new NoPayloadPacket(0x03, 0x2B));
 
             // Spawn on other player's clients
-            var spawnPacket = new CharacterSpawnPacket(context.Character);
-            spawnPacket.IsItMe = false;
-            foreach (var c in Server.Instance.Clients)
+            var spawnPacket = new CharacterSpawnPacket(context.Character) {IsItMe = false};
+            foreach (var c in Server.Instance.Clients.Where(c => c != context).Where(c => c.Character != null))
             {
-                if (c == context)
-                    continue;
-
-                if (c.Character == null)
-                    continue;
-
                 c.SendPacket(spawnPacket);
 
-                var remoteChar = new CharacterSpawnPacket(c.Character);
-                remoteChar.IsItMe = false;
+                var remoteChar = new CharacterSpawnPacket(c.Character) {IsItMe = false};
                 context.SendPacket(remoteChar);
             }
 

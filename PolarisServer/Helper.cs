@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -38,8 +39,7 @@ namespace PolarisServer
             var data = string.Empty;
 
             data += "{ ";
-            foreach (PropertyDescriptor descriptor in TypeDescriptor.GetProperties(obj))
-                data += string.Format("{0} = {1}, ", descriptor.Name, descriptor.GetValue(obj));
+            data = TypeDescriptor.GetProperties(obj).Cast<PropertyDescriptor>().Aggregate(data, (current, descriptor) => current + string.Format("{0} = {1}, ", descriptor.Name, descriptor.GetValue(obj)));
             data = data.Remove(data.Length - 3);
             data += " }";
 

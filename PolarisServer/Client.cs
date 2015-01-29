@@ -11,27 +11,27 @@ namespace PolarisServer
 {
     public class Client
     {
-        internal static RSACryptoServiceProvider rsaCsp = null;
-        private readonly byte[] readBuffer;
-        private readonly Server server;
-        internal ICryptoTransform inputARC4, outputARC4;
-        private int packetID;
-        private uint readBufferSize;
+        internal static RSACryptoServiceProvider RsaCsp = null;
+        private readonly byte[] _readBuffer;
+        private readonly Server _server;
+        internal ICryptoTransform InputArc4, OutputArc4;
+        private int _packetId;
+        private uint _readBufferSize;
 
         public Client(Server server, SocketClient socket)
         {
             IsClosed = false;
-            this.server = server;
+            _server = server;
             Socket = socket;
 
             socket.DataReceived += HandleDataReceived;
             socket.ConnectionLost += HandleConnectionLost;
 
-            readBuffer = new byte[1024*64];
-            readBufferSize = 0;
+            _readBuffer = new byte[1024*64];
+            _readBufferSize = 0;
 
-            inputARC4 = null;
-            outputARC4 = null;
+            InputArc4 = null;
+            OutputArc4 = null;
 
             var welcome = new PacketWriter();
             welcome.Write((ushort) 3);
@@ -51,46 +51,46 @@ namespace PolarisServer
         private void HandleDataReceived(byte[] data, int size)
         {
             Logger.Write("[<--] Recieved {0} bytes", size);
-            if ((readBufferSize + size) > readBuffer.Length)
+            if ((_readBufferSize + size) > _readBuffer.Length)
             {
                 // Buffer overrun
                 // TODO: Drop the connection when this occurs?
                 return;
             }
 
-            Array.Copy(data, 0, readBuffer, readBufferSize, size);
+            Array.Copy(data, 0, _readBuffer, _readBufferSize, size);
 
-            if (inputARC4 != null)
+            if (InputArc4 != null)
             {
-                inputARC4.TransformBlock(readBuffer, (int) readBufferSize, size, readBuffer, (int) readBufferSize);
+                InputArc4.TransformBlock(_readBuffer, (int) _readBufferSize, size, _readBuffer, (int) _readBufferSize);
             }
 
-            readBufferSize += (uint) size;
+            _readBufferSize += (uint) size;
 
             // Process ALL the packets
             uint position = 0;
 
-            while ((position + 8) <= readBufferSize)
+            while ((position + 8) <= _readBufferSize)
             {
                 var packetSize =
-                    readBuffer[position] |
-                    ((uint) readBuffer[position + 1] << 8) |
-                    ((uint) readBuffer[position + 2] << 16) |
-                    ((uint) readBuffer[position + 3] << 24);
+                    _readBuffer[position] |
+                    ((uint) _readBuffer[position + 1] << 8) |
+                    ((uint) _readBuffer[position + 2] << 16) |
+                    ((uint) _readBuffer[position + 3] << 24);
 
                 // Minimum size, just to avoid possible infinite loops etc
                 if (packetSize < 8)
                     packetSize = 8;
 
                 // If we don't have enough data for this one...
-                if (packetSize > 0x1000000 || (packetSize + position) > readBufferSize)
+                if (packetSize > 0x1000000 || (packetSize + position) > _readBufferSize)
                     break;
 
                 // Now handle this one
                 HandlePacket(
-                    readBuffer[position + 4], readBuffer[position + 5],
-                    readBuffer[position + 6], readBuffer[position + 7],
-                    readBuffer, position + 8, packetSize - 8);
+                    _readBuffer[position + 4], _readBuffer[position + 5],
+                    _readBuffer[position + 6], _readBuffer[position + 7],
+                    _readBuffer, position + 8, packetSize - 8);
 
                 // If the connection was closed, we have no more business here
                 if (IsClosed)
@@ -102,12 +102,12 @@ namespace PolarisServer
             // Wherever 'position' is up to, is what was successfully processed
             if (position > 0)
             {
-                if (position >= readBufferSize)
-                    readBufferSize = 0;
+                if (position >= _readBufferSize)
+                    _readBufferSize = 0;
                 else
                 {
-                    Array.Copy(readBuffer, position, readBuffer, 0, readBufferSize - position);
-                    readBufferSize -= position;
+                    Array.Copy(_readBuffer, position, _readBuffer, 0, _readBufferSize - position);
+                    _readBufferSize -= position;
                 }
             }
         }
@@ -136,8 +136,8 @@ namespace PolarisServer
                 Logger.WriteHex(info, blob);
             }
 
-            if (outputARC4 != null)
-                outputARC4.TransformBlock(blob, 0, blob.Length, blob, 0);
+            if (OutputArc4 != null)
+                OutputArc4.TransformBlock(blob, 0, blob.Length, blob, 0);
 
             try
             {
@@ -172,7 +172,7 @@ namespace PolarisServer
         public void SendPacket(Packet packet)
         {
             var h = packet.GetHeader();
-            SendPacket(h.type, h.subtype, h.flags1, packet.Build());
+            SendPacket(h.Type, h.Subtype, h.Flags1, packet.Build());
         }
 
         private void HandlePacket(byte typeA, byte typeB, byte flags1, byte flags2, byte[] data, uint position,
@@ -208,12 +208,12 @@ namespace PolarisServer
         private void LogPacket(bool fromClient, byte typeA, byte typeB, byte flags1, byte flags2, byte[] packet)
         {
             // Check for and create packets directory if it doesn't exist
-            var packetPath = "packets/" + server.StartTime.ToShortDateString().Replace('/', '-') + "-" +
-                             server.StartTime.ToShortTimeString().Replace('/', '-').Replace(':', '-');
+            var packetPath = "packets/" + _server.StartTime.ToShortDateString().Replace('/', '-') + "-" +
+                             _server.StartTime.ToShortTimeString().Replace('/', '-').Replace(':', '-');
             if (!Directory.Exists(packetPath))
                 Directory.CreateDirectory(packetPath);
 
-            var filename = string.Format("{0}/{1}.{2:X}.{3:X}.{4}.bin", packetPath, packetID++, typeA, typeB,
+            var filename = string.Format("{0}/{1}.{2:X}.{3:X}.{4}.bin", packetPath, _packetId++, typeA, typeB,
                 fromClient ? "C" : "S");
 
             using (var stream = File.OpenWrite(filename))

@@ -49,7 +49,7 @@ namespace PolarisServer.Models
 
         // Probably more info than this
         [Key]
-        public int CharacterID { get; set; }
+        public int CharacterId { get; set; }
 
         public virtual Player Player { get; set; }
         public string Name { get; set; }
@@ -82,7 +82,7 @@ namespace PolarisServer.Models
         public JobParam Jobs { get; set; }
 
         [StructLayout(LayoutKind.Sequential)]
-        public struct HSVColor
+        public struct HsvColor
         {
             public ushort hue, saturation, value;
         }
@@ -143,13 +143,13 @@ namespace PolarisServer.Models
             public ushort accessoryData2;
             public ushort accessoryData3;
             public ushort accessoryData4;
-            public HSVColor costumeColor;
-            public HSVColor mainColor;
-            public HSVColor sub1Color;
-            public HSVColor sub2Color;
-            public HSVColor sub3Color;
-            public HSVColor eyeColor;
-            public HSVColor hairColor;
+            public HsvColor costumeColor;
+            public HsvColor mainColor;
+            public HsvColor sub1Color;
+            public HsvColor sub2Color;
+            public HsvColor sub3Color;
+            public HsvColor eyeColor;
+            public HsvColor hairColor;
             public int modelID;
             public ushort mainParts;
             public ushort bodyPaint;
@@ -176,6 +176,6 @@ namespace PolarisServer.Models
 
     public struct MysteryPositions
     {
-        public float a, b, c, facingAngle, x, y, z;
+        public float A, B, C, FacingAngle, X, Y, Z;
     }
 }

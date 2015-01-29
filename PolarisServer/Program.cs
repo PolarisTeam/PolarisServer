@@ -30,8 +30,7 @@ namespace PolarisServer
         {
             Config = new Config();
 
-            ConsoleSystem = new ConsoleSystem();
-            ConsoleSystem.Thread = new Thread(ConsoleSystem.StartThread);
+            ConsoleSystem = new ConsoleSystem {Thread = new Thread(ConsoleSystem.StartThread)};
             ConsoleSystem.Thread.Start();
 
             // Setup function exit handlers to guarentee Exit() is run before closing
@@ -44,9 +43,6 @@ namespace PolarisServer
                 {
                     switch (args[i].ToLower())
                     {
-                        default:
-                            break;
-
                         case "-b":
                         case "--bind-address":
                             if (++i < args.Length)
