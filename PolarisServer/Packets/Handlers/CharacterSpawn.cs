@@ -1,6 +1,6 @@
 ﻿using System;
 using System.IO;
-
+using Newtonsoft.Json;
 using PolarisServer.Models;
 
 namespace PolarisServer.Packets.Handlers
@@ -43,7 +43,16 @@ namespace PolarisServer.Packets.Handlers
                 Array.Sort(objectPaths);
                 foreach (var path in objectPaths)
                 {
-                    context.SendPacket(File.ReadAllBytes(path));
+                    if (Path.GetExtension(path) == "bin")
+                    {
+                        Logger.WriteWarning("Object {0} is still in BIN format and should be migrated to JSON!", path);
+                        context.SendPacket(File.ReadAllBytes(path));    
+                    } else if (Path.GetExtension(path) == "json")
+                    {
+                        PSOObject new_object = JsonConvert.DeserializeObject<PSOObject>(File.ReadAllText(path));
+                        //TODO: Generate Object Packet...
+                    }
+                    
                 }
             }
             else
