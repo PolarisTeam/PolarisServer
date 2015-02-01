@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq.Expressions;
 using System.Runtime.InteropServices;
 using Newtonsoft.Json;
 using NUnit.Framework;
@@ -89,7 +90,26 @@ namespace PolarisTests
         [Test]
         public void TestObjectSerialize()
         {
-            var testObject = new PsoObject();
+            var testObject = new PsoObject
+            {
+                Name = "testobj",
+                Header = new EntityHeader {Id = 1337, EntityType = 0x6},
+                Position = new MysteryPositions
+                {
+                    A = (float) 3.3,
+                    B = (float) 3.3,
+                    C = (float) 3.3,
+                    FacingAngle = (float) 3.3,
+                    X = (float) 3.3,
+                    Y = (float) 3.3,
+                    Z = (float) 3.3
+                },
+                ThingFlag = 4,
+                Things = new PsoObject.PsoObjectThing[2]
+            };
+
+            var thingData = BitConverter.ToUInt32(new byte[] {0xff, 0xff, 0xff, 0xff}, 0);
+            testObject.Things[0] = new PsoObject.PsoObjectThing {Data = thingData};
             var output = JsonConvert.SerializeObject(testObject);
             Console.Out.WriteLine(output);
         }
