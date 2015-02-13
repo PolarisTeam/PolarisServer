@@ -95,7 +95,7 @@ namespace PolarisServer
         {
             var writer = new PacketWriter();
             writer.WriteStruct(new PacketHeader(0x90, 0x11, 0x2C, 0x0, 0x0));
-            writer.Write(new byte[0x64 - 8]);
+            writer.Write(new byte[0x68 - 8]);
             writer.Write(PolarisApp.BindAddress.GetAddressBytes());
             writer.Write((UInt16) 12205);
             writer.Write(new byte[0x90 - 0x6A]);
