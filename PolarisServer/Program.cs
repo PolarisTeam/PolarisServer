@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Threading;
+using System.Security.Cryptography;
 using PolarisServer.Database;
 using PolarisServer.Packets.Handlers;
 
@@ -86,10 +87,17 @@ namespace PolarisServer
             // Check for Private Key BLOB [AIDA]
             if (!File.Exists("privateKey.blob"))
             {
-                // If it doesn't exist, throw an error and quit [AIDA]
-                Logger.WriteError("[ERR] Failed to load privateKey.blob. Press any key to quit.");
-                Console.ReadKey();
-                Environment.Exit(0);
+                // If it doesn't exist, generate a fresh keypair [CK]
+                Logger.WriteWarning("[WRN] No privatekey.blob installed, generating new keypair...");
+                RSACryptoServiceProvider rcsp = new RSACryptoServiceProvider();
+                byte[] cspBlob = rcsp.ExportCspBlob(true);
+                byte[] cspBlobPub = rcsp.ExportCspBlob(false);
+                FileStream outFile = File.Create("privateKey.blob");
+                FileStream outFilePub = File.Create("publicKey.blob");
+                outFile.Write(cspBlob, 0, cspBlob.Length);
+                outFile.Close();
+                outFilePub.Write(cspBlobPub, 0, cspBlobPub.Length);
+                outFilePub.Close();
             }
 
             // Fix up startup message [KeyPhact]
