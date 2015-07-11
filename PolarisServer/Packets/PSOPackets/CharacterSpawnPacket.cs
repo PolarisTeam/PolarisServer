@@ -35,7 +35,7 @@ namespace PolarisServer.Packets.PSOPackets
             writer.Write(Position);
 
             writer.Write((ushort) 0); // padding?
-            writer.WriteFixedLengthAscii("Character", 32);
+            writer.WriteFixedLengthASCII("Character", 32);
             writer.Write((ushort) 1); // 0x44
             writer.Write((ushort) 0); // 0x46
             writer.Write((uint) 602); // 0x48

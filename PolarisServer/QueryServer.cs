@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading;
 using PolarisServer.Models;
@@ -89,6 +90,7 @@ namespace PolarisServer
 
             socket.Send(writer.ToArray());
             socket.Close();
+
         }
 
         private void DoBlockBalance(Socket socket)

@@ -65,7 +65,7 @@ namespace PolarisServer.Packets
             }
         }
 
-        public void WriteFixedLengthAscii(string str, int charCount)
+        public void WriteFixedLengthASCII(string str, int charCount)
         {
             var writeAmount = Math.Min(str.Length, charCount);
             var paddingAmount = charCount - writeAmount;

@@ -90,10 +90,10 @@ namespace PolarisTests
         [Test]
         public void TestObjectSerialize()
         {
-            var testObject = new PsoObject
+            var testObject = new PSOObject
             {
                 Name = "testobj",
-                Header = new EntityHeader {Id = 1337, EntityType = 0x6},
+                Header = new EntityHeader {ID = 1337, EntityType = 0x6},
                 Position = new MysteryPositions
                 {
                     A = (float) 3.3,
@@ -105,11 +105,11 @@ namespace PolarisTests
                     Z = (float) 3.3
                 },
                 ThingFlag = 4,
-                Things = new PsoObject.PsoObjectThing[2]
+                Things = new PSOObject.PSOObjectThing[2]
             };
 
             var thingData = BitConverter.ToUInt32(new byte[] {0xff, 0xff, 0xff, 0xff}, 0);
-            testObject.Things[0] = new PsoObject.PsoObjectThing {Data = thingData};
+            testObject.Things[0] = new PSOObject.PSOObjectThing {Data = thingData};
             var output = JsonConvert.SerializeObject(testObject);
             Console.Out.WriteLine(output);
         }
