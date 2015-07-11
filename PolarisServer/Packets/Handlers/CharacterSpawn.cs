@@ -30,7 +30,8 @@ namespace PolarisServer.Packets.Handlers
             }
 
             // Set Area
-            context.SendPacket(File.ReadAllBytes("Resources/testSetAreaPacket.bin"));
+            var setAreaPacket = File.ReadAllBytes("Resources/testSetAreaPacket.bin");
+            context.SendPacket(0x03, 0x24, 4, setAreaPacket);
 
             // Set Player ID
             var setPlayerId = new PacketWriter();
