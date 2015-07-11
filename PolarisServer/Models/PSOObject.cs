@@ -37,5 +37,25 @@ namespace PolarisServer.Models
             return writer.ToArray();
 
         }
+
+        internal static PSOObject FromPacketBin(byte[] v)
+        {
+            PacketReader reader = new PacketReader(v);
+            PSOObject obj = new PSOObject();
+            reader.ReadStruct<PacketHeader>(); //Skip over header
+            obj.Header = reader.ReadStruct<EntityHeader>();
+            obj.Position = reader.ReadEntityPosition();
+            reader.ReadUInt16(); // Seek 2
+            obj.Name = reader.ReadFixedLengthAscii(0x34);
+            obj.ThingFlag = reader.ReadUInt32();
+            uint thingCount = reader.ReadUInt32();
+            obj.Things = new PSOObjectThing[thingCount];
+            for(int i = 0; i < thingCount; i++)
+            {
+                obj.Things[i] = reader.ReadStruct<PSOObjectThing>();
+            }
+
+            return obj;
+        }
     }
 }
