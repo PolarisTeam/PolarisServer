@@ -10,7 +10,7 @@ namespace PolarisServer.Object
     {
         private static readonly ObjectManager instance = new ObjectManager();
 
-        private Dictionary<String, Dictionary<uint, PSOObject>> zoneObjects = new Dictionary<string, Dictionary<uint, PSOObject>>();
+        private Dictionary<String, Dictionary<ulong, PSOObject>> zoneObjects = new Dictionary<string, Dictionary<ulong, PSOObject>>();
 
         private ObjectManager() {}
 
@@ -22,7 +22,7 @@ namespace PolarisServer.Object
             }
         }
 
-        public Dictionary<uint, PSOObject> getObjectsForZone(string zone)
+        public Dictionary<ulong, PSOObject> getObjectsForZone(string zone)
         {
             if(!zoneObjects.ContainsKey(zone))
             {
@@ -32,7 +32,7 @@ namespace PolarisServer.Object
                     throw new Exception(String.Format("Unable to get objects for Zone {0}, Object folder not present.", zone));
                 }
 
-                Dictionary<uint, PSOObject> objects = new Dictionary<uint, PSOObject>();
+                Dictionary<ulong, PSOObject> objects = new Dictionary<ulong, PSOObject>();
                 var objectPaths = Directory.GetFiles("Resources/objects/" + zone);
                 Array.Sort(objectPaths);
                 foreach (var path in objectPaths)
@@ -63,7 +63,7 @@ namespace PolarisServer.Object
             }
         }
 
-        internal PSOObject getObjectByID(string zone, uint ID)
+        internal PSOObject getObjectByID(string zone, ulong ID)
         {
             if(!zoneObjects.ContainsKey(zone) || !zoneObjects[zone].ContainsKey(ID))
             {
