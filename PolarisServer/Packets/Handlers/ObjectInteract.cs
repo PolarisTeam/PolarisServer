@@ -21,8 +21,9 @@ namespace PolarisServer.Packets.Handlers
             reader.ReadBytes(16); // Not sure what this is yet
             string command = reader.ReadAscii(0xD711, 0xCA);
 
-            Logger.WriteInternal("[OBJ] Object ID {0} (Type {1}) wants to {2} onto Object ID {3} (Type {4}) !!!", srcObject.ID, srcObject.EntityType, command,
-                dstObject.ID, dstObject.EntityType);
+            PSOObject srcObj = ObjectManager.Instance.getObjectByID("lobby", srcObject.ID);
+
+            Logger.WriteInternal("[OBJ] {0} (ID {1}) <{2}> --> Ent {3} (ID {4})", srcObj.Name, srcObj.Header.ID, command, (EntityType)dstObject.EntityType, dstObject.ID);
 
             // TODO: Delete this code and do this COMPLETELY correctly!!!
             if (command == "Transfer")
@@ -31,13 +32,13 @@ namespace PolarisServer.Packets.Handlers
                 context.SendPacket(new ObjectActionPacket(dstObject, srcObject, new EntityHeader(), new EntityHeader(), "Forwarded"));
                 // Send teleport
                 PSOLocation dstLoc = new PSOLocation();
-                dstLoc.FacingAngle = 0f;
-                dstLoc.X = -8f;
-                dstLoc.Y = 5f;
-                dstLoc.Z = -143f;
-                dstLoc.B = 0f;
-                dstLoc.A = 0f;
-                dstLoc.C = 10f;
+                dstLoc.PosX = -8f;
+                dstLoc.PosY = 50f;
+                dstLoc.PosZ = -143f;
+                //dstLoc.RotX = -0.7158228f;
+                dstLoc.RotY = 1f;
+                //dstLoc.RotZ = 0f;
+                dstLoc.RotW = 0.698282f;
                 context.SendPacket(new TeleportTransferPacket(ObjectManager.Instance.getObjectByID("lobby", srcObject.ID), dstLoc));
             }
         }

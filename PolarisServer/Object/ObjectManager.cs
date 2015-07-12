@@ -41,15 +41,15 @@ namespace PolarisServer.Object
                     {
                         var newObject = PSOObject.FromPacketBin(File.ReadAllBytes(path));
                         objects.Add(newObject.Header.ID, newObject);
-                        Logger.WriteInternal("[OBJ] Loaded object ID {0} with name {1} pos: ({2}, {3}, {4})", newObject.Header.ID, newObject.Name, newObject.Position.X,
-                            newObject.Position.Y, newObject.Position.Z);
+                        Logger.WriteInternal("[OBJ] Loaded object ID {0} with name {1} pos: ({2}, {3}, {4})", newObject.Header.ID, newObject.Name, newObject.Position.PosX,
+                            newObject.Position.PosY, newObject.Position.PosZ);
                     }
                     else if (Path.GetExtension(path) == ".json")
                     {
                         var newObject = JsonConvert.DeserializeObject<PSOObject>(File.ReadAllText(path));
                         objects.Add(newObject.Header.ID, newObject);
-                        Logger.WriteInternal("[OBJ] Loaded object ID {0} with name {1} pos: ({2}, {3}, {4})", newObject.Header.ID, newObject.Name, newObject.Position.X,
-                            newObject.Position.Y, newObject.Position.Z);
+                        Logger.WriteInternal("[OBJ] Loaded object ID {0} with name {1} pos: ({2}, {3}, {4})", newObject.Header.ID, newObject.Name, newObject.Position.PosX,
+                            newObject.Position.PosY, newObject.Position.PosZ);
                     }
                 }
 

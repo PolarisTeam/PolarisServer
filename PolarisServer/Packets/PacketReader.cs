@@ -96,13 +96,13 @@ namespace PolarisServer.Packets
         {
             PSOLocation pos = new PSOLocation()
             {
-                A = Helper.FloatFromHalfPrecision(ReadUInt16()),
-                B = Helper.FloatFromHalfPrecision(ReadUInt16()),
-                C = Helper.FloatFromHalfPrecision(ReadUInt16()),
-                FacingAngle = Helper.FloatFromHalfPrecision(ReadUInt16()),
-                X = Helper.FloatFromHalfPrecision(ReadUInt16()),
-                Y = Helper.FloatFromHalfPrecision(ReadUInt16()),
-                Z = Helper.FloatFromHalfPrecision(ReadUInt16()),
+                RotX = Helper.FloatFromHalfPrecision(ReadUInt16()),
+                RotY = Helper.FloatFromHalfPrecision(ReadUInt16()),
+                RotZ = Helper.FloatFromHalfPrecision(ReadUInt16()),
+                RotW = Helper.FloatFromHalfPrecision(ReadUInt16()),
+                PosX = Helper.FloatFromHalfPrecision(ReadUInt16()),
+                PosY = Helper.FloatFromHalfPrecision(ReadUInt16()),
+                PosZ = Helper.FloatFromHalfPrecision(ReadUInt16()),
             };
 
             return pos;

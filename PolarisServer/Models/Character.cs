@@ -185,6 +185,6 @@ namespace PolarisServer.Models
 
     public struct PSOLocation
     {
-        public float A, B, C, FacingAngle, X, Y, Z; // ABC seem related to gravity / down vector.
+        public float RotX, RotY, RotZ, RotW, PosX, PosY, PosZ; // RotX, RotY, RotZ, and RotW make up a Quaternion
     }
 }

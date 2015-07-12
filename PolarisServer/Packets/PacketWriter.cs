@@ -46,13 +46,13 @@ namespace PolarisServer.Packets
 
         internal void WritePosition(PSOLocation location)
         {
-            Write(Helper.FloatToHalfPrecision(location.A));
-            Write(Helper.FloatToHalfPrecision(location.B));
-            Write(Helper.FloatToHalfPrecision(location.C));
-            Write(Helper.FloatToHalfPrecision(location.FacingAngle));
-            Write(Helper.FloatToHalfPrecision(location.X));
-            Write(Helper.FloatToHalfPrecision(location.Y));
-            Write(Helper.FloatToHalfPrecision(location.Z));
+            Write(Helper.FloatToHalfPrecision(location.RotX));
+            Write(Helper.FloatToHalfPrecision(location.RotY));
+            Write(Helper.FloatToHalfPrecision(location.RotZ));
+            Write(Helper.FloatToHalfPrecision(location.RotW));
+            Write(Helper.FloatToHalfPrecision(location.PosX));
+            Write(Helper.FloatToHalfPrecision(location.PosY));
+            Write(Helper.FloatToHalfPrecision(location.PosZ));
         }
 
         public void WriteUtf16(string str, uint xor, uint sub)
@@ -116,13 +116,13 @@ namespace PolarisServer.Packets
 
         public void Write(PSOLocation s)
         {
-            Write(Helper.FloatToHalfPrecision(s.A));
-            Write(Helper.FloatToHalfPrecision(s.B));
-            Write(Helper.FloatToHalfPrecision(s.C));
-            Write(Helper.FloatToHalfPrecision(s.FacingAngle));
-            Write(Helper.FloatToHalfPrecision(s.X));
-            Write(Helper.FloatToHalfPrecision(s.Y));
-            Write(Helper.FloatToHalfPrecision(s.Z));
+            Write(Helper.FloatToHalfPrecision(s.RotX));
+            Write(Helper.FloatToHalfPrecision(s.RotY));
+            Write(Helper.FloatToHalfPrecision(s.RotZ));
+            Write(Helper.FloatToHalfPrecision(s.RotW));
+            Write(Helper.FloatToHalfPrecision(s.PosX));
+            Write(Helper.FloatToHalfPrecision(s.PosY));
+            Write(Helper.FloatToHalfPrecision(s.PosZ));
         }
 
         public void WritePlayerHeader(uint id)

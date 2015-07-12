@@ -12,14 +12,14 @@ namespace PolarisServer.Packets.PSOPackets
         {
             _character = character;
 
-            Position.A = 0.000031f;
-            Position.B = 1.0f;
-            Position.C = 0.000031f;
-            Position.FacingAngle = -0.000031f;
+            Position.RotX = 0.000031f;
+            Position.RotY = 1.0f;
+            Position.RotZ = 0.000031f;
+            Position.RotW = -0.000031f;
 
-            Position.X = -0.417969f;
-            Position.Y = 0.000031f;
-            Position.Z = 134.375f;
+            Position.PosX = -0.417969f;
+            Position.PosY = 0.000031f;
+            Position.PosZ = 134.375f;
         }
 
         #region implemented abstract members of Packet

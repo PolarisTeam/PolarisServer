@@ -96,13 +96,13 @@ namespace PolarisTests
                 Header = new EntityHeader {ID = 1337, EntityType = 0x6},
                 Position = new PSOLocation
                 {
-                    A = (float) 3.3,
-                    B = (float) 3.3,
-                    C = (float) 3.3,
-                    FacingAngle = (float) 3.3,
-                    X = (float) 3.3,
-                    Y = (float) 3.3,
-                    Z = (float) 3.3
+                    RotX = (float) 3.3,
+                    RotY = (float) 3.3,
+                    RotZ = (float) 3.3,
+                    RotW = (float) 3.3,
+                    PosX = (float) 3.3,
+                    PosY = (float) 3.3,
+                    PosZ = (float) 3.3
                 },
                 ThingFlag = 4,
                 Things = new PSOObject.PSOObjectThing[2]
