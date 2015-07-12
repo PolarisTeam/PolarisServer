@@ -178,7 +178,7 @@ namespace PolarisServer
         private void HandlePacket(byte typeA, byte typeB, byte flags1, byte flags2, byte[] data, uint position,
             uint size)
         {
-            Logger.Write("[-->] Packet {0:X}-{1:X} (flags {2}, {3}) ({4} bytes)", typeA, typeB, flags1, flags2, size);
+            Logger.Write("[-->] Packet {0:X}-{1:X} (flags {2}) ({3} bytes)", typeA, typeB, (PacketFlags)flags1, size);
             if (Logger.VerbosePackets && size > 0) // TODO: This is trimming too far?
             {
                 var dataTrimmed = new byte[size];
@@ -198,8 +198,8 @@ namespace PolarisServer
                 handler.HandlePacket(this, packet, 0, size);
             else
             {
-                Logger.WriteWarning("[!!!] UNIMPLEMENTED PACKET {0:X}-{1:X} - (Flags {2}, {3}) ({4} bytes)", typeA,
-                    typeB, flags1, flags2, size);
+                Logger.WriteWarning("[!!!] UNIMPLEMENTED PACKET {0:X}-{1:X} - (Flags {2}) ({3} bytes)", typeA,
+                    typeB, (PacketFlags)flags1, size);
             }
 
             // throw new NotImplementedException();

@@ -34,6 +34,7 @@ namespace PolarisServer.Models
         }
     }
 
+    [Flags]
     public enum PacketFlags : byte
     {
         NONE,
