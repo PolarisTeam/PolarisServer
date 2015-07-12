@@ -183,8 +183,8 @@ namespace PolarisServer.Models
     }
 
 
-    public struct MysteryPositions
+    public struct PSOLocation
     {
-        public float A, B, C, FacingAngle, X, Y, Z;
+        public float A, B, C, FacingAngle, X, Y, Z; // ABC seem related to gravity / down vector.
     }
 }

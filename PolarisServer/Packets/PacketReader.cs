@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using PolarisServer.Models;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -89,6 +90,22 @@ namespace PolarisServer.Packets
             Read(structBytes, 0, structBytes.Length);
 
             return Helper.ByteArrayToStructure<T>(structBytes);
+        }
+
+        public PSOLocation ReadEntityPosition()
+        {
+            PSOLocation pos = new PSOLocation()
+            {
+                A = Helper.FloatFromHalfPrecision(ReadUInt16()),
+                B = Helper.FloatFromHalfPrecision(ReadUInt16()),
+                C = Helper.FloatFromHalfPrecision(ReadUInt16()),
+                FacingAngle = Helper.FloatFromHalfPrecision(ReadUInt16()),
+                X = Helper.FloatFromHalfPrecision(ReadUInt16()),
+                Y = Helper.FloatFromHalfPrecision(ReadUInt16()),
+                Z = Helper.FloatFromHalfPrecision(ReadUInt16()),
+            };
+
+            return pos;
         }
     }
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using Newtonsoft.Json;
 using PolarisServer.Models;
 using PolarisServer.Packets.PSOPackets;
+using PolarisServer.Object;
 
 namespace PolarisServer.Packets.Handlers
 {
@@ -38,28 +39,12 @@ namespace PolarisServer.Packets.Handlers
             setPlayerId.WritePlayerHeader((uint) context.User.PlayerId);
             context.SendPacket(0x06, 0x00, 0, setPlayerId.ToArray());
 
-            // Spawn Lobby Objects
-            if (Directory.Exists("Resources/objects/lobby"))
+            // Lobby Objects
+            PSOObject[] lobbyObjects = ObjectManager.Instance.getObjectsForZone("lobby").Values.ToArray();
+
+            foreach(PSOObject obj in lobbyObjects)
             {
-                var objectPaths = Directory.GetFiles("Resources/objects/lobby");
-                Array.Sort(objectPaths);
-                foreach (var path in objectPaths)
-                {
-                    if (Path.GetExtension(path) == ".bin")
-                    {
-                        Logger.WriteWarning("Object {0} is still in BIN format and should be migrated to JSON!", path);
-                        context.SendPacket(File.ReadAllBytes(path));
-                    }
-                    else if (Path.GetExtension(path) == ".json")
-                    {
-                        var newObject = JsonConvert.DeserializeObject<PSOObject>(File.ReadAllText(path));
-                        context.SendPacket(0x08, 0x0B, 0x0, newObject.GenerateSpawnBlob());
-                    }
-                }
-            }
-            else
-            {
-                Logger.WriteWarning("Directory 'Resources/objects/lobby' not found!");
+                context.SendPacket(0x08, 0x0B, 0x0, obj.GenerateSpawnBlob());
             }
 
             // Spawn Character
