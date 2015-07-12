@@ -641,7 +641,7 @@ namespace PolarisServer
 
             var fakePacket = new CharacterSpawnPacket(fakeChar)
             {
-                Position = {FacingAngle = 0f, X = x, Y = y, Z = z},
+                Position = {RotW = 0f, PosX = x, PosY = y, PosZ = z},
                 IsItMe = false
             };
             client.SendPacket(fakePacket);
