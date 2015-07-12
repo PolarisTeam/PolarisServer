@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using PolarisServer.Models;
 using PolarisServer.Packets.PSOPackets;
+using PolarisServer.Database;
 
 namespace PolarisServer.Packets.Handlers
 {
@@ -36,8 +37,11 @@ namespace PolarisServer.Packets.Handlers
             };
 
             // Add to database
-            PolarisApp.Instance.Database.Characters.Add(newCharacter);
-            PolarisApp.Instance.Database.SaveChanges();
+            using (var db = new PolarisEf())
+            { 
+                db.Characters.Add(newCharacter);
+                db.SaveChanges();
+            }
 
             // Assign character to player
             context.Character = newCharacter;

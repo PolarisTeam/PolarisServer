@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using PolarisServer.Models;
 using PolarisServer.Packets.PSOPackets;
 using PolarisServer.Object;
+using PolarisServer.Database;
 
 namespace PolarisServer.Packets.Handlers
 {
@@ -27,7 +28,8 @@ namespace PolarisServer.Packets.Handlers
                 context.Character.Looks = reader.ReadStruct<Character.LooksParam>();
                 context.Character.Jobs = reader.ReadStruct<Character.JobParam>();
 
-                PolarisApp.Instance.Database.ChangeTracker.DetectChanges();
+                using(var db = new PolarisEf())
+                    db.ChangeTracker.DetectChanges();
             }
 
             // Set Area

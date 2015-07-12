@@ -145,7 +145,7 @@ namespace PolarisServer
             else
                 Writer.WriteLine(DateTime.Now + " - " + text);
 
-            // Later we should probably only flush once every X amount of lines or on some other condition
+            // Later we should probably only flush once every PosX amount of lines or on some other condition
             Writer.Flush();
         }
     }

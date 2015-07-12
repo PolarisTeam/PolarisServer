@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using PolarisServer.Packets.PSOPackets;
+using PolarisServer.Database;
 
 // This file is to hold all packet handlers that require no logic to respond to, or require less than 5 lines of logic.
 
@@ -32,17 +33,21 @@ namespace PolarisServer.Packets.Handlers
             Logger.Write("[CHR] {0} is deleting character with ID {1}", context.User.Username, id);
 
             // Delete Character
-            foreach (var character in PolarisApp.Instance.Database.Characters)
-                if (character.CharacterId == id)
-                {
-                    PolarisApp.Instance.Database.Characters.Remove(character);
-                    PolarisApp.Instance.Database.ChangeTracker.DetectChanges();
-                    break;
-                }
+            using (var db = new PolarisEf())
+            {
 
-            // Detect the deletion and save the Database
-            if (PolarisApp.Instance.Database.ChangeTracker.HasChanges())
-                PolarisApp.Instance.Database.SaveChanges();
+                foreach (var character in db.Characters)
+                    if (character.CharacterId == id)
+                    {
+                        db.Characters.Remove(character);
+                        db.ChangeTracker.DetectChanges();
+                        break;
+                    }
+
+                // Detect the deletion and save the Database
+                if (db.ChangeTracker.HasChanges())
+                    db.SaveChanges(); 
+            }
 
             // Disconnect for now
             // TODO: What do we do after a deletion?

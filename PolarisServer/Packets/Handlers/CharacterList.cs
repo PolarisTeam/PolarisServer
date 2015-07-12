@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using PolarisServer.Database;
+using System.Linq;
 
 namespace PolarisServer.Packets.Handlers
 {
@@ -12,28 +13,32 @@ namespace PolarisServer.Packets.Handlers
             if (context.User == null)
                 return;
 
-            var db = PolarisApp.Instance.Database;
-            var chars = from c in db.Characters
-                where c.Player.PlayerId == context.User.PlayerId
-                select c;
-
             var writer = new PacketWriter();
-            writer.Write((uint) chars.Count());
 
-            foreach (var ch in chars)
+            using (var db = new PolarisEf())
             {
-                writer.Write((uint) ch.CharacterId);
-                writer.Write((uint) context.User.PlayerId);
-                for (var i = 0; i < 0xC; i++)
-                    writer.Write((byte) 0);
+                var chars = from c in db.Characters
+                            where c.Player.PlayerId == context.User.PlayerId
+                            select c;
 
-                writer.WriteFixedLengthUtf16(ch.Name, 16);
-                writer.Write((uint) 0);
 
-                writer.WriteStruct(ch.Looks);
-                writer.WriteStruct(ch.Jobs);
-                for (var i = 0; i < 0x44; i++)
-                    writer.Write((byte) 0);
+                writer.Write((uint)chars.Count());
+
+                foreach (var ch in chars)
+                {
+                    writer.Write((uint)ch.CharacterId);
+                    writer.Write((uint)context.User.PlayerId);
+                    for (var i = 0; i < 0xC; i++)
+                        writer.Write((byte)0);
+
+                    writer.WriteFixedLengthUtf16(ch.Name, 16);
+                    writer.Write((uint)0);
+
+                    writer.WriteStruct(ch.Looks);
+                    writer.WriteStruct(ch.Jobs);
+                    for (var i = 0; i < 0x44; i++)
+                        writer.Write((byte)0);
+                } 
             }
 
             // Ninji note: This packet may be followed by extra data,

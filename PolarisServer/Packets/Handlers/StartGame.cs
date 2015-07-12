@@ -1,4 +1,5 @@
-﻿using PolarisServer.Packets.PSOPackets;
+﻿using PolarisServer.Database;
+using PolarisServer.Packets.PSOPackets;
 
 namespace PolarisServer.Packets.Handlers
 {
@@ -17,12 +18,16 @@ namespace PolarisServer.Packets.Handlers
 
             if (context.Character == null) // On character create, this is already set.
             {
-                var character = PolarisApp.Instance.Database.Characters.Find((int) charId);
+                using (var db = new PolarisEf())
+                {
+                    var character = db.Characters.Find((int)charId);
 
-                if (character == null || character.Player.PlayerId != context.User.PlayerId)
-                    return;
+                    if (character == null || character.Player.PlayerId != context.User.PlayerId)
+                        return;
 
-                context.Character = character;
+                    context.Character = character;
+                }
+
             }
 
             // Transition to the loading screen
@@ -53,7 +58,7 @@ namespace PolarisServer.Packets.Handlers
         {
             // Set Player ID
             var setPlayerId = new PacketWriter();
-            setPlayerId.WritePlayerHeader((uint) context.User.PlayerId);
+            setPlayerId.WritePlayerHeader((uint)context.User.PlayerId);
             context.SendPacket(6, 0, 0, setPlayerId.ToArray());
 
             // Spawn Player

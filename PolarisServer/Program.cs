@@ -25,7 +25,6 @@ namespace PolarisServer
         public List<QueryServer> QueryServers = new List<QueryServer>();
         public Server Server;
         public static PolarisApp Instance { get; private set; }
-        public PolarisEf Database { get; private set; }
 
         public static void Main(string[] args)
         {
@@ -122,7 +121,10 @@ namespace PolarisServer
             PacketHandlers.LoadPacketHandlers();
 
             Logger.WriteInternal("[DB ] Loading database...");
-            Database = new PolarisEf();
+            using (var db = new PolarisEf())
+            { 
+                db.SetupDB();
+            }
 
             for (var i = 0; i < 10; i++)
                 QueryServers.Add(new QueryServer(QueryMode.ShipList, 12099 + (100*i)));
@@ -134,10 +136,6 @@ namespace PolarisServer
         {
             // Save the configuration
             Config.Save();
-
-            // Save the database
-            if (Instance != null && Instance.Database != null)
-                Instance.Database.SaveChanges();
         }
     }
 }

@@ -186,5 +186,17 @@ namespace PolarisServer.Models
     public struct PSOLocation
     {
         public float RotX, RotY, RotZ, RotW, PosX, PosY, PosZ; // RotX, RotY, RotZ, and RotW make up a Quaternion
+
+        public PSOLocation(float RotX, float RotY, float RotZ, float RotW, float PosX, float PosY, float PosZ)
+        {
+            this.RotX = RotX;
+            this.RotY = RotY;
+            this.RotZ = RotZ;
+            this.RotW = RotW;
+
+            this.PosX = PosX;
+            this.PosY = PosY;
+            this.PosZ = PosZ;
+        }
     }
 }

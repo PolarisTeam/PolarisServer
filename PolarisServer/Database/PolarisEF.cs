@@ -4,6 +4,7 @@ using System.Data.Entity;
 using System.IO;
 using MySql.Data.Entity;
 using PolarisServer.Models;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PolarisServer.Database
 {
@@ -13,6 +14,24 @@ namespace PolarisServer.Database
         public string Info { get; set; }
 
         public string Setting { get; set; }
+    }
+
+    public class Teleport
+    {
+        [Key, Column(Order = 1)]
+        public string ZoneName { get; set; }
+
+        [Key, Column(Order = 2)]
+        public int ObjectID { get; set; }
+
+        public float RotX { get; set; }
+        public float RotY { get; set; }
+        public float RotZ { get; set; }
+        public float RotW { get; set; }
+
+        public float PosX { get; set; }
+        public float PosY { get; set; }
+        public float PosZ { get; set; }
     }
 
     public class Player
@@ -35,6 +54,11 @@ namespace PolarisServer.Database
                     PolarisApp.Config.DatabaseName, PolarisApp.Config.DatabaseUsername,
                     PolarisApp.Config.DatabasePassword))
         {
+           
+        }
+
+        public void SetupDB()
+        {
             try
             {
                 foreach (
@@ -47,7 +71,7 @@ namespace PolarisServer.Database
                 var revision = ServerInfos.Find("Revision");
                 if (revision == null)
                 {
-                    revision = new ServerInfo {Info = "Revision", Setting = "0"};
+                    revision = new ServerInfo { Info = "Revision", Setting = "0" };
                     ServerInfos.Add(revision);
 
                     //TODO Possibly move this somewhere else?
@@ -66,5 +90,6 @@ namespace PolarisServer.Database
         public DbSet<ServerInfo> ServerInfos { get; set; }
         public DbSet<Player> Players { get; set; }
         public DbSet<Character> Characters { get; set; }
+        public DbSet<Teleport> Teleports { get; set; }
     }
 }
