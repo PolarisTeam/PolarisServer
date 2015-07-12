@@ -9,6 +9,7 @@ using PolarisServer.Database;
 using PolarisServer.Models;
 using PolarisServer.Packets.PSOPackets;
 using Timer = System.Timers.Timer;
+using PolarisServer.Object;
 
 namespace PolarisServer
 {
@@ -316,6 +317,22 @@ namespace PolarisServer
             sendPacketDirectory.Arguments.Add(new ConsoleCommandArgument("Dirname", false));
             sendPacketDirectory.Help = "Sends the specified directory's contents as a packet";
             Commands.Add(sendPacketDirectory);
+
+
+            var teleportPlayer = new ConsoleCommand(TeleportPlayer, "teleportplayer", "tp");
+            teleportPlayer.Arguments.Add(new ConsoleCommandArgument("Username", false));
+
+            teleportPlayer.Arguments.Add(new ConsoleCommandArgument("RotX", false));
+            teleportPlayer.Arguments.Add(new ConsoleCommandArgument("RotY", false));
+            teleportPlayer.Arguments.Add(new ConsoleCommandArgument("RotZ", false));
+            teleportPlayer.Arguments.Add(new ConsoleCommandArgument("RotW", false));
+
+            teleportPlayer.Arguments.Add(new ConsoleCommandArgument("PosX", false));
+            teleportPlayer.Arguments.Add(new ConsoleCommandArgument("PosY", false));
+            teleportPlayer.Arguments.Add(new ConsoleCommandArgument("PosZ", false));
+
+            teleportPlayer.Help = "Teleports a player to the given position. (Only works in lobby.)";
+            Commands.Add(teleportPlayer);
 
             // Exit
             var exit = new ConsoleCommand(Exit, "exit", "quit") {Help = "Close the Polaris Server"};
@@ -756,6 +773,31 @@ namespace PolarisServer
 
             Logger.WriteCommand(client, "[CMD] Sent contents of {0} as packet {1:X}-{2:X} with flags {3} to {4}",
                 filename, data[4], data[5], data[6], name);
+        }
+
+        private void TeleportPlayer(string[] args, int length, string full, Client client)
+        {
+            var name = args[1].Trim('\"');
+            var foundPlayer = false;
+
+
+            var id = Helper.FindPlayerByUsername(name);
+            if (id != -1)
+                foundPlayer = true;
+
+            // Couldn't find the username
+            if (!foundPlayer)
+            {
+                Logger.WriteError("[CMD] Could not find user " + name);
+                return;
+            }
+
+            PSOLocation destination = new PSOLocation(float.Parse(args[2]), float.Parse(args[3]), float.Parse(args[4]), float.Parse(args[5]),
+                float.Parse(args[6]), float.Parse(args[7]), float.Parse(args[8]));
+
+
+            PolarisApp.Instance.Server.Clients[id].SendPacket(new TeleportTransferPacket(ObjectManager.Instance.getObjectByID("lobby", 443), destination));
+
         }
 
         #endregion
