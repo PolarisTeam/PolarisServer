@@ -5,6 +5,12 @@ using System.Text;
 
 namespace PolarisServer.Models
 {
+    public enum EntityType
+    {
+        Player = 0x4,
+        Object = 0x6
+    }
+
     public struct EntityHeader
     {
         public UInt32 ID;
