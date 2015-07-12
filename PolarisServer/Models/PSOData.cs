@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,17 +12,20 @@ namespace PolarisServer.Models
         Object = 0x6
     }
 
+    [StructLayout(LayoutKind.Explicit, Size = 12)]
     public struct EntityHeader
     {
-        public UInt32 ID;
-        public UInt32 Unknown_4;
-        public UInt16 EntityType; // Maybe...
+        [FieldOffset(0x0)]
+        public UInt64 ID;
+        [FieldOffset(0x8)]
+        public EntityType EntityType; // Maybe...
+        [FieldOffset(0xA)]
         public UInt16 Unknown_A;
 
-        public EntityHeader(int id, EntityType type) : this()
+        public EntityHeader(ulong id, EntityType type) : this()
         {
-            this.ID = (uint)id;
-            this.EntityType = (UInt16)type;
+            this.ID = id;
+            this.EntityType = type;
         }
     }
 }

@@ -67,6 +67,7 @@
     <Compile Include="Packets\Handlers\CharacterSpawn.cs" />
     <Compile Include="Packets\Handlers\ObjectInteract.cs" />
     <Compile Include="Packets\PSOPackets\GuildInfoPacket.cs" />
+    <Compile Include="Packets\PSOPackets\MovementPacket.cs" />
     <Compile Include="Packets\PSOPackets\ObjectActionPacket.cs" />
     <Compile Include="Packets\PSOPackets\PalettePacket.cs" />
     <Compile Include="Packets\PSOPackets\SetCurrencyPacket.cs" />

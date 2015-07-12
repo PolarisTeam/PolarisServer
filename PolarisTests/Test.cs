@@ -93,7 +93,7 @@ namespace PolarisTests
             var testObject = new PSOObject
             {
                 Name = "testobj",
-                Header = new EntityHeader {ID = 1337, EntityType = 0x6},
+                Header = new EntityHeader {ID = 1337, EntityType = EntityType.Object},
                 Position = new PSOLocation
                 {
                     RotX = (float) 3.3,
@@ -113,5 +113,24 @@ namespace PolarisTests
             var output = JsonConvert.SerializeObject(testObject);
             Console.Out.WriteLine(output);
         }
+    }
+
+    [TestFixture]
+    public class DataTests
+    {
+        [Test]
+        public void TestShiftEnum()
+        {
+            byte[] bytes = { 0x1, 0x1, 0x1 };
+            uint dataFlags = bytes[0];
+            dataFlags |= (uint)(bytes[1] << 8);
+            dataFlags |= (uint)(bytes[2] << 16);
+
+            Assert.AreEqual((PackedData.ENT1_ID|PackedData.ROT_Y|PackedData.CUR_Y), 
+                (PackedData) dataFlags);
+            Console.Out.WriteLine((PackedData)dataFlags);
+        }
+
+      
     }
 }
