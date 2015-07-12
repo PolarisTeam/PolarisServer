@@ -129,6 +129,6 @@
   </Target>
   <ItemGroup />
   <PropertyGroup>
-    <PostBuildEvent>xcopy /S /Y $(ProjectDir)\Resources $(TargetDir)\Resources\</PostBuildEvent>
+    <PostBuildEvent>xcopy /S /Y "$(ProjectDir)Resources" "$(TargetDir)Resources\"</PostBuildEvent>
   </PropertyGroup>
 </Project>
