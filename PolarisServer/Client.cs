@@ -48,6 +48,7 @@ namespace PolarisServer
         public Character Character { get; set; }
         public Zone.Zone CurrentZone { get; set; }
         public PSOLocation CurrentLocation;
+        public PSOLocation LastLocation;
 
         private void HandleDataReceived(byte[] data, int size)
         {

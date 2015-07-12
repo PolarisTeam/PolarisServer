@@ -1,4 +1,5 @@
 ﻿using PolarisServer.Models;
+using PolarisServer.Packets.PSOPackets;
 using System;
 using System.Runtime.InteropServices;
 
@@ -59,30 +60,37 @@ namespace PolarisServer.Packets.Handlers
             if(theFlags.HasFlag(PackedData.ROT_X))
             {
                 dstData.rotation.x = reader.ReadUInt16();
+                context.CurrentLocation.RotX = Helper.FloatFromHalfPrecision(dstData.rotation.x);
             }
             if (theFlags.HasFlag(PackedData.ROT_Y))
             {
                 dstData.rotation.y = reader.ReadUInt16();
+                context.CurrentLocation.RotY = Helper.FloatFromHalfPrecision(dstData.rotation.y);
             }
             if (theFlags.HasFlag(PackedData.ROT_Z))
             {
                 dstData.rotation.z = reader.ReadUInt16();
+                context.CurrentLocation.RotZ = Helper.FloatFromHalfPrecision(dstData.rotation.z);
             }
             if (theFlags.HasFlag(PackedData.ROT_W))
             {
                 dstData.rotation.w = reader.ReadUInt16();
+                context.CurrentLocation.RotW = Helper.FloatFromHalfPrecision(dstData.rotation.w);
             }
             if (theFlags.HasFlag(PackedData.LAST_X))
             {
                 dstData.lastPos.x = reader.ReadUInt16();
+                context.LastLocation.PosX = Helper.FloatFromHalfPrecision(dstData.lastPos.x);
             }
             if (theFlags.HasFlag(PackedData.LAST_Y))
             {
                 dstData.lastPos.y = reader.ReadUInt16();
+                context.LastLocation.PosY = Helper.FloatFromHalfPrecision(dstData.lastPos.y);
             }
             if (theFlags.HasFlag(PackedData.LAST_Z))
             {
                 dstData.lastPos.z = reader.ReadUInt16();
+                context.LastLocation.PosZ = Helper.FloatFromHalfPrecision(dstData.lastPos.z);
             }
             if (theFlags.HasFlag(PackedData.UNKNOWN4))
             {
@@ -122,6 +130,26 @@ namespace PolarisServer.Packets.Handlers
             {
                 Logger.WriteInternal("[MOV] Player moving! {0} -> ({1}, {2}, {3})", context.Character.Name, context.CurrentLocation.PosX,
                     context.CurrentLocation.PosY, context.CurrentLocation.PosZ);
+
+                FullMovementData dataOut = new FullMovementData();
+                dataOut.entity1 = new EntityHeader((ulong)context.User.PlayerId, EntityType.Player);
+                dataOut.entity2 = dataOut.entity1; // I guess?
+
+                dataOut.lastPos = new PackedVec3(context.LastLocation);
+                dataOut.currentPos = new PackedVec3(context.LastLocation);
+                dataOut.rotation = new PackedVec4(context.LastLocation);
+
+                foreach (var c in Server.Instance.Clients)
+                {
+                    if (c.Character == null)
+                        continue;
+
+                    if (c == context)
+                        continue;
+
+                    c.SendPacket(new MovementPacket(dataOut));
+                } 
+
             }
         }
 
@@ -165,6 +193,50 @@ namespace PolarisServer.Packets.Handlers
         #endregion
     }
 
+    [PacketHandlerAttr(0x4, 0x8)]
+    public class MovementActionHandler : PacketHandler
+    {
+        public override void HandlePacket(Client context, byte[] data, uint position, uint size)
+        {
+            PacketReader reader = new PacketReader(data);
+            reader.ReadStruct<EntityHeader>(); // Skip blank entity header.
+            var preformer = reader.ReadStruct<EntityHeader>(); // Preformer
+            byte[] preData = reader.ReadBytes(40);
+            string command = reader.ReadAscii(0x922D, 0x45);
+            byte[] rest = reader.ReadBytes(4);
+            uint thingCount = reader.ReadMagic(0x922D, 0x45);
+            byte[] things;
+            PacketWriter thingWriter = new PacketWriter();
+            for (int i = 0; thingCount < 0; i++)
+            {
+                thingWriter.Write(reader.ReadBytes(12));
+            }
+            things = thingWriter.ToArray();
+            byte[] final = reader.ReadBytes(4);
+
+
+            Logger.WriteInternal("[ACT] {0} is preforming {1}", context.Character.Name, command);
+            
+            foreach(var c in Server.Instance.Clients)
+            {
+                if (c == context || c.Character == null)
+                    continue;
+                PacketWriter output = new PacketWriter();
+                output.WriteStruct(new EntityHeader((ulong)context.User.PlayerId, EntityType.Player));
+                output.WriteStruct(preformer);
+                output.Write(preData);
+                output.WriteAscii(command, 0x4315, 0x7A);
+                output.Write(rest);
+                output.WriteMagic(thingCount, 0x4315, 0x7A);
+                output.Write(things);
+                output.Write(final);
+
+                c.SendPacket(0x4, 0x80, 0x44, output.ToArray());
+
+                
+            }
+        }
+    }
 
     [Flags]
     public enum PackedData : Int32
@@ -196,11 +268,26 @@ namespace PolarisServer.Packets.Handlers
     public struct PackedVec4
     {
         public UInt16 x, y, z, w;
+
+        public PackedVec4(PSOLocation location)
+        {
+            this.x = Helper.FloatToHalfPrecision(location.RotX);
+            this.y = Helper.FloatToHalfPrecision(location.RotY);
+            this.z = Helper.FloatToHalfPrecision(location.RotZ);
+            this.w = Helper.FloatToHalfPrecision(location.RotW);
+        }
     }
 
     public struct PackedVec3
     {
         public UInt16 x, y, z;
+
+        public PackedVec3(PSOLocation location)
+        {
+            this.x = Helper.FloatToHalfPrecision(location.PosX);
+            this.y = Helper.FloatToHalfPrecision(location.PosY);
+            this.z = Helper.FloatToHalfPrecision(location.PosZ);
+        }
     }
 
     [StructLayout(LayoutKind.Explicit, Size = 0x38)]

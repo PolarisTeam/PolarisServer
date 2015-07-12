@@ -21,8 +21,21 @@ namespace PolarisServer.Packets.Handlers
             EntityHeader dstObject = reader.ReadStruct<EntityHeader>(); // Could be wrong
             reader.ReadBytes(16); // Not sure what this is yet
             string command = reader.ReadAscii(0xD711, 0xCA);
-
-            PSOObject srcObj = ObjectManager.Instance.getObjectByID("lobby", srcObject.ID);
+            PSOObject srcObj;
+            if(srcObject.EntityType == EntityType.Object)
+            {
+                srcObj = ObjectManager.Instance.getObjectByID("lobby", srcObject.ID);
+            }
+            else if(srcObject.EntityType == EntityType.Player)
+            {
+                srcObj = new PSOObject();
+                srcObj.Header = srcObject;
+                srcObj.Name = "Player";
+            }
+            else
+            {
+                srcObj = null;
+            }
 
             Logger.WriteInternal("[OBJ] {0} (ID {1}) <{2}> --> Ent {3} (ID {4})", srcObj.Name, srcObj.Header.ID, command, (EntityType)dstObject.EntityType, dstObject.ID);
 
