@@ -59,7 +59,7 @@ namespace PolarisServer.Packets.PSOPackets
 
         public override PacketHeader GetHeader()
         {
-            return new PacketHeader(0x1C, 0x1F, 0);
+            return new PacketHeader(0x1C, 0x1F, (byte)0);
         }
 
         #endregion

@@ -62,5 +62,15 @@ namespace PolarisServer.Object
                 return zoneObjects[zone];
             }
         }
+
+        internal PSOObject getObjectByID(string zone, uint ID)
+        {
+            if(!zoneObjects.ContainsKey(zone) || !zoneObjects[zone].ContainsKey(ID))
+            {
+                throw new Exception(String.Format("Object ID {0} does not exist in {1}!", ID, zone));
+            }
+
+            return zoneObjects[zone][ID];
+        }
     }
 }

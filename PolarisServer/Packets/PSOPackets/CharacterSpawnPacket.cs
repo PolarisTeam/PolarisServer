@@ -6,7 +6,7 @@ namespace PolarisServer.Packets.PSOPackets
     {
         private readonly Character _character;
         public bool IsItMe = true;
-        public MysteryPositions Position;
+        public PSOLocation Position;
 
         public CharacterSpawnPacket(Character character)
         {

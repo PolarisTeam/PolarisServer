@@ -92,9 +92,9 @@ namespace PolarisServer.Packets
             return Helper.ByteArrayToStructure<T>(structBytes);
         }
 
-        public MysteryPositions ReadEntityPosition()
+        public PSOLocation ReadEntityPosition()
         {
-            MysteryPositions pos = new MysteryPositions()
+            PSOLocation pos = new PSOLocation()
             {
                 A = Helper.FloatFromHalfPrecision(ReadUInt16()),
                 B = Helper.FloatFromHalfPrecision(ReadUInt16()),

@@ -21,13 +21,26 @@ namespace PolarisServer.Models
             this.Flags2 = flags2;
         }
 
-        public PacketHeader(byte type, byte subtype) : this(type, subtype, 0)
+        public PacketHeader(byte type, byte subtype) : this(type, subtype, (byte)0)
         {
         }
 
         public PacketHeader(byte type, byte subtype, byte flags1) : this(0, type, subtype, flags1, 0)
         {
         }
+
+        public PacketHeader(byte type, byte subtype, PacketFlags packetFlags) : this(type, subtype, (byte)packetFlags)
+        {
+        }
     }
+
+    public enum PacketFlags : byte
+    {
+        NONE,
+        STREAM_PACKED = 0x4,
+        FLAG_10 = 0x10,
+        ENTITY_HEADER = 0x40
+    }
+
 }
 

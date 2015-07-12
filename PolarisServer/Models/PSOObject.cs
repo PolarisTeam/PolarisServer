@@ -15,7 +15,7 @@ namespace PolarisServer.Models
         }
 
         public EntityHeader Header { get; set; }
-        public MysteryPositions Position { get; set; }
+        public PSOLocation Position { get; set; }
         public string Name { get; set; }
         public UInt32 ThingFlag { get; set; }
         public PSOObjectThing[] Things { get; set; }

@@ -44,6 +44,17 @@ namespace PolarisServer.Packets
             }
         }
 
+        internal void WritePosition(PSOLocation location)
+        {
+            Write(Helper.FloatToHalfPrecision(location.A));
+            Write(Helper.FloatToHalfPrecision(location.B));
+            Write(Helper.FloatToHalfPrecision(location.C));
+            Write(Helper.FloatToHalfPrecision(location.FacingAngle));
+            Write(Helper.FloatToHalfPrecision(location.X));
+            Write(Helper.FloatToHalfPrecision(location.Y));
+            Write(Helper.FloatToHalfPrecision(location.Z));
+        }
+
         public void WriteUtf16(string str, uint xor, uint sub)
         {
             if (str.Length == 0)
@@ -103,7 +114,7 @@ namespace PolarisServer.Packets
             }
         }
 
-        public void Write(MysteryPositions s)
+        public void Write(PSOLocation s)
         {
             Write(Helper.FloatToHalfPrecision(s.A));
             Write(Helper.FloatToHalfPrecision(s.B));
