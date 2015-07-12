@@ -63,11 +63,15 @@
     <Compile Include="Logger.cs" />
     <Compile Include="Models\PSOData.cs" />
     <Compile Include="Models\PSOObject.cs" />
+    <Compile Include="Object\ObjectManager.cs" />
     <Compile Include="Packets\Handlers\CharacterSpawn.cs" />
+    <Compile Include="Packets\Handlers\ObjectInteract.cs" />
     <Compile Include="Packets\PSOPackets\GuildInfoPacket.cs" />
+    <Compile Include="Packets\PSOPackets\ObjectActionPacket.cs" />
     <Compile Include="Packets\PSOPackets\PalettePacket.cs" />
     <Compile Include="Packets\PSOPackets\SetCurrencyPacket.cs" />
     <Compile Include="Packets\PSOPackets\SetMesetaPacket.cs" />
+    <Compile Include="Packets\PSOPackets\TeleportTransferPacket.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Client.cs" />
@@ -124,4 +128,7 @@
     <Copy SourceFiles="@(CopyItems)" DestinationFolder="$(OutputPath)\\Resources\\%(CopyItems.RecursiveDir)" />
   </Target>
   <ItemGroup />
+  <PropertyGroup>
+    <PostBuildEvent>xcopy /S /Y $(ProjectDir)\Resources $(TargetDir)\Resources\</PostBuildEvent>
+  </PropertyGroup>
 </Project>

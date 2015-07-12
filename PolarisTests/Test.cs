@@ -94,7 +94,7 @@ namespace PolarisTests
             {
                 Name = "testobj",
                 Header = new EntityHeader {ID = 1337, EntityType = 0x6},
-                Position = new MysteryPositions
+                Position = new PSOLocation
                 {
                     A = (float) 3.3,
                     B = (float) 3.3,

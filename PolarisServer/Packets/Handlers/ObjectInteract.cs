@@ -35,9 +35,9 @@ namespace PolarisServer.Packets.Handlers
                 dstLoc.X = -8f;
                 dstLoc.Y = 5f;
                 dstLoc.Z = -143f;
-                dstLoc.B = 1f;
-                //dstLoc.A = 1f;
-                //dstLoc.C = 1f;
+                dstLoc.B = 0f;
+                dstLoc.A = 0f;
+                dstLoc.C = 10f;
                 context.SendPacket(new TeleportTransferPacket(ObjectManager.Instance.getObjectByID("lobby", srcObject.ID), dstLoc));
             }
         }
