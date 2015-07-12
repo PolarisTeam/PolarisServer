@@ -126,7 +126,7 @@ namespace PolarisServer
             var flags1 = blob[6];
             var flags2 = blob[7];
 
-            Logger.Write("[<--] Packet {0:X}-{1:X} (flags {2}, {3}) ({4} bytes)", typeA, typeB, flags1, flags2,
+            Logger.Write("[<--] Packet {0:X}-{1:X} (flags {2}) ({3} bytes)", typeA, typeB, (PacketFlags)flags1,
                 blob.Length);
             LogPacket(false, typeA, typeB, flags1, flags2, blob);
 
