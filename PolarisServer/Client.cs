@@ -122,14 +122,7 @@ namespace PolarisServer
             Logger.Write("[BYE] Connection lost. :(");
             if (Character != null)
             {
-                foreach(var c in Server.Instance.Clients)
-                {
-                    if (c == this || c.Character == null)
-                        continue;
-                    PacketWriter writer = new PacketWriter();
-                    writer.Write(User.PlayerId);
-                    c.SendPacket(0x2c, 0x2, 0x0, writer.ToArray());
-                }
+                //TODO: Remove player model for other users here.
             }
             IsClosed = true;
         }

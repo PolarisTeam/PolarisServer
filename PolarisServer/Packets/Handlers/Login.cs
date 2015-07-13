@@ -29,7 +29,7 @@ namespace PolarisServer.Packets.Handlers
             using (var db = new PolarisEf())
             {
                 var users = from u in db.Players
-                            where u.Username.Equals(username)
+                            where u.Username.ToLower().Equals(username.ToLower())
                             select u;
 
 
@@ -55,9 +55,9 @@ namespace PolarisServer.Packets.Handlers
                         // Insert new player into database
                         user = new Player
                         {
-                            Username = username,
+                            Username = username.ToLower(),
                             Password = BCrypt.Net.BCrypt.HashPassword(password),
-                            Nickname = username,
+                            Nickname = username.ToLower(),
                             // Since we can't display the nickname prompt yet, just default it to the username
                             SettingsIni = File.ReadAllText("Resources/settings.txt")
                         };
