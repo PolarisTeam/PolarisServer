@@ -47,6 +47,8 @@ namespace PolarisServer
         public Player User { get; set; }
         public Character Character { get; set; }
         public Zone.Zone CurrentZone { get; set; }
+        public uint Something { get; internal set; }
+
         public PSOLocation CurrentLocation;
         public PSOLocation LastLocation;
 
@@ -118,6 +120,17 @@ namespace PolarisServer
         {
             // :(
             Logger.Write("[BYE] Connection lost. :(");
+            if (Character != null)
+            {
+                foreach(var c in Server.Instance.Clients)
+                {
+                    if (c == this || c.Character == null)
+                        continue;
+                    PacketWriter writer = new PacketWriter();
+                    writer.Write(User.PlayerId);
+                    c.SendPacket(0x2c, 0x2, 0x0, writer.ToArray());
+                }
+            }
             IsClosed = true;
         }
 
