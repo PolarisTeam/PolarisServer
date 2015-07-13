@@ -56,6 +56,8 @@ namespace PolarisServer.Packets.Handlers
             if (theFlags.HasFlag(PackedData.UNKNOWN1))
             {
                 dstData.unknown1 = reader.ReadUInt32();
+                context.Something = dstData.unknown1;
+                
             }
             if(theFlags.HasFlag(PackedData.ROT_X))
             {
@@ -126,31 +128,30 @@ namespace PolarisServer.Packets.Handlers
                 }
             }
 
-            if (theFlags.HasFlag(PackedData.CUR_X) || theFlags.HasFlag(PackedData.CUR_Y) || theFlags.HasFlag(PackedData.CUR_Z))
+           
+            Logger.WriteInternal("[MOV] Player moving! {0} -> ({1}, {2}, {3})", context.Character.Name, context.CurrentLocation.PosX,
+                context.CurrentLocation.PosY, context.CurrentLocation.PosZ);
+
+            FullMovementData dataOut = new FullMovementData();
+            dataOut.entity1 = new EntityHeader((ulong)context.User.PlayerId, EntityType.Player);
+            dataOut.entity2 = dataOut.entity1; // I guess?
+            dataOut.unknown1 = context.Something;
+            dataOut.lastPos = new PackedVec3(context.LastLocation);
+            dataOut.currentPos = new PackedVec3(context.LastLocation);
+            dataOut.rotation = new PackedVec4(context.LastLocation);
+
+            foreach (var c in Server.Instance.Clients)
             {
-                Logger.WriteInternal("[MOV] Player moving! {0} -> ({1}, {2}, {3})", context.Character.Name, context.CurrentLocation.PosX,
-                    context.CurrentLocation.PosY, context.CurrentLocation.PosZ);
+                if (c.Character == null)
+                    continue;
 
-                FullMovementData dataOut = new FullMovementData();
-                dataOut.entity1 = new EntityHeader((ulong)context.User.PlayerId, EntityType.Player);
-                dataOut.entity2 = dataOut.entity1; // I guess?
+                if (c == context)
+                    continue;
 
-                dataOut.lastPos = new PackedVec3(context.LastLocation);
-                dataOut.currentPos = new PackedVec3(context.LastLocation);
-                dataOut.rotation = new PackedVec4(context.LastLocation);
+                c.SendPacket(new MovementPacket(dataOut));
+            } 
 
-                foreach (var c in Server.Instance.Clients)
-                {
-                    if (c.Character == null)
-                        continue;
-
-                    if (c == context)
-                        continue;
-
-                    c.SendPacket(new MovementPacket(dataOut));
-                } 
-
-            }
+            
         }
 
         #endregion
@@ -169,6 +170,8 @@ namespace PolarisServer.Packets.Handlers
             if (movData.entity1.ID == 0 && movData.entity2.ID != 0)
                 movData.entity1 = movData.entity2;
 
+
+            movData.unknown1 = 0;
             // This could be simplified
             PacketWriter writer = new PacketWriter();
             writer.WriteStruct(movData);
@@ -237,6 +240,33 @@ namespace PolarisServer.Packets.Handlers
             }
         }
     }
+
+    [PacketHandlerAttr(0x4, 0x3C)]
+    public class ActionUpdateHandler : PacketHandler
+    {
+        public override void HandlePacket(Client context, byte[] data, uint position, uint size)
+        {
+            PacketReader reader = new PacketReader(data);
+            reader.ReadStruct<EntityHeader>(); // Read the blank
+            EntityHeader actor = reader.ReadStruct<EntityHeader>(); // Read the actor
+            byte[] rest = reader.ReadBytes(32); // TODO Map this out and do stuff with it!
+
+            foreach(var c in Server.Instance.Clients)
+            {
+                if (c == context || c.Character == null)
+                    continue;
+                PacketWriter writer = new PacketWriter();
+                writer.WriteStruct(new EntityHeader((uint)c.User.PlayerId, EntityType.Player));
+                writer.WriteStruct(actor);
+                writer.Write(rest);
+
+                c.SendPacket(0x4, 0x81, 0x40, writer.ToArray());
+            }
+            
+        }
+    }
+
+
 
     [Flags]
     public enum PackedData : Int32
