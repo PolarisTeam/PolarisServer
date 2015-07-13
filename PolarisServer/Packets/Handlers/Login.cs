@@ -29,7 +29,7 @@ namespace PolarisServer.Packets.Handlers
             using (var db = new PolarisEf())
             {
                 var users = from u in db.Players
-                            where u.Username == username
+                            where u.Username.Equals(username)
                             select u;
 
 
