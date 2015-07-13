@@ -8,18 +8,10 @@ namespace PolarisServer.Packets.PSOPackets
         public bool IsItMe = true;
         public PSOLocation Position;
 
-        public CharacterSpawnPacket(Character character)
+        public CharacterSpawnPacket(Character character, PSOLocation locatiion)
         {
             _character = character;
-
-            Position.RotX = 0.000031f;
-            Position.RotY = 1.0f;
-            Position.RotZ = 0.000031f;
-            Position.RotW = -0.000031f;
-
-            Position.PosX = -0.417969f;
-            Position.PosY = 0.000031f;
-            Position.PosZ = 134.375f;
+            Position = locatiion;
         }
 
         #region implemented abstract members of Packet

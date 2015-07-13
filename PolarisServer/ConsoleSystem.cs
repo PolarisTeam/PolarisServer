@@ -656,9 +656,8 @@ namespace PolarisServer
             };
 
 
-            var fakePacket = new CharacterSpawnPacket(fakeChar)
+            var fakePacket = new CharacterSpawnPacket(fakeChar, new PSOLocation(0f, 1f, 0f, 0f, x, y, z))
             {
-                Position = {RotW = 0f, PosX = x, PosY = y, PosZ = z},
                 IsItMe = false
             };
             client.SendPacket(fakePacket);

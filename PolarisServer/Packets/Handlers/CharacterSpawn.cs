@@ -50,18 +50,19 @@ namespace PolarisServer.Packets.Handlers
             }
 
             // Spawn Character
-            context.SendPacket(new CharacterSpawnPacket(context.Character));
+            context.SendPacket(new CharacterSpawnPacket(context.Character, new PSOLocation(0f, 1f, 0f, 0f, -0.417969f, 0f, 137.375f)));
+            context.CurrentLocation = new PSOLocation(0f, 1f, 0f, 0f, -0.417969f, 0f, 137.375f);
 
             // Unlock Controls
             context.SendPacket(new NoPayloadPacket(0x03, 0x2B));
 
             // Spawn on other player's clients
-            var spawnPacket = new CharacterSpawnPacket(context.Character) {IsItMe = false};
+            var spawnPacket = new CharacterSpawnPacket(context.Character, new PSOLocation(0f, 1f, 0f, 0f, -0.417969f, 0f, 137.375f)) {IsItMe = false};
             foreach (var c in Server.Instance.Clients.Where(c => c != context).Where(c => c.Character != null))
             {
                 c.SendPacket(spawnPacket);
 
-                var remoteChar = new CharacterSpawnPacket(c.Character) {IsItMe = false};
+                var remoteChar = new CharacterSpawnPacket(c.Character, c.CurrentLocation) {IsItMe = false};
                 context.SendPacket(remoteChar);
             }
 
