@@ -36,6 +36,8 @@ namespace PolarisServer.Packets.Handlers
             writer.Write((ulong)18446744073709551615); // FF FF FF FF FF FF FF FF
             writer.Write(0);
 
+            context.CurrentZone = "casino";
+
             context.SendPacket(0x3, 0x0, 0x0, writer.ToArray());
 
 

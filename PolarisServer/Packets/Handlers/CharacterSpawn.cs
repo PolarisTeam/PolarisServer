@@ -36,6 +36,8 @@ namespace PolarisServer.Packets.Handlers
             var setAreaPacket = File.ReadAllBytes("Resources/testSetAreaPacket.bin");
             context.SendPacket(0x03, 0x24, 4, setAreaPacket);
 
+            context.CurrentZone = "lobby";
+
             // Set Player ID
             var setPlayerId = new PacketWriter();
             setPlayerId.WritePlayerHeader((uint) context.User.PlayerId);
@@ -58,7 +60,7 @@ namespace PolarisServer.Packets.Handlers
 
             // Spawn on other player's clients
             var spawnPacket = new CharacterSpawnPacket(context.Character, new PSOLocation(0f, 1f, 0f, 0f, -0.417969f, 0f, 137.375f)) {IsItMe = false};
-            foreach (var c in Server.Instance.Clients.Where(c => c != context).Where(c => c.Character != null))
+            foreach (var c in Server.Instance.Clients.Where(c => c != context).Where(c => c.Character != null).Where(c => c.CurrentZone == "lobby"))
             {
                 c.SendPacket(spawnPacket);
 

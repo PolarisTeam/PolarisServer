@@ -46,7 +46,8 @@ namespace PolarisServer
         // Game properties, TODO Consider moving these somewhere else
         public Player User { get; set; }
         public Character Character { get; set; }
-        public Zone.Zone CurrentZone { get; set; }
+        //public Zone.Zone CurrentZone { get; set; }
+        public string CurrentZone;
         public uint Something { get; internal set; }
 
         public PSOLocation CurrentLocation;

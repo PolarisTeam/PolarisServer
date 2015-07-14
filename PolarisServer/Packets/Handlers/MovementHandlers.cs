@@ -142,10 +142,7 @@ namespace PolarisServer.Packets.Handlers
 
             foreach (var c in Server.Instance.Clients)
             {
-                if (c.Character == null)
-                    continue;
-
-                if (c == context)
+                if (c.Character == null || c == context || c.CurrentZone != context.CurrentZone)
                     continue;
 
                 c.SendPacket(new MovementPacket(dataOut));
@@ -183,10 +180,7 @@ namespace PolarisServer.Packets.Handlers
 
             foreach (var c in Server.Instance.Clients)
             {
-                if (c == context)
-                    continue;
-
-                if (c.Character == null)
+                if (c == context || c.Character == null || c.CurrentZone != context.CurrentZone)
                     continue;
 
                 c.SendPacket(0x04, 0x71, 0x40, writer.ToArray());
@@ -222,7 +216,7 @@ namespace PolarisServer.Packets.Handlers
             
             foreach(var c in Server.Instance.Clients)
             {
-                if (c == context || c.Character == null)
+                if (c == context || c.Character == null || c.CurrentZone != context.CurrentZone)
                     continue;
                 PacketWriter output = new PacketWriter();
                 output.WriteStruct(new EntityHeader((ulong)context.User.PlayerId, EntityType.Player));
@@ -253,7 +247,7 @@ namespace PolarisServer.Packets.Handlers
 
             foreach(var c in Server.Instance.Clients)
             {
-                if (c == context || c.Character == null)
+                if (c == context || c.Character == null || c.CurrentZone != context.CurrentZone)
                     continue;
                 PacketWriter writer = new PacketWriter();
                 writer.WriteStruct(new EntityHeader((uint)c.User.PlayerId, EntityType.Player));

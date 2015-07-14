@@ -24,7 +24,7 @@ namespace PolarisServer.Packets.Handlers
             PSOObject srcObj;
             if(srcObject.EntityType == EntityType.Object)
             {
-                srcObj = ObjectManager.Instance.getObjectByID("lobby", srcObject.ID);
+                srcObj = ObjectManager.Instance.getObjectByID(context.CurrentZone, srcObject.ID);
             }
             else if(srcObject.EntityType == EntityType.Player)
             {
@@ -40,7 +40,7 @@ namespace PolarisServer.Packets.Handlers
             Logger.WriteInternal("[OBJ] {0} (ID {1}) <{2}> --> Ent {3} (ID {4})", srcObj.Name, srcObj.Header.ID, command, (EntityType)dstObject.EntityType, dstObject.ID);
 
             // TODO: Delete this code and do this COMPLETELY correctly!!!
-            if (command == "Transfer")
+            if (command == "Transfer" && context.CurrentZone == "lobby")
             {
                 // Try and get the teleport definition for the object...
                 using (var db = new PolarisEf())
