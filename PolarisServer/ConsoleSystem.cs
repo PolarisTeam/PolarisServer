@@ -10,6 +10,7 @@ using PolarisServer.Models;
 using PolarisServer.Packets.PSOPackets;
 using Timer = System.Timers.Timer;
 using PolarisServer.Object;
+using PolarisServer.Packets;
 
 namespace PolarisServer
 {
@@ -333,6 +334,19 @@ namespace PolarisServer
 
             teleportPlayer.Help = "Teleports a player to the given position. (Only works in lobby.)";
             Commands.Add(teleportPlayer);
+
+            var changeThezone = new ConsoleCommand(ChangeArea, "areachange", "map");
+            changeThezone.Arguments.Add(new ConsoleCommandArgument("username", false));
+            changeThezone.Arguments.Add(new ConsoleCommandArgument("zoneID", false));
+            changeThezone.Arguments.Add(new ConsoleCommandArgument("mapNumber", false));
+            changeThezone.Arguments.Add(new ConsoleCommandArgument("flags", false));
+            changeThezone.Arguments.Add(new ConsoleCommandArgument("seed", false));
+            changeThezone.Arguments.Add(new ConsoleCommandArgument("sizeX", false));
+            changeThezone.Arguments.Add(new ConsoleCommandArgument("sizeY", false));
+            changeThezone.Arguments.Add(new ConsoleCommandArgument("rngEnable", false));
+
+            teleportPlayer.Help = "Spawns you elsewhere.";
+            Commands.Add(changeThezone);
 
             // Exit
             var exit = new ConsoleCommand(Exit, "exit", "quit") { Help = "Close the Polaris Server" };
@@ -796,6 +810,74 @@ namespace PolarisServer
 
 
             PolarisApp.Instance.Server.Clients[id].SendPacket(new TeleportTransferPacket(ObjectManager.Instance.getObjectByID("lobby", 443), destination));
+
+        }
+
+        private void ChangeArea(string[] args, int length, string full, Client client)
+        {
+            var name = args[1].Trim('\"');
+            var foundPlayer = false;
+
+
+            var id = Helper.FindPlayerByUsername(name);
+            if (id != -1)
+                foundPlayer = true;
+
+            // Couldn't find the username
+            if (!foundPlayer)
+            {
+                Logger.WriteError("[CMD] Could not find user " + name);
+                return;
+            }
+
+            Client context = PolarisApp.Instance.Server.Clients[id];
+
+            PacketWriter writer = new PacketWriter();
+            writer.Write(0x015e47); // ???
+            writer.Write(0); // ???
+            writer.Write(5);
+            writer.WriteStruct(new EntityHeader((ulong)id, EntityType.Player));
+            writer.Write(0x34f9); // 8 Zeros
+            writer.Write(0); // 8 Zeros
+            writer.Write(~Int32.Parse(args[2])); // F4 FF FF FF
+            writer.Write(Int32.Parse(args[3])); // Map ID maybe
+            writer.Write(Int32.Parse(args[4])); // Unknown
+            writer.Write(Int32.Parse(args[5])); // 81 8F E6 19 (Maybe seed)
+            writer.Write(Int32.Parse(args[8])); // Randomgen enable / disable maybe
+            writer.Write(Int32.Parse(args[6])); // X Size
+            writer.Write(Int32.Parse(args[7])); // Y Size
+            writer.Write(0);
+            writer.Write(0);
+            writer.Write(~0); // FF FF FF FF FF FF FF FF
+            writer.Write(0x0c01);
+
+
+            context.SendPacket(0x3, 0x0, 0x0, writer.ToArray());
+
+            context.SendPacket(new NoPayloadPacket(0x3, 0x2a));
+
+            var setPlayerId = new PacketWriter();
+            setPlayerId.WritePlayerHeader((uint)context.User.PlayerId);
+            context.SendPacket(0x06, 0x00, 0, setPlayerId.ToArray());
+
+            context.SendPacket(new CharacterSpawnPacket(context.Character, new PSOLocation(0, 1f, 0, 0, 0, 50, 0)));
+
+            //PSOLocation destination = new PSOLocation(float.Parse(args[2]), float.Parse(args[3]), float.Parse(args[4]), float.Parse(args[5]),float.Parse(args[6]), float.Parse(args[7]), float.Parse(args[8]));
+
+
+            //PolarisApp.Instance.Server.Clients[id].SendPacket(new TeleportTransferPacket(ObjectManager.Instance.getObjectByID("lobby", 443), destination));
+
+            context.SendPacket(0x8, 0xB, 0x0, ObjectManager.Instance.getObjectByID(443).GenerateSpawnBlob());
+
+            //var objects = ObjectManager.Instance.getObjectsForZone("casino").Values;
+            //foreach (var obj in objects)
+            //{
+            //    context.SendPacket(0x8, 0xB, 0x0, obj.GenerateSpawnBlob());
+            //}
+
+
+
+            context.SendPacket(new NoPayloadPacket(0x03, 0x2B));
 
         }
 
