@@ -123,6 +123,7 @@ namespace PolarisServer
             Logger.WriteInternal("[DB ] Loading database...");
             using (var db = new PolarisEf())
             {
+
                 db.SetupDB();
             }
 

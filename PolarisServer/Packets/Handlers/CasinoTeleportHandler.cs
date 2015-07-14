@@ -28,13 +28,13 @@ namespace PolarisServer.Packets.Handlers
             writer.WriteStruct(new EntityHeader((ulong)context.User.PlayerId, EntityType.Player));
             writer.Write(new byte[8]); // 8 Zeros
 
-            writer.Write((uint)4294967284);
-            writer.Write(104);
-            writer.Write(3);
-            writer.Write((uint)434540417);
-            writer.Write(new byte[16]);
-            writer.Write((ulong)18446744073709551615); // FF FF FF FF FF FF FF FF
-            writer.Write(0);
+            //writer.Write((uint)4294967284); // F4 FF FF FF
+            //writer.Write(104);
+            //writer.Write(3);
+            //writer.Write((uint)434540417);
+            //writer.Write(new byte[16]);
+            //writer.Write((ulong)18446744073709551615); // FF FF FF FF FF FF FF FF
+            //writer.Write(0);
 
             context.CurrentZone = "casino";
 
