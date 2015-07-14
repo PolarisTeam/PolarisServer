@@ -64,6 +64,7 @@
     <Compile Include="Models\PSOData.cs" />
     <Compile Include="Models\PSOObject.cs" />
     <Compile Include="Object\ObjectManager.cs" />
+    <Compile Include="Packets\Handlers\CasinoTeleportHandler.cs" />
     <Compile Include="Packets\Handlers\CharacterSpawn.cs" />
     <Compile Include="Packets\Handlers\ObjectInteract.cs" />
     <Compile Include="Packets\PSOPackets\GuildInfoPacket.cs" />
