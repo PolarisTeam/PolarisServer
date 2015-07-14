@@ -50,6 +50,15 @@ namespace PolarisServer.Packets.Handlers
 
             context.SendPacket(new CharacterSpawnPacket(context.Character, new PSOLocation(0, 1f, 0, 0, 2, 6, 102)));
 
+            var spawnPacket = new CharacterSpawnPacket(context.Character, new PSOLocation(0, 1f, 0, 0, 2, 6, 102)) { IsItMe = false };
+            foreach (var c in Server.Instance.Clients.Where(c => c != context).Where(c => c.Character != null).Where(c => c.CurrentZone == "casino"))
+            {
+                c.SendPacket(spawnPacket);
+
+                var remoteChar = new CharacterSpawnPacket(c.Character, c.CurrentLocation) { IsItMe = false };
+                context.SendPacket(remoteChar);
+            }
+
             var objects = ObjectManager.Instance.getObjectsForZone("casino").Values;
             foreach (var obj in objects)
             {
