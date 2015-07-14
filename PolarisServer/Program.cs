@@ -30,7 +30,7 @@ namespace PolarisServer
         {
             Config = new Config();
 
-            ConsoleSystem = new ConsoleSystem {Thread = new Thread(ConsoleSystem.StartThread)};
+            ConsoleSystem = new ConsoleSystem { Thread = new Thread(ConsoleSystem.StartThread) };
             ConsoleSystem.Thread.Start();
 
             // Setup function exit handlers to guarentee Exit() is run before closing
@@ -122,12 +122,12 @@ namespace PolarisServer
 
             Logger.WriteInternal("[DB ] Loading database...");
             using (var db = new PolarisEf())
-            { 
+            {
                 db.SetupDB();
             }
 
             for (var i = 0; i < 10; i++)
-                QueryServers.Add(new QueryServer(QueryMode.ShipList, 12099 + (100*i)));
+                QueryServers.Add(new QueryServer(QueryMode.ShipList, 12099 + (100 * i)));
 
             Server.Run();
         }

@@ -34,7 +34,7 @@ namespace PolarisServer.Models
             Braver,
             Bouncer,
         }
-        
+
         [Flags]
         public enum ClassTypeField : byte
         {
@@ -144,7 +144,7 @@ namespace PolarisServer.Models
         public int CharacterId { get; set; }
 
         public virtual Player Player { get; set; }
-        public string Name { get; set; } 
+        public string Name { get; set; }
 
         public byte[] LooksBinary
         {
@@ -177,7 +177,7 @@ namespace PolarisServer.Models
             }
 
         }
-            
+
         public LooksParam Looks { get; set; }
         public JobParam Jobs { get; set; }
     }

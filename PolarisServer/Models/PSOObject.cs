@@ -50,7 +50,7 @@ namespace PolarisServer.Models
             obj.ThingFlag = reader.ReadUInt32();
             uint thingCount = reader.ReadUInt32();
             obj.Things = new PSOObjectThing[thingCount];
-            for(int i = 0; i < thingCount; i++)
+            for (int i = 0; i < thingCount; i++)
             {
                 obj.Things[i] = reader.ReadStruct<PSOObjectThing>();
             }

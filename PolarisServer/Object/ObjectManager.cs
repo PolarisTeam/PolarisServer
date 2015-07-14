@@ -14,7 +14,7 @@ namespace PolarisServer.Object
 
         private Dictionary<ulong, PSOObject> allTheObjects = new Dictionary<ulong, PSOObject>();
 
-        private ObjectManager() {}
+        private ObjectManager() { }
 
         public static ObjectManager Instance
         {
@@ -26,10 +26,10 @@ namespace PolarisServer.Object
 
         public Dictionary<ulong, PSOObject> getObjectsForZone(string zone)
         {
-            if(!zoneObjects.ContainsKey(zone))
+            if (!zoneObjects.ContainsKey(zone))
             {
                 //TODO Maybe make some resource management class for this stuff?
-                if(!Directory.Exists("Resources/objects/" + zone))
+                if (!Directory.Exists("Resources/objects/" + zone))
                 {
                     throw new Exception(String.Format("Unable to get objects for Zone {0}, Object folder not present.", zone));
                 }

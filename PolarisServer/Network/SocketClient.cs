@@ -16,7 +16,7 @@ namespace PolarisServer.Network
             _server = server;
             Socket = socket;
 
-            _readBuffer = new byte[1024*16];
+            _readBuffer = new byte[1024 * 16];
         }
 
         public TcpClient Socket { get; private set; }

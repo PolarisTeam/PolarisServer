@@ -88,7 +88,7 @@ namespace PolarisServer
             // Calculate lines
             var lines = 0;
             for (var i = 0; i < array.Length; i++)
-                if ((i%16) == 0)
+                if ((i % 16) == 0)
                     lines++;
 
             for (var i = 0; i < lines; i++)
@@ -96,36 +96,36 @@ namespace PolarisServer
                 var hexString = string.Empty;
 
                 // Address
-                hexString += string.Format("{0:X8} ", i*16);
+                hexString += string.Format("{0:X8} ", i * 16);
 
                 // Bytes
                 for (var j = 0; j < 16; j++)
                 {
-                    if (j + (i*16) >= array.Length)
+                    if (j + (i * 16) >= array.Length)
                         break;
 
-                    hexString += string.Format("{0:X2} ", array[j + (i*16)]);
+                    hexString += string.Format("{0:X2} ", array[j + (i * 16)]);
                 }
-                
+
 
                 // Spacing
-                while (hexString.Length < 16*4)
+                while (hexString.Length < 16 * 4)
                     hexString += ' ';
 
                 // ASCII
                 for (var j = 0; j < 16; j++)
                 {
-                    if (j + (i*16) >= array.Length)
+                    if (j + (i * 16) >= array.Length)
                         break;
 
-                    var asciiChar = (char) array[j + (i*16)];
+                    var asciiChar = (char)array[j + (i * 16)];
 
-                    if (asciiChar == (char) 0x00)
+                    if (asciiChar == (char)0x00)
                         asciiChar = '.';
 
                     hexString += asciiChar;
                 }
-                
+
 
                 // Strip off unnecessary stuff
                 hexString = hexString.Replace('\a', ' '); // Alert beeps

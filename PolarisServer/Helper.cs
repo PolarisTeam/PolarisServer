@@ -10,7 +10,7 @@ namespace PolarisServer
     {
         public static string ByteArrayToString(byte[] ba)
         {
-            var hex = new StringBuilder(ba.Length*2);
+            var hex = new StringBuilder(ba.Length * 2);
             foreach (var b in ba)
                 hex.AppendFormat("{0:x2}", b);
             return hex.ToString();
@@ -19,17 +19,17 @@ namespace PolarisServer
         public static byte[] StringToByteArray(String hex)
         {
             var numberChars = hex.Length;
-            var bytes = new byte[numberChars/2];
+            var bytes = new byte[numberChars / 2];
             for (var i = 0; i < numberChars; i += 2)
-                bytes[i/2] = Convert.ToByte(hex.Substring(i, 2), 16);
+                bytes[i / 2] = Convert.ToByte(hex.Substring(i, 2), 16);
             return bytes;
         }
 
         public static T ByteArrayToStructure<T>(byte[] bytes) where T : struct
         {
             var handle = GCHandle.Alloc(bytes, GCHandleType.Pinned);
-            var stuff = (T) Marshal.PtrToStructure(handle.AddrOfPinnedObject(),
-                typeof (T));
+            var stuff = (T)Marshal.PtrToStructure(handle.AddrOfPinnedObject(),
+                typeof(T));
             handle.Free();
             return stuff;
         }
@@ -57,20 +57,20 @@ namespace PolarisServer
 
         public static ushort PacketTypeToUShort(uint type, uint subtype)
         {
-            return (ushort) ((type << 8) | subtype);
+            return (ushort)((type << 8) | subtype);
         }
 
         #region Float Manipulation
 
         public static unsafe float UIntToFloat(uint input)
         {
-            var fp = (float*) (&input);
+            var fp = (float*)(&input);
             return *fp;
         }
 
         public static unsafe uint FloatToUInt(float input)
         {
-            var ip = (uint*) (&input);
+            var ip = (uint*)(&input);
             return *ip;
         }
 
@@ -78,9 +78,9 @@ namespace PolarisServer
         {
             if ((value & 0x7FFF) != 0)
             {
-                var sign = (uint) ((value & 0x8000) << 16);
-                var exponent = (uint) (((value & 0x7C00) >> 10) + 0x70) << 23;
-                var mantissa = (uint) ((value & 0x3FF) << 13);
+                var sign = (uint)((value & 0x8000) << 16);
+                var exponent = (uint)(((value & 0x7C00) >> 10) + 0x70) << 23;
+                var mantissa = (uint)((value & 0x3FF) << 13);
                 return UIntToFloat(sign | exponent | mantissa);
             }
             return 0;
@@ -91,17 +91,17 @@ namespace PolarisServer
             var ivalue = FloatToUInt(value);
             if ((ivalue & 0x7FFFFFFF) != 0)
             {
-                var sign = (ushort) ((ivalue >> 16) & 0x8000);
-                var exponent = (ushort) (((ivalue & 0x7F800000) >> 23) - 0x70);
+                var sign = (ushort)((ivalue >> 16) & 0x8000);
+                var exponent = (ushort)(((ivalue & 0x7F800000) >> 23) - 0x70);
                 if ((exponent & 0xFFFFFFE0) != 0)
                 {
-                    return (ushort) ((exponent >> 17) ^ 0x7FFF | sign);
+                    return (ushort)((exponent >> 17) ^ 0x7FFF | sign);
                 }
-                var a = (ushort) ((ivalue & 0x7FFFFF) >> 13);
-                var b = (ushort) (exponent << 10);
-                return (ushort) (a | b | sign);
+                var a = (ushort)((ivalue & 0x7FFFFF) >> 13);
+                var b = (ushort)(exponent << 10);
+                return (ushort)(a | b | sign);
             }
-            return (ushort) (ivalue >> 16);
+            return (ushort)(ivalue >> 16);
         }
 
         #endregion
@@ -110,12 +110,12 @@ namespace PolarisServer
 
         public static long Timestamp(DateTime time)
         {
-            return time.ToFileTimeUtc()/10000;
+            return time.ToFileTimeUtc() / 10000;
         }
 
         public static DateTime Timestamp(long stamp)
         {
-            return DateTime.FromFileTimeUtc(stamp*10000);
+            return DateTime.FromFileTimeUtc(stamp * 10000);
         }
 
         #endregion

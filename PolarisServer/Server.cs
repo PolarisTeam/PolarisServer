@@ -19,7 +19,7 @@ namespace PolarisServer
             Instance = this;
             StartTime = DateTime.Now;
 
-            PingTimer = new Timer(1000*PolarisApp.Config.PingTime); // 1 Minute default
+            PingTimer = new Timer(1000 * PolarisApp.Config.PingTime); // 1 Minute default
             PingTimer.Elapsed += PingClients;
             PingTimer.Start();
 

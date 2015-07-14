@@ -23,23 +23,32 @@ namespace PolarisServer
                                              Path.DirectorySeparatorChar + "PolarisServer.cfg";
 
         // Settings
-        [ConfigComment("The address to bind to")] public IPAddress BindAddress = IPAddress.Loopback;
+        [ConfigComment("The address to bind to")]
+        public IPAddress BindAddress = IPAddress.Loopback;
 
-        [ConfigComment("The prefix to check for to send a command from the client to the server")] public string
+        [ConfigComment("The prefix to check for to send a command from the client to the server")]
+        public string
             CommandPrefix = "|";
 
-        [ConfigComment("Address of the database server")] public string DatabaseAddress = "127.0.0.1";
-        [ConfigComment("Name of the database which contains the Polaris data")] public string DatabaseName = "polaris";
-        [ConfigComment("Password for logging into the database server")] public string DatabasePassword = "polaris";
-        [ConfigComment("Username for logging into the database server")] public string DatabaseUsername = "polaris";
+        [ConfigComment("Address of the database server")]
+        public string DatabaseAddress = "127.0.0.1";
+        [ConfigComment("Name of the database which contains the Polaris data")]
+        public string DatabaseName = "polaris";
+        [ConfigComment("Password for logging into the database server")]
+        public string DatabasePassword = "polaris";
+        [ConfigComment("Username for logging into the database server")]
+        public string DatabaseUsername = "polaris";
 
-        [ConfigComment("Time in seconds to perform a ping of all connected clients to the server")] public double
+        [ConfigComment("Time in seconds to perform a ping of all connected clients to the server")]
+        public double
             PingTime = 60;
 
-        [ConfigComment("Enable foreground colors for console text (Unstable on linux)")] public bool UseConsoleColors =
+        [ConfigComment("Enable foreground colors for console text (Unstable on linux)")]
+        public bool UseConsoleColors =
             true;
 
-        [ConfigComment("Log the data sent and recieved from packets")] public bool VerbosePackets = false;
+        [ConfigComment("Log the data sent and recieved from packets")]
+        public bool VerbosePackets = false;
 
         public void Load()
         {
@@ -119,7 +128,7 @@ namespace PolarisServer
         {
             PolarisApp.BindAddress = BindAddress;
             Logger.VerbosePackets = VerbosePackets;
-            PolarisApp.Instance.Server.PingTimer.Interval = 1000*PingTime;
+            PolarisApp.Instance.Server.PingTimer.Interval = 1000 * PingTime;
         }
 
         public bool SetField(string name, string value)
@@ -158,7 +167,7 @@ namespace PolarisServer
                 field.SetValue(this, value);
 
             // IPAddress
-            if (field.GetValue(this).GetType() == typeof (IPAddress))
+            if (field.GetValue(this).GetType() == typeof(IPAddress))
                 field.SetValue(this, IPAddress.Parse(value));
 
             // Add more handling for special/custom types as needed
@@ -167,17 +176,17 @@ namespace PolarisServer
         private void SaveField(FieldInfo field, List<string> data)
         {
             // Comment
-            var attributes = (Attribute[]) field.GetCustomAttributes(typeof (ConfigComment), false);
+            var attributes = (Attribute[])field.GetCustomAttributes(typeof(ConfigComment), false);
             if (attributes.Length > 0)
             {
-                var commentAttr = (ConfigComment) attributes[0];
+                var commentAttr = (ConfigComment)attributes[0];
                 data.Add("// " + commentAttr.Comment);
             }
 
             // IP Address
-            if (field.GetValue(this).GetType() == typeof (IPAddress))
+            if (field.GetValue(this).GetType() == typeof(IPAddress))
             {
-                var address = (IPAddress) field.GetValue(this);
+                var address = (IPAddress)field.GetValue(this);
                 data.Add(field.Name + " = " + address);
             }
             else // Basic field

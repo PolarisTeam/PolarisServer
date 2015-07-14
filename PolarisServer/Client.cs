@@ -27,17 +27,17 @@ namespace PolarisServer
             socket.DataReceived += HandleDataReceived;
             socket.ConnectionLost += HandleConnectionLost;
 
-            _readBuffer = new byte[1024*64];
+            _readBuffer = new byte[1024 * 64];
             _readBufferSize = 0;
 
             InputArc4 = null;
             OutputArc4 = null;
 
             var welcome = new PacketWriter();
-            welcome.Write((ushort) 3);
-            welcome.Write((ushort) 201);
-            welcome.Write((ushort) 0);
-            welcome.Write((ushort) 0);
+            welcome.Write((ushort)3);
+            welcome.Write((ushort)201);
+            welcome.Write((ushort)0);
+            welcome.Write((ushort)0);
             SendPacket(0x03, 0x08, 0, welcome.ToArray());
         }
 
@@ -67,10 +67,10 @@ namespace PolarisServer
 
             if (InputArc4 != null)
             {
-                InputArc4.TransformBlock(_readBuffer, (int) _readBufferSize, size, _readBuffer, (int) _readBufferSize);
+                InputArc4.TransformBlock(_readBuffer, (int)_readBufferSize, size, _readBuffer, (int)_readBufferSize);
             }
 
-            _readBufferSize += (uint) size;
+            _readBufferSize += (uint)size;
 
             // Process ALL the packets
             uint position = 0;
@@ -79,9 +79,9 @@ namespace PolarisServer
             {
                 var packetSize =
                     _readBuffer[position] |
-                    ((uint) _readBuffer[position + 1] << 8) |
-                    ((uint) _readBuffer[position + 2] << 16) |
-                    ((uint) _readBuffer[position + 3] << 24);
+                    ((uint)_readBuffer[position + 1] << 8) |
+                    ((uint)_readBuffer[position + 2] << 16) |
+                    ((uint)_readBuffer[position + 3] << 24);
 
                 // Minimum size, just to avoid possible infinite loops etc
                 if (packetSize < 8)
@@ -163,11 +163,11 @@ namespace PolarisServer
             var packet = new byte[8 + data.Length];
 
             // TODO: Use BinaryWriter here maybe?
-            var dataLen = (uint) data.Length + 8;
-            packet[0] = (byte) (dataLen & 0xFF);
-            packet[1] = (byte) ((dataLen >> 8) & 0xFF);
-            packet[2] = (byte) ((dataLen >> 16) & 0xFF);
-            packet[3] = (byte) ((dataLen >> 24) & 0xFF);
+            var dataLen = (uint)data.Length + 8;
+            packet[0] = (byte)(dataLen & 0xFF);
+            packet[1] = (byte)((dataLen >> 8) & 0xFF);
+            packet[2] = (byte)((dataLen >> 16) & 0xFF);
+            packet[3] = (byte)((dataLen >> 24) & 0xFF);
             packet[4] = typeA;
             packet[5] = typeB;
             packet[6] = flags;

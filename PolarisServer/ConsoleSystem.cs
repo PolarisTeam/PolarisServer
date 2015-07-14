@@ -209,7 +209,7 @@ namespace PolarisServer
             {
                 var clients = PolarisApp.Instance.Server.Clients.Count;
                 // ReSharper disable once PossibleLossOfFraction
-                float usage = Process.GetCurrentProcess().PrivateMemorySize64/1024/1024;
+                float usage = Process.GetCurrentProcess().PrivateMemorySize64 / 1024 / 1024;
                 var time = DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToLongTimeString();
 
                 return string.Format("Clients: {0} | Memory: {1} MB | {2}", clients, usage, time);
@@ -253,7 +253,7 @@ namespace PolarisServer
         public void CreateCommands()
         {
             // Help
-            var help = new ConsoleCommand(Help, "help") {Help = "Displays help for all commands"};
+            var help = new ConsoleCommand(Help, "help") { Help = "Displays help for all commands" };
             Commands.Add(help);
 
             // Config
@@ -264,11 +264,11 @@ namespace PolarisServer
             Commands.Add(config);
 
             // Clear
-            var clearLog = new ConsoleCommand(ClearLog, "clear", "cls") {Help = "Clears the current log buffer"};
+            var clearLog = new ConsoleCommand(ClearLog, "clear", "cls") { Help = "Clears the current log buffer" };
             Commands.Add(clearLog);
 
             // Echo
-            var echo = new ConsoleCommand(Echo, "echo") {Help = "Echo the given text back into the Console"};
+            var echo = new ConsoleCommand(Echo, "echo") { Help = "Echo the given text back into the Console" };
             echo.Arguments.Add(new ConsoleCommandArgument("text", false));
             Commands.Add(echo);
 
@@ -335,7 +335,7 @@ namespace PolarisServer
             Commands.Add(teleportPlayer);
 
             // Exit
-            var exit = new ConsoleCommand(Exit, "exit", "quit") {Help = "Close the Polaris Server"};
+            var exit = new ConsoleCommand(Exit, "exit", "quit") { Help = "Close the Polaris Server" };
             Commands.Add(exit);
         }
 

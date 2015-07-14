@@ -45,7 +45,7 @@ namespace PolarisServer.Database
         public string SettingsIni { get; set; }
     }
 
-    [DbConfigurationType(typeof (MySqlEFConfiguration))]
+    [DbConfigurationType(typeof(MySqlEFConfiguration))]
     public class PolarisEf : DbContext
     {
         public PolarisEf()
@@ -54,7 +54,7 @@ namespace PolarisServer.Database
                     PolarisApp.Config.DatabaseName, PolarisApp.Config.DatabaseUsername,
                     PolarisApp.Config.DatabasePassword))
         {
-           
+
         }
 
         public void SetupDB()
