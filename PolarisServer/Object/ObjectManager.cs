@@ -12,6 +12,8 @@ namespace PolarisServer.Object
 
         private Dictionary<String, Dictionary<ulong, PSOObject>> zoneObjects = new Dictionary<string, Dictionary<ulong, PSOObject>>();
 
+        private Dictionary<ulong, PSOObject> allTheObjects = new Dictionary<ulong, PSOObject>();
+
         private ObjectManager() {}
 
         public static ObjectManager Instance
@@ -41,6 +43,7 @@ namespace PolarisServer.Object
                     {
                         var newObject = PSOObject.FromPacketBin(File.ReadAllBytes(path));
                         objects.Add(newObject.Header.ID, newObject);
+                        allTheObjects.Add(newObject.Header.ID, newObject);
                         Logger.WriteInternal("[OBJ] Loaded object ID {0} with name {1} pos: ({2}, {3}, {4})", newObject.Header.ID, newObject.Name, newObject.Position.PosX,
                             newObject.Position.PosY, newObject.Position.PosZ);
                     }
@@ -48,6 +51,7 @@ namespace PolarisServer.Object
                     {
                         var newObject = JsonConvert.DeserializeObject<PSOObject>(File.ReadAllText(path));
                         objects.Add(newObject.Header.ID, newObject);
+                        allTheObjects.Add(newObject.Header.ID, newObject);
                         Logger.WriteInternal("[OBJ] Loaded object ID {0} with name {1} pos: ({2}, {3}, {4})", newObject.Header.ID, newObject.Name, newObject.Position.PosX,
                             newObject.Position.PosY, newObject.Position.PosZ);
                     }
@@ -65,12 +69,23 @@ namespace PolarisServer.Object
 
         internal PSOObject getObjectByID(string zone, ulong ID)
         {
-            if(!zoneObjects.ContainsKey(zone) || !zoneObjects[zone].ContainsKey(ID))
+            //if(!zoneObjects.ContainsKey(zone) || !zoneObjects[zone].ContainsKey(ID))
+            //{
+            //    throw new Exception(String.Format("Object ID {0} does not exist in {1}!", ID, zone));
+            //}
+
+            //return zoneObjects[zone][ID];
+            return getObjectByID(ID);
+        }
+
+        internal PSOObject getObjectByID(ulong ID)
+        {
+            if (!allTheObjects.ContainsKey(ID))
             {
-                throw new Exception(String.Format("Object ID {0} does not exist in {1}!", ID, zone));
+                throw new Exception(String.Format("Object ID {0} does not exist!", ID));
             }
 
-            return zoneObjects[zone][ID];
+            return allTheObjects[ID];
         }
     }
 }

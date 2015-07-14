@@ -65,6 +65,8 @@ namespace PolarisServer.Packets.Handlers
                 context.SendPacket(0x8, 0xB, 0x0, obj.GenerateSpawnBlob());
             }
 
+            
+
             context.SendPacket(new NoPayloadPacket(0x03, 0x2B));
 
         }
