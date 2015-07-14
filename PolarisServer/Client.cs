@@ -186,7 +186,7 @@ namespace PolarisServer
         private void HandlePacket(byte typeA, byte typeB, byte flags1, byte flags2, byte[] data, uint position,
             uint size)
         {
-            Logger.Write("[-->] Packet {0:X}-{1:X} (flags {2}) ({3} bytes)", typeA, typeB, (PacketFlags)flags1, size);
+            Logger.Write("[-->] Packet {0:X}-{1:X} (flags {2}) ({3} bytes)", typeA, typeB, (PacketFlags)flags1, size + 8);
             if (Logger.VerbosePackets && size > 0) // TODO: This is trimming too far?
             {
                 var dataTrimmed = new byte[size];
