@@ -51,6 +51,14 @@ namespace PolarisServer.Packets.Handlers
                 context.SendPacket(0x08, 0x0B, 0x0, obj.GenerateSpawnBlob());
             }
 
+            // Lobby NPCs
+            PSONPC[] lobbyNpcs = ObjectManager.Instance.getNPCSForZone("lobby");
+
+            foreach (PSONPC npc in lobbyNpcs)
+            {
+                context.SendPacket(0x08, 0xC, 0x4, npc.GenerateSpawnBlob());
+            }
+
             // Spawn Character
             context.SendPacket(new CharacterSpawnPacket(context.Character, destination));
             context.CurrentLocation = destination;
