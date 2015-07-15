@@ -68,12 +68,14 @@
     <Compile Include="Packets\Handlers\CasinoTeleportHandler.cs" />
     <Compile Include="Packets\Handlers\CharacterSpawn.cs" />
     <Compile Include="Packets\Handlers\ObjectInteract.cs" />
+    <Compile Include="Packets\Handlers\ReturnToLobbyHandler.cs" />
     <Compile Include="Packets\PSOPackets\GuildInfoPacket.cs" />
     <Compile Include="Packets\PSOPackets\MovementPacket.cs" />
     <Compile Include="Packets\PSOPackets\ObjectActionPacket.cs" />
     <Compile Include="Packets\PSOPackets\PalettePacket.cs" />
     <Compile Include="Packets\PSOPackets\SetCurrencyPacket.cs" />
     <Compile Include="Packets\PSOPackets\SetMesetaPacket.cs" />
+    <Compile Include="Packets\PSOPackets\SetScenePacket.cs" />
     <Compile Include="Packets\PSOPackets\TeleportTransferPacket.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
