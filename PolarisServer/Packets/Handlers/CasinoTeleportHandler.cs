@@ -22,10 +22,8 @@ namespace PolarisServer.Packets.Handlers
 
             // Has a bunch of data, Likely a Set Area packet variation!
             PacketWriter writer = new PacketWriter();
-            writer.Write(1); // ???
-            writer.Write(0); // ???
-            writer.Write(5);
-            writer.WriteStruct(new EntityHeader((ulong)context.User.PlayerId, EntityType.Player));
+            writer.WriteStruct(new ObjectHeader(1, EntityType.Map));
+            writer.WriteStruct(new ObjectHeader((ulong)context.User.PlayerId, EntityType.Player));
             writer.Write(new byte[8]); // 8 Zeros
 
             writer.Write((uint)4294967284); // F4 FF FF FF

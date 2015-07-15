@@ -16,9 +16,9 @@ namespace PolarisServer.Packets.Handlers
         {
             PacketReader reader = new PacketReader(data);
             reader.ReadBytes(12); // Padding MAYBE???????????
-            EntityHeader srcObject = reader.ReadStruct<EntityHeader>();
+            ObjectHeader srcObject = reader.ReadStruct<ObjectHeader>();
             byte[] someBytes = reader.ReadBytes(4); // Dunno what this is yet.
-            EntityHeader dstObject = reader.ReadStruct<EntityHeader>(); // Could be wrong
+            ObjectHeader dstObject = reader.ReadStruct<ObjectHeader>(); // Could be wrong
             reader.ReadBytes(16); // Not sure what this is yet
             string command = reader.ReadAscii(0xD711, 0xCA);
             PSOObject srcObj;
@@ -54,7 +54,7 @@ namespace PolarisServer.Packets.Handlers
                         // Teleport Player to default point
                         context.SendPacket(new TeleportTransferPacket(srcObj, new PSOLocation(0f, 1f, 0f, -0.000031f, -0.417969f, 0.000031f, 134.375f)));
                         // Unhide player
-                        context.SendPacket(new ObjectActionPacket(dstObject, srcObject, new EntityHeader(), new EntityHeader(), "Forwarded"));
+                        context.SendPacket(new ObjectActionPacket(dstObject, srcObject, new ObjectHeader(), new ObjectHeader(), "Forwarded"));
                     }
                     else
                     {
@@ -71,17 +71,17 @@ namespace PolarisServer.Packets.Handlers
                         // Teleport Player
                         context.SendPacket(new TeleportTransferPacket(srcObj, endpointLocation));
                         // Unhide player
-                        context.SendPacket(new ObjectActionPacket(dstObject, srcObject, new EntityHeader(), new EntityHeader(), "Forwarded")); 
+                        context.SendPacket(new ObjectActionPacket(dstObject, srcObject, new ObjectHeader(), new ObjectHeader(), "Forwarded")); 
                     }
                 }
             }
 
             if (command == "READY" && context.CurrentZone == "lobby")
             {
-                context.SendPacket(new ObjectActionPacket(new EntityHeader((ulong)context.User.PlayerId, EntityType.Player), srcObj.Header, srcObj.Header,
-                    new EntityHeader(), "FavsNeutral"));
-                context.SendPacket(new ObjectActionPacket(new EntityHeader((ulong)context.User.PlayerId, EntityType.Player), srcObj.Header, srcObj.Header,
-                    new EntityHeader(), "AP")); // Short for Appear, Thanks Zapero!
+                context.SendPacket(new ObjectActionPacket(new ObjectHeader((ulong)context.User.PlayerId, EntityType.Player), srcObj.Header, srcObj.Header,
+                    new ObjectHeader(), "FavsNeutral"));
+                context.SendPacket(new ObjectActionPacket(new ObjectHeader((ulong)context.User.PlayerId, EntityType.Player), srcObj.Header, srcObj.Header,
+                    new ObjectHeader(), "AP")); // Short for Appear, Thanks Zapero!
             }
         }
     }

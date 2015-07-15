@@ -14,7 +14,7 @@ namespace PolarisServer.Models
             public UInt32 Data;
         }
 
-        public EntityHeader Header { get; set; }
+        public ObjectHeader Header { get; set; }
         public PSOLocation Position { get; set; }
         public string Name { get; set; }
         public UInt32 ThingFlag { get; set; }
@@ -43,7 +43,7 @@ namespace PolarisServer.Models
             PacketReader reader = new PacketReader(v);
             PSOObject obj = new PSOObject();
             reader.ReadStruct<PacketHeader>(); //Skip over header
-            obj.Header = reader.ReadStruct<EntityHeader>();
+            obj.Header = reader.ReadStruct<ObjectHeader>();
             obj.Position = reader.ReadEntityPosition();
             reader.ReadUInt16(); // Seek 2
             obj.Name = reader.ReadFixedLengthAscii(0x34);

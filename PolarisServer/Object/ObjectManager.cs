@@ -81,7 +81,7 @@ namespace PolarisServer.Object
                 foreach(NPC npc in dbNpcs)
                 {
                     PSONPC dNpc = new PSONPC();
-                    dNpc.Header = new EntityHeader((ulong)npc.EntityID, EntityType.Object);
+                    dNpc.Header = new ObjectHeader((ulong)npc.EntityID, EntityType.Object);
                     dNpc.Position = new PSOLocation(npc.RotX, npc.RotY, npc.RotZ, npc.RotW, npc.PosX, npc.PosY, npc.PosZ);
                     dNpc.Name = npc.NPCName;
 
@@ -113,7 +113,7 @@ namespace PolarisServer.Object
             if (!allTheObjects.ContainsKey(ID))
             {
                 Logger.WriteWarning("[OBJ] Client requested object {0} which we don't know about. Investigate.", ID);
-                return new PSOObject() { Header = new EntityHeader(ID, EntityType.Object), Name = "Unknown" };
+                return new PSOObject() { Header = new ObjectHeader(ID, EntityType.Object), Name = "Unknown" };
             }
 
             return allTheObjects[ID];

@@ -93,7 +93,7 @@ namespace PolarisTests
             var testObject = new PSOObject
             {
                 Name = "testobj",
-                Header = new EntityHeader {ID = 1337, EntityType = EntityType.Object},
+                Header = new ObjectHeader {ID = 1337, EntityType = EntityType.Object},
                 Position = new PSOLocation
                 {
                     RotX = (float) 3.3,

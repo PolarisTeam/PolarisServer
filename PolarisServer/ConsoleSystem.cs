@@ -839,10 +839,8 @@ namespace PolarisServer
             Client context = PolarisApp.Instance.Server.Clients[id];
 
             PacketWriter writer = new PacketWriter();
-            writer.Write(0x015e47); // ???
-            writer.Write(0); // ???
-            writer.Write(5);
-            writer.WriteStruct(new EntityHeader((ulong)id, EntityType.Player));
+            writer.WriteStruct(new ObjectHeader(1, EntityType.Map));
+            writer.WriteStruct(new ObjectHeader((ulong)id, EntityType.Player));
             writer.Write(0x34f9); // 8 Zeros
             writer.Write(0); // 8 Zeros
             writer.Write(~Int32.Parse(args[2])); // F4 FF FF FF
@@ -908,7 +906,7 @@ namespace PolarisServer
                 }
 
                 NPC newNPC = new NPC();
-                newNPC.EntityID = (int)reader.ReadStruct<EntityHeader>().ID;
+                newNPC.EntityID = (int)reader.ReadStruct<ObjectHeader>().ID;
                 var pos = reader.ReadEntityPosition();
                 newNPC.RotX = pos.RotX;
                 newNPC.RotY = pos.RotY;

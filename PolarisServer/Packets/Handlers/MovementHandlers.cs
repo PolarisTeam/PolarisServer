@@ -133,7 +133,7 @@ namespace PolarisServer.Packets.Handlers
                 context.CurrentLocation.PosY, context.CurrentLocation.PosZ);
 
             FullMovementData dataOut = new FullMovementData();
-            dataOut.entity1 = new EntityHeader((ulong)context.User.PlayerId, EntityType.Player);
+            dataOut.entity1 = new ObjectHeader((ulong)context.User.PlayerId, EntityType.Player);
             dataOut.entity2 = dataOut.entity1; // I guess?
             dataOut.unknown1 = context.Something;
             dataOut.lastPos = new PackedVec3(context.LastLocation);
@@ -196,8 +196,8 @@ namespace PolarisServer.Packets.Handlers
         public override void HandlePacket(Client context, byte[] data, uint position, uint size)
         {
             PacketReader reader = new PacketReader(data);
-            reader.ReadStruct<EntityHeader>(); // Skip blank entity header.
-            var preformer = reader.ReadStruct<EntityHeader>(); // Preformer
+            reader.ReadStruct<ObjectHeader>(); // Skip blank entity header.
+            var preformer = reader.ReadStruct<ObjectHeader>(); // Preformer
             byte[] preData = reader.ReadBytes(40);
             string command = reader.ReadAscii(0x922D, 0x45);
             byte[] rest = reader.ReadBytes(4);
@@ -219,7 +219,7 @@ namespace PolarisServer.Packets.Handlers
                 if (c == context || c.Character == null || c.CurrentZone != context.CurrentZone)
                     continue;
                 PacketWriter output = new PacketWriter();
-                output.WriteStruct(new EntityHeader((ulong)context.User.PlayerId, EntityType.Player));
+                output.WriteStruct(new ObjectHeader((ulong)context.User.PlayerId, EntityType.Player));
                 output.WriteStruct(preformer);
                 output.Write(preData);
                 output.WriteAscii(command, 0x4315, 0x7A);
@@ -241,8 +241,8 @@ namespace PolarisServer.Packets.Handlers
         public override void HandlePacket(Client context, byte[] data, uint position, uint size)
         {
             PacketReader reader = new PacketReader(data);
-            reader.ReadStruct<EntityHeader>(); // Read the blank
-            EntityHeader actor = reader.ReadStruct<EntityHeader>(); // Read the actor
+            reader.ReadStruct<ObjectHeader>(); // Read the blank
+            ObjectHeader actor = reader.ReadStruct<ObjectHeader>(); // Read the actor
             byte[] rest = reader.ReadBytes(32); // TODO Map this out and do stuff with it!
 
             foreach(var c in Server.Instance.Clients)
@@ -250,7 +250,7 @@ namespace PolarisServer.Packets.Handlers
                 if (c == context || c.Character == null || c.CurrentZone != context.CurrentZone)
                     continue;
                 PacketWriter writer = new PacketWriter();
-                writer.WriteStruct(new EntityHeader((uint)c.User.PlayerId, EntityType.Player));
+                writer.WriteStruct(new ObjectHeader((uint)c.User.PlayerId, EntityType.Player));
                 writer.WriteStruct(actor);
                 writer.Write(rest);
 
@@ -318,9 +318,9 @@ namespace PolarisServer.Packets.Handlers
     public struct FullMovementData
     {
         [FieldOffset(0x0)]
-        public EntityHeader entity1;
+        public ObjectHeader entity1;
         [FieldOffset(0xC)]
-        public EntityHeader entity2;
+        public ObjectHeader entity2;
         [FieldOffset(0x18)]
         public UInt32 unknown1;
         [FieldOffset(0x1C)]
