@@ -901,7 +901,7 @@ namespace PolarisServer
                 var data = File.ReadAllBytes(path);
                 PacketReader reader = new PacketReader(data);
                 PacketHeader header = reader.ReadStruct<PacketHeader>();
-                if (header.Type != 0x8 || header.Type != 0xC)
+                if (header.Type != 0x8 || header.Subtype != 0xC)
                 {
                     Logger.WriteWarning("[WRN] File {0} not an NPC spawn packet, skipping.", path);
                     continue;
@@ -909,7 +909,7 @@ namespace PolarisServer
 
                 NPC newNPC = new NPC();
                 newNPC.EntityID = (int)reader.ReadStruct<EntityHeader>().ID;
-                var pos = reader.ReadStruct<PSOLocation>();
+                var pos = reader.ReadEntityPosition();
                 newNPC.RotX = pos.RotX;
                 newNPC.RotY = pos.RotY;
                 newNPC.RotZ = pos.RotZ;
