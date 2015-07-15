@@ -348,6 +348,12 @@ namespace PolarisServer
             teleportPlayer.Help = "Spawns you elsewhere.";
             Commands.Add(changeThezone);
 
+            var ImportNPC = new ConsoleCommand(ImportNPCs, "importnpc");
+            ImportNPC.Arguments.Add(new ConsoleCommandArgument("zone", false));
+            ImportNPC.Arguments.Add(new ConsoleCommandArgument("npcfolder", false));
+            ImportNPC.Help = "Imports a folder of NPC spawn packets into the database.";
+            Commands.Add(ImportNPC);
+
             // Exit
             var exit = new ConsoleCommand(Exit, "exit", "quit") { Help = "Close the Polaris Server" };
             Commands.Add(exit);
@@ -879,6 +885,51 @@ namespace PolarisServer
 
             context.SendPacket(new NoPayloadPacket(0x03, 0x2B));
 
+        }
+
+        private void ImportNPCs(string[] args, int length, string full, Client client)
+        {
+            string zone = args[1];
+            string folder = args[2];
+
+            var packetList = Directory.GetFiles(folder);
+            Array.Sort(packetList);
+
+            List<NPC> newNPCs = new List<NPC>();
+            foreach (var path in packetList)
+            {
+                var data = File.ReadAllBytes(path);
+                PacketReader reader = new PacketReader(data);
+                PacketHeader header = reader.ReadStruct<PacketHeader>();
+                if (header.Type != 0x8 || header.Type != 0xC)
+                {
+                    Logger.WriteWarning("[WRN] File {0} not an NPC spawn packet, skipping.", path);
+                    continue;
+                }
+
+                NPC newNPC = new NPC();
+                newNPC.EntityID = (int)reader.ReadStruct<EntityHeader>().ID;
+                var pos = reader.ReadStruct<PSOLocation>();
+                newNPC.RotX = pos.RotX;
+                newNPC.RotY = pos.RotY;
+                newNPC.RotZ = pos.RotZ;
+                newNPC.RotW = pos.RotW;
+
+                newNPC.PosX = pos.PosX;
+                newNPC.PosY = pos.PosY;
+                newNPC.PosZ = pos.PosZ;
+                newNPC.NPCName = reader.ReadFixedLengthAscii(0x22);
+                newNPC.ZoneName = zone;
+                newNPCs.Add(newNPC);
+                Logger.WriteInternal("[NPC] Adding new NPC {0} to the database for zone {1}", newNPC.NPCName, zone);
+            }
+
+            using (var db = new PolarisEf())
+            {
+                db.NPCs.AddRange(newNPCs);
+                db.SaveChanges();
+            }
+                
         }
 
         #endregion
