@@ -45,6 +45,25 @@ namespace PolarisServer.Database
         public string SettingsIni { get; set; }
     }
 
+    public class NPC
+    {
+        [Key, Column(Order = 1)]
+        public int EntityID { get; set; }
+        [Key, Column(Order = 2)]
+        public string ZoneName { get; set; }
+
+        public string NPCName { get; set; }
+
+        public float RotX { get; set; }
+        public float RotY { get; set; }
+        public float RotZ { get; set; }
+        public float RotW { get; set; }
+
+        public float PosX { get; set; }
+        public float PosY { get; set; }
+        public float PosZ { get; set; }
+    }
+
     [DbConfigurationType(typeof(MySqlEFConfiguration))]
     public class PolarisEf : DbContext
     {
@@ -91,5 +110,6 @@ namespace PolarisServer.Database
         public DbSet<Player> Players { get; set; }
         public DbSet<Character> Characters { get; set; }
         public DbSet<Teleport> Teleports { get; set; }
+        public DbSet<NPC> NPCs { get; set; }
     }
 }

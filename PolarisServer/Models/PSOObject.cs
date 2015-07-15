@@ -20,7 +20,7 @@ namespace PolarisServer.Models
         public UInt32 ThingFlag { get; set; }
         public PSOObjectThing[] Things { get; set; }
 
-        public byte[] GenerateSpawnBlob()
+        public virtual byte[] GenerateSpawnBlob()
         {
             PacketWriter writer = new PacketWriter();
             writer.WriteStruct(Header);
@@ -56,6 +56,39 @@ namespace PolarisServer.Models
             }
 
             return obj;
+        }
+    }
+
+    public class PSONPC : PSOObject
+    {
+        public override byte[] GenerateSpawnBlob()
+        {
+            PacketWriter writer = new PacketWriter();
+            writer.WriteStruct(Header);
+            writer.WriteStruct(Position);
+            writer.WriteFixedLengthASCII(Name, 0x22);
+
+            writer.Write(0); // Padding?
+            writer.Write(new byte[0xC]); // Unknown, usually zero
+
+            writer.Write((UInt16)0);
+            writer.Write((UInt16)0);
+
+            writer.Write((UInt32)0);
+            writer.Write((UInt32)0);
+
+            writer.Write((UInt32)1101004800); // Always this
+
+            writer.Write((UInt32)0);
+            writer.Write((UInt32)0);
+            writer.Write((UInt32)0);
+
+            writer.Write((UInt32)1);
+
+            writer.WriteMagic(1, 0x9FCD, 0xE7);
+            writer.Write((UInt32)0);
+
+            return writer.ToArray();
         }
     }
 }

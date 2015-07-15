@@ -1,8 +1,10 @@
 ﻿using Newtonsoft.Json;
+using PolarisServer.Database;
 using PolarisServer.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace PolarisServer.Object
 {
@@ -67,6 +69,29 @@ namespace PolarisServer.Object
             }
         }
 
+        internal PSONPC[] getNPCSForZone(string zone)
+        {
+            List<PSONPC> npcs = new List<PSONPC>();
+            using (var db = new PolarisEf())
+            {
+                var dbNpcs = from n in db.NPCs
+                             where n.ZoneName == zone
+                             select n;
+
+                foreach(NPC npc in dbNpcs)
+                {
+                    PSONPC dNpc = new PSONPC();
+                    dNpc.Header = new EntityHeader((ulong)npc.EntityID, EntityType.Object);
+                    dNpc.Position = new PSOLocation(npc.RotX, npc.RotY, npc.RotZ, npc.RotW, npc.PosX, npc.PosY, npc.PosZ);
+                    dNpc.Name = npc.NPCName;
+
+                    npcs.Add(dNpc);
+                }
+            }
+
+                return npcs.ToArray();
+        }
+
         internal PSOObject getObjectByID(string zone, ulong ID)
         {
             //if(!zoneObjects.ContainsKey(zone) || !zoneObjects[zone].ContainsKey(ID))
@@ -82,7 +107,8 @@ namespace PolarisServer.Object
         {
             if (!allTheObjects.ContainsKey(ID))
             {
-                throw new Exception(String.Format("Object ID {0} does not exist!", ID));
+                Logger.WriteWarning("[OBJ] Client requested object {0} which we don't know about. Investigate.", ID);
+                return new PSOObject() { Header = new EntityHeader(ID, EntityType.Object), Name = "Unknown" };
             }
 
             return allTheObjects[ID];
