@@ -75,6 +75,14 @@ namespace PolarisServer.Packets.Handlers
                     }
                 }
             }
+
+            if (command == "READY" && context.CurrentZone == "lobby")
+            {
+                context.SendPacket(new ObjectActionPacket(new EntityHeader((ulong)context.User.PlayerId, EntityType.Player), srcObj.Header, srcObj.Header,
+                    new EntityHeader(), "FavsNeutral"));
+                context.SendPacket(new ObjectActionPacket(new EntityHeader((ulong)context.User.PlayerId, EntityType.Player), srcObj.Header, srcObj.Header,
+                    new EntityHeader(), "AP")); // Short for Appear, Thanks Zapero!
+            }
         }
     }
 
