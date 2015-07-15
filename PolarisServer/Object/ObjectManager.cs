@@ -86,6 +86,11 @@ namespace PolarisServer.Object
                     dNpc.Name = npc.NPCName;
 
                     npcs.Add(dNpc);
+                    if (!zoneObjects[zone].ContainsKey(dNpc.Header.ID))
+                    {
+                        zoneObjects[zone].Add(dNpc.Header.ID, dNpc);
+                    }
+                    allTheObjects.Add(dNpc.Header.ID, dNpc);
                 }
             }
 
