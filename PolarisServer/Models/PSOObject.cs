@@ -66,7 +66,8 @@ namespace PolarisServer.Models
             PacketWriter writer = new PacketWriter();
             writer.WriteStruct(Header);
             writer.WritePosition(Position);
-            writer.WriteFixedLengthASCII(Name, 0x22);
+            writer.Write((UInt16)0);
+            writer.WriteFixedLengthASCII(Name, 0x20);
 
             writer.Write(0); // Padding?
             writer.Write(new byte[0xC]); // Unknown, usually zero

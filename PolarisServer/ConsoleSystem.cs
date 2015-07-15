@@ -918,7 +918,8 @@ namespace PolarisServer
                 newNPC.PosX = pos.PosX;
                 newNPC.PosY = pos.PosY;
                 newNPC.PosZ = pos.PosZ;
-                newNPC.NPCName = reader.ReadFixedLengthAscii(0x22);
+                reader.ReadInt16();
+                newNPC.NPCName = reader.ReadFixedLengthAscii(0x20);
                 newNPC.ZoneName = zone;
                 newNPCs.Add(newNPC);
                 Logger.WriteInternal("[NPC] Adding new NPC {0} to the database for zone {1}", newNPC.NPCName, zone);
