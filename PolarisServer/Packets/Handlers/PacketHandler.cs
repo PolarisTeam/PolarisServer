@@ -18,7 +18,7 @@ namespace PolarisServer.Packets.Handlers
 
     public abstract class PacketHandler
     {
-        public abstract void HandlePacket(Client context, byte[] data, uint position, uint size);
+        public abstract void HandlePacket(Client context, byte flags, byte[] data, uint position, uint size);
     }
 
     public static class PacketHandlers

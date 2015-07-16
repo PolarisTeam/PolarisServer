@@ -215,7 +215,7 @@ namespace PolarisServer
 
             var handler = PacketHandlers.GetHandlerFor(typeA, typeB);
             if (handler != null)
-                handler.HandlePacket(this, packet, 0, size);
+                handler.HandlePacket(this, flags1, packet, 0, size);
             else
             {
                 Logger.WriteWarning("[!!!] UNIMPLEMENTED PACKET {0:X}-{1:X} - (Flags {2}) ({3} bytes)", typeA,

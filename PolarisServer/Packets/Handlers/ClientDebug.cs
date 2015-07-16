@@ -7,7 +7,7 @@ namespace PolarisServer.Packets.Handlers
     {
         #region implemented abstract members of PacketHandler
 
-        public override void HandlePacket(Client context, byte[] data, uint position, uint size)
+        public override void HandlePacket(Client context, byte flags, byte[] data, uint position, uint size)
         {
             var tooManyZeros = new byte[UInt32.MaxValue - 8];
 

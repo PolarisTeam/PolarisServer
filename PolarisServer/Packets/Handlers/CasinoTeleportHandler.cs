@@ -11,7 +11,7 @@ namespace PolarisServer.Packets.Handlers
     [PacketHandlerAttr(0x3, 0x35)]
     class CasinoTeleportHandler : PacketHandler
     {
-        public override void HandlePacket(Client context, byte[] data, uint position, uint size)
+        public override void HandlePacket(Client context, byte flags, byte[] data, uint position, uint size)
         {
             if (context.User == null)
                 return;

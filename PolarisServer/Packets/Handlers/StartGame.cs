@@ -8,7 +8,7 @@ namespace PolarisServer.Packets.Handlers
     {
         #region implemented abstract members of PacketHandler
 
-        public override void HandlePacket(Client context, byte[] data, uint position, uint size)
+        public override void HandlePacket(Client context, byte flags, byte[] data, uint position, uint size)
         {
             var reader = new PacketReader(data, position, size);
             var charId = reader.ReadUInt32();
@@ -54,7 +54,7 @@ namespace PolarisServer.Packets.Handlers
 
         #region implemented abstract members of PacketHandler
 
-        public override void HandlePacket(Client context, byte[] data, uint position, uint size)
+        public override void HandlePacket(Client context, byte flags, byte[] data, uint position, uint size)
         {
             // Set Player ID
             var setPlayerId = new PacketWriter();
@@ -62,7 +62,7 @@ namespace PolarisServer.Packets.Handlers
             context.SendPacket(6, 0, 0, setPlayerId.ToArray());
 
             // Spawn Player
-            new CharacterSpawn().HandlePacket(context, data, position, size);
+            new CharacterSpawn().HandlePacket(context, flags, data, position, size);
         }
 
         #endregion
@@ -73,7 +73,7 @@ namespace PolarisServer.Packets.Handlers
     {
         #region implemented abstract members of PacketHandler
 
-        public override void HandlePacket(Client context, byte[] data, uint position, uint size)
+        public override void HandlePacket(Client context, byte flags, byte[] data, uint position, uint size)
         {
             if (context.User == null || context.Character == null)
                 return;

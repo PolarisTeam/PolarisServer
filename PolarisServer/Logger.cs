@@ -69,14 +69,9 @@ namespace PolarisServer
 
             text += string.Format("[ERR] {0} - {1}: {2}", message, ex.GetType(), ex);
             if (ex.InnerException != null)
-                text += string.Format("[ERR] Inner Exception: {0}", ex.InnerException);
+                text += string.Format("\n[ERR] Inner Exception: {0}", ex.InnerException);
 
             WriteFile(text);
-
-            // Strip the crap out of the exception so that the line splitting works properly on it
-            text = text.Replace('\r', ' ');
-            text = text.Replace('\n', ' ');
-            text = text.Replace("     ", " ");
 
             AddLine(ConsoleColor.Red, text);
         }

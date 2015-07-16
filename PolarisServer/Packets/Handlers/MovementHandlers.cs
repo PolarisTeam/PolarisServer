@@ -10,7 +10,7 @@ namespace PolarisServer.Packets.Handlers
     {
         #region implemented abstract members of PacketHandler
 
-        public override void HandlePacket(Client context, byte[] data, uint position, uint size)
+        public override void HandlePacket(Client context, byte flags, byte[] data, uint position, uint size)
         {
             PacketReader reader = new PacketReader(data);
             // This packet is "Compressed" basically.
@@ -29,15 +29,15 @@ namespace PolarisServer.Packets.Handlers
             // TODO: Maybe do this better someday
             FullMovementData dstData = new FullMovementData();
 
-            if(theFlags.HasFlag(PackedData.ENT1_ID))
+            if (theFlags.HasFlag(PackedData.ENT1_ID))
             {
                 dstData.entity1.ID = reader.ReadUInt64();
             }
-            if(theFlags.HasFlag(PackedData.ENT1_TYPE))
+            if (theFlags.HasFlag(PackedData.ENT1_TYPE))
             {
                 dstData.entity1.EntityType = (EntityType)reader.ReadUInt16();
             }
-            if(theFlags.HasFlag(PackedData.ENT1_A))
+            if (theFlags.HasFlag(PackedData.ENT1_A))
             {
                 dstData.entity1.Unknown_A = reader.ReadUInt16();
             }
@@ -57,9 +57,8 @@ namespace PolarisServer.Packets.Handlers
             {
                 dstData.timestamp = reader.ReadUInt32();
                 context.MovementTimestamp = dstData.timestamp;
-                
             }
-            if(theFlags.HasFlag(PackedData.ROT_X))
+            if (theFlags.HasFlag(PackedData.ROT_X))
             {
                 dstData.rotation.x = reader.ReadUInt16();
                 context.CurrentLocation.RotX = Helper.FloatFromHalfPrecision(dstData.rotation.x);
@@ -122,33 +121,24 @@ namespace PolarisServer.Packets.Handlers
                 if (theFlags.HasFlag(PackedData.UNKNOWN7))
                 {
                     dstData.Unknown4 = reader.ReadByte();
-                } else
+                }
+                else
                 {
                     dstData.Unknown4 = reader.ReadUInt32();
                 }
             }
 
-           
+
             Logger.WriteInternal("[MOV] Player moving! {0} -> ({1}, {2}, {3})", context.Character.Name, context.CurrentLocation.PosX,
                 context.CurrentLocation.PosY, context.CurrentLocation.PosZ);
-
-            FullMovementData dataOut = new FullMovementData();
-            dataOut.entity1 = new ObjectHeader((ulong)context.User.PlayerId, EntityType.Player);
-            dataOut.entity2 = dataOut.entity1; // I guess?
-            dataOut.timestamp = context.MovementTimestamp;
-            dataOut.unknownPos = new PackedVec3(context.LastLocation);
-            dataOut.currentPos = new PackedVec3(context.CurrentLocation);
-            dataOut.rotation = new PackedVec4(context.CurrentLocation);
 
             foreach (var c in Server.Instance.Clients)
             {
                 if (c.Character == null || c == context || c.CurrentZone != context.CurrentZone)
                     continue;
 
-                c.SendPacket(new MovementPacket(dataOut));
-            } 
-
-            
+                c.SendPacket(0x4, 0x7, flags, data);
+            }
         }
 
         #endregion
@@ -159,7 +149,7 @@ namespace PolarisServer.Packets.Handlers
     {
         #region implemented abstract members of PacketHandler
 
-        public override void HandlePacket(Client context, byte[] data, uint position, uint size)
+        public override void HandlePacket(Client context, byte flags, byte[] data, uint position, uint size)
         {
             PacketReader reader = new PacketReader(data);
             FullMovementData movData = reader.ReadStruct<FullMovementData>();
@@ -192,7 +182,7 @@ namespace PolarisServer.Packets.Handlers
     [PacketHandlerAttr(0x4, 0x8)]
     public class MovementActionHandler : PacketHandler
     {
-        public override void HandlePacket(Client context, byte[] data, uint position, uint size)
+        public override void HandlePacket(Client context, byte flags, byte[] data, uint position, uint size)
         {
             PacketReader reader = new PacketReader(data);
             reader.ReadStruct<ObjectHeader>(); // Skip blank entity header.
@@ -212,8 +202,8 @@ namespace PolarisServer.Packets.Handlers
 
 
             Logger.WriteInternal("[ACT] {0} is preforming {1}", context.Character.Name, command);
-            
-            foreach(var c in Server.Instance.Clients)
+
+            foreach (var c in Server.Instance.Clients)
             {
                 if (c == context || c.Character == null || c.CurrentZone != context.CurrentZone)
                     continue;
@@ -229,7 +219,7 @@ namespace PolarisServer.Packets.Handlers
 
                 c.SendPacket(0x4, 0x80, 0x44, output.ToArray());
 
-                
+
             }
         }
     }
@@ -237,14 +227,14 @@ namespace PolarisServer.Packets.Handlers
     [PacketHandlerAttr(0x4, 0x3C)]
     public class ActionUpdateHandler : PacketHandler
     {
-        public override void HandlePacket(Client context, byte[] data, uint position, uint size)
+        public override void HandlePacket(Client context, byte flags, byte[] data, uint position, uint size)
         {
             PacketReader reader = new PacketReader(data);
             reader.ReadStruct<ObjectHeader>(); // Read the blank
             ObjectHeader actor = reader.ReadStruct<ObjectHeader>(); // Read the actor
             byte[] rest = reader.ReadBytes(32); // TODO Map this out and do stuff with it!
 
-            foreach(var c in Server.Instance.Clients)
+            foreach (var c in Server.Instance.Clients)
             {
                 if (c == context || c.Character == null || c.CurrentZone != context.CurrentZone)
                     continue;
@@ -255,7 +245,7 @@ namespace PolarisServer.Packets.Handlers
 
                 c.SendPacket(0x4, 0x81, 0x40, writer.ToArray());
             }
-            
+
         }
     }
 

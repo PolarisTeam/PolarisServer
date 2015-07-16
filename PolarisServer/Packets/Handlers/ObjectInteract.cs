@@ -12,7 +12,7 @@ namespace PolarisServer.Packets.Handlers
     [PacketHandlerAttr(0x4, 0x14)]
     class ObjectInteract : PacketHandler
     {
-        public override void HandlePacket(Client context, byte[] data, uint position, uint size)
+        public override void HandlePacket(Client context, byte flags, byte[] data, uint position, uint size)
         {
             PacketReader reader = new PacketReader(data);
             reader.ReadBytes(12); // Padding MAYBE???????????
