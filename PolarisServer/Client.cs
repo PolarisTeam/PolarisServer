@@ -125,7 +125,7 @@ namespace PolarisServer
             {
                 foreach (var c in Server.Instance.Clients)
                 {
-                    if (c == this || c.Character == null)
+                    if (c == this || c.Character == null || c.CurrentZone != CurrentZone)
                     {
                         continue;
                     }
