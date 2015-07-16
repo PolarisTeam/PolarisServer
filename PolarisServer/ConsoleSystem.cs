@@ -319,6 +319,13 @@ namespace PolarisServer
             sendPacketDirectory.Help = "Sends the specified directory's contents as a packet";
             Commands.Add(sendPacketDirectory);
 
+            // SendPacketDirectory Slow
+            var sendPacketDirectorySlow = new ConsoleCommand(SendPacketDirectorySlow, "sendpacketdirectoryslow", "sendpds");
+            sendPacketDirectorySlow.Arguments.Add(new ConsoleCommandArgument("Username", false));
+            sendPacketDirectorySlow.Arguments.Add(new ConsoleCommandArgument("Dirname", false));
+            sendPacketDirectorySlow.Arguments.Add(new ConsoleCommandArgument("Sleeptime", false));
+            sendPacketDirectorySlow.Help = "Sends the specified directory's contents as a packet (With delay between packets)";
+            Commands.Add(sendPacketDirectorySlow);
 
             var teleportPlayer = new ConsoleCommand(TeleportPlayer, "teleportplayer", "tp");
             teleportPlayer.Arguments.Add(new ConsoleCommandArgument("Username", false));
@@ -757,6 +764,48 @@ namespace PolarisServer
 
                 Logger.WriteCommand(client, "[CMD] Sent contents of {0} as packet {1:X}-{2:X} with flags {3} to {4}",
                     path, data[4], data[5], data[6], name);
+            }
+        }
+
+        private void SendPacketDirectorySlow(string[] args, int length, string full, Client client)
+        {
+            var name = args[1].Trim('\"');
+            var dirname = args[2].Trim('\"');
+            var delay = Int32.Parse(args[3]);
+            var foundPlayer = false;
+
+            // Find the player
+            var id = Helper.FindPlayerByUsername(name);
+            if (id != -1)
+                foundPlayer = true;
+
+            // Couldn't find the username
+            if (!foundPlayer)
+            {
+                Logger.WriteCommand(client, "[CMD] Could not find user " + name);
+                return;
+            }
+
+            // Pull packets from the specified directory
+            var packetList = Directory.GetFiles(dirname);
+            Array.Sort(packetList);
+
+            foreach (var path in packetList)
+            {
+                var index = -1;
+                var data = File.ReadAllBytes(path);
+                var packet = new byte[data.Length - 8];
+
+                // Strip the header out
+                while (++index < data.Length - 8)
+                    packet[index] = data[index + 8];
+
+                // Send packet
+                PolarisApp.Instance.Server.Clients[id].SendPacket(data[4], data[5], data[6], packet);
+
+                Logger.WriteCommand(client, "[CMD] Sent contents of {0} as packet {1:X}-{2:X} with flags {3} to {4}",
+                    path, data[4], data[5], data[6], name);
+                Thread.Sleep(delay);
             }
         }
 
