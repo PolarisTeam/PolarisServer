@@ -36,6 +36,20 @@ namespace PolarisServer.Packets.Handlers
             var setAreaPacket = File.ReadAllBytes("Resources/testSetAreaPacket.bin");
             context.SendPacket(0x03, 0x24, 4, setAreaPacket);
 
+            foreach (Client c in Server.Instance.Clients)
+            {
+                if (c == context || c.Character == null)
+                    continue;
+
+                if (c.CurrentZone == context.CurrentZone)
+                {
+                    PacketWriter writer2 = new PacketWriter();
+                    writer2.WriteStruct(new ObjectHeader((uint)c.User.PlayerId, EntityType.Player));
+                    writer2.WriteStruct(new ObjectHeader((uint)context.User.PlayerId, EntityType.Player));
+                    c.SendPacket(0x4, 0x3B, 0x40, writer2.ToArray());
+                }
+            }
+
             context.CurrentZone = "lobby";
 
             // Set Player ID

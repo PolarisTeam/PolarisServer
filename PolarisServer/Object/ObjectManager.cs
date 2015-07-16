@@ -90,7 +90,8 @@ namespace PolarisServer.Object
                     {
                         zoneObjects[zone].Add(dNpc.Header.ID, dNpc);
                     }
-                    allTheObjects.Add(dNpc.Header.ID, dNpc);
+                    if (!allTheObjects.ContainsKey(dNpc.Header.ID))
+                        allTheObjects.Add(dNpc.Header.ID, dNpc);
                 }
             }
 

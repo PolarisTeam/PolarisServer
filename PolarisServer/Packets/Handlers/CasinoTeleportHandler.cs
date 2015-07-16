@@ -34,6 +34,20 @@ namespace PolarisServer.Packets.Handlers
             writer.Write((ulong)18446744073709551615); // FF FF FF FF FF FF FF FF
             writer.Write(0);
 
+            foreach (Client c in Server.Instance.Clients)
+            {
+                if (c == context || c.Character == null)
+                    continue;
+
+                if (c.CurrentZone == context.CurrentZone)
+                {
+                    PacketWriter writer2 = new PacketWriter();
+                    writer2.WriteStruct(new ObjectHeader((uint)c.User.PlayerId, EntityType.Player));
+                    writer2.WriteStruct(new ObjectHeader((uint)context.User.PlayerId, EntityType.Player));
+                    c.SendPacket(0x4, 0x3B, 0x40, writer2.ToArray());
+                }
+            }
+
             context.CurrentZone = "casino";
 
             context.SendPacket(0x3, 0x0, 0x0, writer.ToArray());

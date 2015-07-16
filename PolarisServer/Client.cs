@@ -48,7 +48,7 @@ namespace PolarisServer
         public Character Character { get; set; }
         //public Zone.Zone CurrentZone { get; set; }
         public string CurrentZone;
-        public uint Something { get; internal set; }
+        public uint MovementTimestamp { get; internal set; }
 
         public PSOLocation CurrentLocation;
         public PSOLocation LastLocation;
@@ -123,7 +123,18 @@ namespace PolarisServer
             Logger.Write("[BYE] Connection lost. :(");
             if (Character != null)
             {
-                //TODO: Remove player model for other users here.
+                foreach (var c in Server.Instance.Clients)
+                {
+                    if (c == this || c.Character == null)
+                    {
+                        continue;
+                    }
+
+                    PacketWriter writer = new PacketWriter();
+                    writer.WriteStruct(new ObjectHeader((uint)c.User.PlayerId, EntityType.Player));
+                    writer.WriteStruct(new ObjectHeader((uint)User.PlayerId, EntityType.Player));
+                    c.SendPacket(0x4, 0x3B, 0x40, writer.ToArray());
+                }
             }
             IsClosed = true;
         }
