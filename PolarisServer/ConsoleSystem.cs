@@ -855,6 +855,22 @@ namespace PolarisServer
             writer.Write(~0); // FF FF FF FF FF FF FF FF
             writer.Write(0x0c01);
 
+            foreach (Client c in Server.Instance.Clients)
+            {
+                if (c == context || c.Character == null)
+                    continue;
+
+                if (c.CurrentZone == context.CurrentZone)
+                {
+                    PacketWriter writer2 = new PacketWriter();
+                    writer2.WriteStruct(new ObjectHeader((uint)c.User.PlayerId, EntityType.Player));
+                    writer2.WriteStruct(new ObjectHeader((uint)context.User.PlayerId, EntityType.Player));
+                    c.SendPacket(0x4, 0x3B, 0x40, writer2.ToArray());
+                }
+            }
+
+            context.CurrentZone = String.Format("tpinstance_{0}", Int32.Parse(args[3]));
+
 
             context.SendPacket(0x3, 0x0, 0x0, writer.ToArray());
 
@@ -865,6 +881,15 @@ namespace PolarisServer
             context.SendPacket(0x06, 0x00, 0, setPlayerId.ToArray());
 
             context.SendPacket(new CharacterSpawnPacket(context.Character, new PSOLocation(0, 1f, 0, 0, 0, 50, 0)));
+
+            foreach (var c in Server.Instance.Clients)
+            {
+                if (c.CurrentZone == context.CurrentZone && c != context)
+                {
+                    c.SendPacket(new CharacterSpawnPacket(context.Character, new PSOLocation(0, 1f, 0, 0, 0, 50, 0), false));
+                    context.SendPacket(new CharacterSpawnPacket(c.Character, c.CurrentLocation, false));
+                }
+            }
 
             //PSOLocation destination = new PSOLocation(float.Parse(args[2]), float.Parse(args[3]), float.Parse(args[4]), float.Parse(args[5]),float.Parse(args[6]), float.Parse(args[7]), float.Parse(args[8]));
 

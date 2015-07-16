@@ -203,9 +203,9 @@ namespace PolarisServer.Packets.Handlers
             uint thingCount = reader.ReadMagic(0x922D, 0x45);
             byte[] things;
             PacketWriter thingWriter = new PacketWriter();
-            for (int i = 0; thingCount < 0; i++)
+            for (int i = 0; i < thingCount; i++)
             {
-                thingWriter.Write(reader.ReadBytes(12));
+                thingWriter.Write(reader.ReadBytes(4));
             }
             things = thingWriter.ToArray();
             byte[] final = reader.ReadBytes(4);

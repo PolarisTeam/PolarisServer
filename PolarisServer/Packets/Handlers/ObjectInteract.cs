@@ -83,6 +83,18 @@ namespace PolarisServer.Packets.Handlers
                 context.SendPacket(new ObjectActionPacket(new ObjectHeader((ulong)context.User.PlayerId, EntityType.Player), srcObj.Header, srcObj.Header,
                     new ObjectHeader(), "AP")); // Short for Appear, Thanks Zapero!
             }
+
+            if (command == "Sit" && context.CurrentZone == "lobby")
+            {
+                foreach (var client in Server.Instance.Clients)
+                {
+                    if (client.Character == null || client.CurrentZone != "lobby" || client == context)
+                        continue;
+
+                    client.SendPacket(new ObjectActionPacket(new ObjectHeader((ulong)client.User.PlayerId, EntityType.Player), srcObj.Header,
+                        new ObjectHeader((ulong)dstObject.ID, EntityType.Player), new ObjectHeader(), "SitSuccess"));
+                }
+            }
         }
     }
 
