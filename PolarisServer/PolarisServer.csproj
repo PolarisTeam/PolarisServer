@@ -107,7 +107,7 @@
     <Compile Include="Packets\PSOPackets\CharacterSpawnPacket.cs" />
     <Compile Include="Packets\Handlers\MovementHandlers.cs" />
     <Compile Include="Packets\Handlers\ChatHandler.cs" />
-    <Compile Include="Zone\Zone.cs" />
+    <Compile Include="Zone\Map.cs" />
     <Compile Include="Zone\ZoneManager.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

@@ -6,6 +6,7 @@ using PolarisServer.Models;
 using PolarisServer.Network;
 using PolarisServer.Packets;
 using PolarisServer.Packets.Handlers;
+using PolarisServer.Zone;
 
 namespace PolarisServer
 {
@@ -47,7 +48,7 @@ namespace PolarisServer
         public Player User { get; set; }
         public Character Character { get; set; }
         //public Zone.Zone CurrentZone { get; set; }
-        public string CurrentZone;
+        public Map CurrentZone;
         public uint MovementTimestamp { get; internal set; }
 
         public PSOLocation CurrentLocation;
@@ -121,20 +122,9 @@ namespace PolarisServer
         {
             // :(
             Logger.Write("[BYE] Connection lost. :(");
-            if (Character != null)
+            if (CurrentZone != null)
             {
-                foreach (var c in Server.Instance.Clients)
-                {
-                    if (c == this || c.Character == null || c.CurrentZone != CurrentZone)
-                    {
-                        continue;
-                    }
-
-                    PacketWriter writer = new PacketWriter();
-                    writer.WriteStruct(new ObjectHeader((uint)c.User.PlayerId, EntityType.Player));
-                    writer.WriteStruct(new ObjectHeader((uint)User.PlayerId, EntityType.Player));
-                    c.SendPacket(0x4, 0x3B, 0x40, writer.ToArray());
-                }
+                CurrentZone.RemoveClient(this);
             }
             IsClosed = true;
         }

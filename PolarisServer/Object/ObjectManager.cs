@@ -26,8 +26,12 @@ namespace PolarisServer.Object
             }
         }
 
-        public Dictionary<ulong, PSOObject> getObjectsForZone(string zone)
+        public PSOObject[] getObjectsForZone(string zone)
         {
+            if (zone == "tpmap")
+            {
+                return new PSOObject[0];
+            }
             if (!zoneObjects.ContainsKey(zone))
             {
                 //TODO Maybe make some resource management class for this stuff?
@@ -60,12 +64,12 @@ namespace PolarisServer.Object
                 }
 
                 zoneObjects.Add(zone, objects);
-                return objects;
+                return objects.Values.ToArray();
 
             }
             else
             {
-                return zoneObjects[zone];
+                return zoneObjects[zone].Values.ToArray();
             }
         }
 

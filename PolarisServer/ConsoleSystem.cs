@@ -11,6 +11,7 @@ using PolarisServer.Packets.PSOPackets;
 using Timer = System.Timers.Timer;
 using PolarisServer.Object;
 using PolarisServer.Packets;
+using PolarisServer.Zone;
 
 namespace PolarisServer
 {
@@ -887,58 +888,21 @@ namespace PolarisServer
 
             Client context = PolarisApp.Instance.Server.Clients[id];
 
-            PacketWriter writer = new PacketWriter();
-            writer.WriteStruct(new ObjectHeader(1, EntityType.Map));
-            writer.WriteStruct(new ObjectHeader((ulong)id, EntityType.Player));
-            writer.Write(0x34f9); // 8 Zeros
-            writer.Write(0); // 8 Zeros
-            writer.Write(~Int32.Parse(args[2])); // F4 FF FF FF
-            writer.Write(Int32.Parse(args[3])); // Map ID maybe
-            writer.Write(Int32.Parse(args[4])); // Unknown
-            writer.Write(Int32.Parse(args[5])); // 81 8F E6 19 (Maybe seed)
-            writer.Write(Int32.Parse(args[8])); // Randomgen enable / disable maybe
-            writer.Write(Int32.Parse(args[6])); // X Size
-            writer.Write(Int32.Parse(args[7])); // Y Size
-            writer.Write(0);
-            writer.Write(0);
-            writer.Write(~0); // FF FF FF FF FF FF FF FF
-            writer.Write(0x0c01);
+            Map dstMap = null;
 
-            foreach (Client c in Server.Instance.Clients)
+            if (!ZoneManager.Instance.InstanceExists(String.Format("tpinstance_{0}", Int32.Parse(args[3]))))
             {
-                if (c == context || c.Character == null)
-                    continue;
-
-                if (c.CurrentZone == context.CurrentZone)
-                {
-                    PacketWriter writer2 = new PacketWriter();
-                    writer2.WriteStruct(new ObjectHeader((uint)c.User.PlayerId, EntityType.Player));
-                    writer2.WriteStruct(new ObjectHeader((uint)context.User.PlayerId, EntityType.Player));
-                    c.SendPacket(0x4, 0x3B, 0x40, writer2.ToArray());
-                }
+                dstMap = new Map("tpmap", Int32.Parse(args[3]), Int32.Parse(args[8]), (Map.MapType)Int32.Parse(args[2]), (Map.MapFlags)Int32.Parse(args[4]))
+                { GenerationArgs = new Map.GenParam() { seed = Int32.Parse(args[5]), xsize = Int32.Parse(args[6]), ysize = Int32.Parse(args[7]) } };
+                ZoneManager.Instance.NewInstance(String.Format("tpinstance_{0}", Int32.Parse(args[3])), dstMap);
+            } else
+            {
+                dstMap = ZoneManager.Instance.MapFromInstance("tpmap", String.Format("tpinstance_{0}", Int32.Parse(args[3])));
             }
 
-            context.CurrentZone = String.Format("tpinstance_{0}", Int32.Parse(args[3]));
+            dstMap.SpawnClient(context, dstMap.GetDefaultLoaction());
 
 
-            context.SendPacket(0x3, 0x0, 0x0, writer.ToArray());
-
-            context.SendPacket(new NoPayloadPacket(0x3, 0x2a));
-
-            var setPlayerId = new PacketWriter();
-            setPlayerId.WritePlayerHeader((uint)context.User.PlayerId);
-            context.SendPacket(0x06, 0x00, 0, setPlayerId.ToArray());
-
-            context.SendPacket(new CharacterSpawnPacket(context.Character, new PSOLocation(0, 1f, 0, 0, 0, 50, 0)));
-
-            foreach (var c in Server.Instance.Clients)
-            {
-                if (c.CurrentZone == context.CurrentZone && c != context)
-                {
-                    c.SendPacket(new CharacterSpawnPacket(context.Character, new PSOLocation(0, 1f, 0, 0, 0, 50, 0), false));
-                    context.SendPacket(new CharacterSpawnPacket(c.Character, c.CurrentLocation, false));
-                }
-            }
 
             //PSOLocation destination = new PSOLocation(float.Parse(args[2]), float.Parse(args[3]), float.Parse(args[4]), float.Parse(args[5]),float.Parse(args[6]), float.Parse(args[7]), float.Parse(args[8]));
 

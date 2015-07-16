@@ -24,7 +24,7 @@ namespace PolarisServer.Packets.Handlers
             PSOObject srcObj;
             if(srcObject.EntityType == EntityType.Object)
             {
-                srcObj = ObjectManager.Instance.getObjectByID(context.CurrentZone, srcObject.ID);
+                srcObj = ObjectManager.Instance.getObjectByID(context.CurrentZone.Name, srcObject.ID);
             }
             else if(srcObject.EntityType == EntityType.Player)
             {
@@ -40,7 +40,7 @@ namespace PolarisServer.Packets.Handlers
             Logger.WriteInternal("[OBJ] {0} (ID {1}) <{2}> --> Ent {3} (ID {4})", srcObj.Name, srcObj.Header.ID, command, (EntityType)dstObject.EntityType, dstObject.ID);
 
             // TODO: Delete this code and do this COMPLETELY correctly!!!
-            if (command == "Transfer" && context.CurrentZone == "lobby")
+            if (command == "Transfer" && context.CurrentZone.Name == "lobby")
             {
                 // Try and get the teleport definition for the object...
                 using (var db = new PolarisEf())
@@ -76,7 +76,7 @@ namespace PolarisServer.Packets.Handlers
                 }
             }
 
-            if (command == "READY" && context.CurrentZone == "lobby")
+            if (command == "READY")
             {
                 context.SendPacket(new ObjectActionPacket(new ObjectHeader((ulong)context.User.PlayerId, EntityType.Player), srcObj.Header, srcObj.Header,
                     new ObjectHeader(), "FavsNeutral"));
@@ -84,11 +84,11 @@ namespace PolarisServer.Packets.Handlers
                     new ObjectHeader(), "AP")); // Short for Appear, Thanks Zapero!
             }
 
-            if (command == "Sit" && context.CurrentZone == "lobby")
+            if (command == "Sit")
             {
                 foreach (var client in Server.Instance.Clients)
                 {
-                    if (client.Character == null || client.CurrentZone != "lobby" || client == context)
+                    if (client.Character == null || client == context)
                         continue;
 
                     client.SendPacket(new ObjectActionPacket(new ObjectHeader((ulong)client.User.PlayerId, EntityType.Player), srcObj.Header,

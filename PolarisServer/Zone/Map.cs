@@ -69,7 +69,7 @@ namespace PolarisServer.Zone
             switch (Type)
             {
                 case MapType.Lobby:
-                    location = new PSOLocation(0f, 1f, 0f, 0f, -0.22f, 2.4f, 198.75f);
+                    location = new PSOLocation(0f, 1f, 0f, 0f, -0.417969f, 0f, 137.375f);
                     break;
 
                 case MapType.Casino:
@@ -184,7 +184,7 @@ namespace PolarisServer.Zone
                 PacketWriter writer = new PacketWriter();
                 writer.WriteStruct(new ObjectHeader((uint)other.User.PlayerId, EntityType.Player));
                 writer.WriteStruct(new ObjectHeader((uint)c.User.PlayerId, EntityType.Player));
-                c.SendPacket(0x4, 0x3B, 0x40, writer.ToArray());
+                other.SendPacket(0x4, 0x3B, 0x40, writer.ToArray());
             }
 
             if (InstanceName != null && ZoneManager.Instance.playerCounter.ContainsKey(InstanceName))
