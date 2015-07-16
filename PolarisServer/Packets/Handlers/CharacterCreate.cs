@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Data.Entity;
 using PolarisServer.Models;
 using PolarisServer.Packets.PSOPackets;
 using PolarisServer.Database;
@@ -40,6 +41,7 @@ namespace PolarisServer.Packets.Handlers
             using (var db = new PolarisEf())
             { 
                 db.Characters.Add(newCharacter);
+                db.Entry(newCharacter.Player).State = EntityState.Modified;
                 db.SaveChanges();
             }
 
