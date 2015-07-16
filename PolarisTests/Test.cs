@@ -126,7 +126,7 @@ namespace PolarisTests
             dataFlags |= (uint)(bytes[1] << 8);
             dataFlags |= (uint)(bytes[2] << 16);
 
-            Assert.AreEqual((PackedData.ENT1_ID|PackedData.ROT_Y|PackedData.CUR_Y), 
+            Assert.AreEqual((PackedData.ENT1_ID|PackedData.ROT_Y|PackedData.UNK_Y), 
                 (PackedData) dataFlags);
             Console.Out.WriteLine((PackedData)dataFlags);
         }
