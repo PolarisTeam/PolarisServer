@@ -82,17 +82,17 @@ namespace PolarisServer.Packets.Handlers
             if (theFlags.HasFlag(PackedData.CUR_X))
             {
                 dstData.currentPos.x = reader.ReadUInt16();
-                context.LastLocation.PosX = Helper.FloatFromHalfPrecision(dstData.currentPos.x);
+                context.CurrentLocation.PosX = Helper.FloatFromHalfPrecision(dstData.currentPos.x);
             }
             if (theFlags.HasFlag(PackedData.CUR_Y))
             {
                 dstData.currentPos.y = reader.ReadUInt16();
-                context.LastLocation.PosY = Helper.FloatFromHalfPrecision(dstData.currentPos.y);
+                context.CurrentLocation.PosY = Helper.FloatFromHalfPrecision(dstData.currentPos.y);
             }
             if (theFlags.HasFlag(PackedData.CUR_Z))
             {
                 dstData.currentPos.z = reader.ReadUInt16();
-                context.LastLocation.PosZ = Helper.FloatFromHalfPrecision(dstData.currentPos.z);
+                context.CurrentLocation.PosZ = Helper.FloatFromHalfPrecision(dstData.currentPos.z);
             }
             if (theFlags.HasFlag(PackedData.UNKNOWN4))
             {
