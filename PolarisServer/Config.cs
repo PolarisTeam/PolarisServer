@@ -196,9 +196,15 @@ namespace PolarisServer
                 var address = (IPAddress)field.GetValue(this);
                 data.Add(field.Name + " = " + address);
             }
-            else // Basic field
+            else if (field.GetValue(this).GetType() == typeof(string))
+            {
+                var str = (string)field.GetValue(this);
+                data.Add(field.Name + " = " + str.Replace("\n", "\\n"));
+            }
+            else
+            {// Basic field
                 data.Add(field.Name + " = " + field.GetValue(this));
-
+            }
             data.Add(string.Empty); // Leave a blank line between options
 
             // Add more handling for special/custom types as needed
