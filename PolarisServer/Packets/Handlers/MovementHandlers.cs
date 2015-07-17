@@ -31,7 +31,7 @@ namespace PolarisServer.Packets.Handlers
 
             if (theFlags.HasFlag(PackedData.ENT1_ID))
             {
-                dstData.entity1.ID = reader.ReadUInt64();
+                dstData.entity1.ID = (uint)reader.ReadUInt64();
             }
             if (theFlags.HasFlag(PackedData.ENT1_TYPE))
             {
@@ -43,7 +43,7 @@ namespace PolarisServer.Packets.Handlers
             }
             if (theFlags.HasFlag(PackedData.ENT2_ID))
             {
-                dstData.entity1.ID = reader.ReadUInt64();
+                dstData.entity1.ID = (uint)reader.ReadUInt64();
             }
             if (theFlags.HasFlag(PackedData.ENT2_TYPE))
             {
@@ -208,7 +208,7 @@ namespace PolarisServer.Packets.Handlers
                 if (c == context || c.Character == null || c.CurrentZone != context.CurrentZone)
                     continue;
                 PacketWriter output = new PacketWriter();
-                output.WriteStruct(new ObjectHeader((ulong)context.User.PlayerId, EntityType.Player));
+                output.WriteStruct(new ObjectHeader((uint)context.User.PlayerId, EntityType.Player));
                 output.WriteStruct(preformer);
                 output.Write(preData);
                 output.WriteAscii(command, 0x4315, 0x7A);

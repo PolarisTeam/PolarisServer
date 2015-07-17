@@ -675,7 +675,7 @@ namespace PolarisServer
             {
                 Username = name,
                 Nickname = playerName,
-                PlayerId = 12345678 + new Random().Next()
+                PlayerId = (12345678 + new Random().Next())
             };
 
             var fakeChar = new Character
@@ -948,7 +948,7 @@ namespace PolarisServer
                 }
 
                 NPC newNPC = new NPC();
-                newNPC.EntityID = (int)reader.ReadStruct<ObjectHeader>().ID;
+                newNPC.EntityID = reader.ReadStruct<ObjectHeader>().ID;
                 var pos = reader.ReadEntityPosition();
                 newNPC.RotX = pos.RotX;
                 newNPC.RotY = pos.RotY;

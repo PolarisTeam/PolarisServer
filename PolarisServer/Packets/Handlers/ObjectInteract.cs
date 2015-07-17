@@ -78,9 +78,9 @@ namespace PolarisServer.Packets.Handlers
 
             if (command == "READY")
             {
-                context.SendPacket(new ObjectActionPacket(new ObjectHeader((ulong)context.User.PlayerId, EntityType.Player), srcObj.Header, srcObj.Header,
+                context.SendPacket(new ObjectActionPacket(new ObjectHeader((uint)context.User.PlayerId, EntityType.Player), srcObj.Header, srcObj.Header,
                     new ObjectHeader(), "FavsNeutral"));
-                context.SendPacket(new ObjectActionPacket(new ObjectHeader((ulong)context.User.PlayerId, EntityType.Player), srcObj.Header, srcObj.Header,
+                context.SendPacket(new ObjectActionPacket(new ObjectHeader((uint)context.User.PlayerId, EntityType.Player), srcObj.Header, srcObj.Header,
                     new ObjectHeader(), "AP")); // Short for Appear, Thanks Zapero!
             }
 
@@ -91,8 +91,8 @@ namespace PolarisServer.Packets.Handlers
                     if (client.Character == null || client == context)
                         continue;
 
-                    client.SendPacket(new ObjectActionPacket(new ObjectHeader((ulong)client.User.PlayerId, EntityType.Player), srcObj.Header,
-                        new ObjectHeader((ulong)dstObject.ID, EntityType.Player), new ObjectHeader(), "SitSuccess"));
+                    client.SendPacket(new ObjectActionPacket(new ObjectHeader((uint)client.User.PlayerId, EntityType.Player), srcObj.Header,
+                        new ObjectHeader(dstObject.ID, EntityType.Player), new ObjectHeader(), "SitSuccess"));
                 }
             }
         }

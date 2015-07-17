@@ -85,7 +85,7 @@ namespace PolarisServer.Object
                 foreach(NPC npc in dbNpcs)
                 {
                     PSONPC dNpc = new PSONPC();
-                    dNpc.Header = new ObjectHeader((ulong)npc.EntityID, EntityType.Object);
+                    dNpc.Header = new ObjectHeader(npc.EntityID, EntityType.Object);
                     dNpc.Position = new PSOLocation(npc.RotX, npc.RotY, npc.RotZ, npc.RotW, npc.PosX, npc.PosY, npc.PosZ);
                     dNpc.Name = npc.NPCName;
 
@@ -102,7 +102,7 @@ namespace PolarisServer.Object
                 return npcs.ToArray();
         }
 
-        internal PSOObject getObjectByID(string zone, ulong ID)
+        internal PSOObject getObjectByID(string zone, uint ID)
         {
             //if(!zoneObjects.ContainsKey(zone) || !zoneObjects[zone].ContainsKey(ID))
             //{
@@ -113,7 +113,7 @@ namespace PolarisServer.Object
             return getObjectByID(ID);
         }
 
-        internal PSOObject getObjectByID(ulong ID)
+        internal PSOObject getObjectByID(uint ID)
         {
             if (!allTheObjects.ContainsKey(ID))
             {

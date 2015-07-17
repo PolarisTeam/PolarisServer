@@ -103,7 +103,7 @@ namespace PolarisServer.Zone
             {
                 PacketWriter writer = new PacketWriter();
                 writer.WriteStruct(new ObjectHeader(1, EntityType.Map));
-                writer.WriteStruct(new ObjectHeader((ulong)c.User.PlayerId, EntityType.Player));
+                writer.WriteStruct(new ObjectHeader((uint)c.User.PlayerId, EntityType.Player));
                 writer.Write(0x34f9); // 8 Zeros
                 writer.Write(0); // 8 Zeros
                 writer.Write(~(uint)Type); // F4 FF FF FF
