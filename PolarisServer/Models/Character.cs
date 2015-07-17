@@ -198,5 +198,10 @@ namespace PolarisServer.Models
             this.PosY = PosY;
             this.PosZ = PosZ;
         }
+
+        public override string ToString()
+        {
+            return String.Format("Rot: ({1}, {2}, {3}, {4}) Loc: ({5}, {6}, {7}", RotX, RotY, RotZ, RotW, PosX, PosY, PosZ);
+        }
     }
 }

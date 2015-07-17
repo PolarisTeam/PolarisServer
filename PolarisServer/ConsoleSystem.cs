@@ -362,6 +362,10 @@ namespace PolarisServer
             ImportNPC.Help = "Imports a folder of NPC spawn packets into the database.";
             Commands.Add(ImportNPC);
 
+            var tellLoc = new ConsoleCommand(TellPosition, "pos");
+            tellLoc.Help = "Tells you your current location. (Need to be a client to use this.)";
+            Commands.Add(tellLoc);
+
             // Exit
             var exit = new ConsoleCommand(Exit, "exit", "quit") { Help = "Close the Polaris Server" };
             Commands.Add(exit);
@@ -967,6 +971,16 @@ namespace PolarisServer
                 db.SaveChanges();
             }
                 
+        }
+
+        private void TellPosition(string[] args, int length, string full, Client client)
+        {
+            if (client == null)
+            {
+                Logger.WriteError("[CMD] You need to be a client to run this command!");
+            }
+
+            Logger.WriteCommand(client, "[CMD] {0}", client.CurrentLocation.ToString());
         }
 
         #endregion

@@ -130,6 +130,11 @@ namespace PolarisServer.Zone
             setPlayerId.WritePlayerHeader((uint)c.User.PlayerId);
             c.SendPacket(0x06, 0x00, 0, setPlayerId.ToArray());
 
+            // Spawn Character
+            c.SendPacket(new CharacterSpawnPacket(c.Character, location));
+            c.CurrentLocation = location;
+            c.CurrentZone = this;
+
             // Objects
             foreach (PSOObject obj in Objects)
             {
@@ -141,13 +146,6 @@ namespace PolarisServer.Zone
             {
                 c.SendPacket(0x08, 0xC, 0x4, npc.GenerateSpawnBlob());
             }
-
-
-
-            // Spawn Character
-            c.SendPacket(new CharacterSpawnPacket(c.Character, location));
-            c.CurrentLocation = location;
-            c.CurrentZone = this;
 
             // Spawn for others, Spawn others for me
             CharacterSpawnPacket spawnMe = new CharacterSpawnPacket(c.Character, location, false);
