@@ -13,16 +13,11 @@ namespace PolarisServer.Models
         Object = 0x6
     }
 
-    [StructLayout(LayoutKind.Explicit, Size = 12)]
     public struct ObjectHeader
     {
-        [FieldOffset(0x0)]
         public UInt32 ID;
-        [FieldOffset(0x4)]
         public UInt32 padding; // Always is padding
-        [FieldOffset(0x8)]
         public EntityType EntityType; // Maybe...
-        [FieldOffset(0xA)]
         public UInt16 Unknown_A;
 
         public ObjectHeader(uint id, EntityType type) : this()

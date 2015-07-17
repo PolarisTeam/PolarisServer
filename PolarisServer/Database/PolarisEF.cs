@@ -48,7 +48,7 @@ namespace PolarisServer.Database
     public class NPC
     {
         [Key, Column(Order = 1)]
-        public uint EntityID { get; set; }
+        public int EntityID { get; set; }
         [Key, Column(Order = 2)]
         public string ZoneName { get; set; }
 

@@ -948,7 +948,7 @@ namespace PolarisServer
                 }
 
                 NPC newNPC = new NPC();
-                newNPC.EntityID = reader.ReadStruct<ObjectHeader>().ID;
+                newNPC.EntityID = (int)reader.ReadStruct<ObjectHeader>().ID;
                 var pos = reader.ReadEntityPosition();
                 newNPC.RotX = pos.RotX;
                 newNPC.RotY = pos.RotY;

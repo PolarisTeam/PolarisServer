@@ -85,7 +85,7 @@ namespace PolarisServer.Object
                 foreach(NPC npc in dbNpcs)
                 {
                     PSONPC dNpc = new PSONPC();
-                    dNpc.Header = new ObjectHeader(npc.EntityID, EntityType.Object);
+                    dNpc.Header = new ObjectHeader((uint)npc.EntityID, EntityType.Object);
                     dNpc.Position = new PSOLocation(npc.RotX, npc.RotY, npc.RotZ, npc.RotW, npc.PosX, npc.PosY, npc.PosZ);
                     dNpc.Name = npc.NPCName;
 
