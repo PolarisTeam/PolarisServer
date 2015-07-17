@@ -151,7 +151,7 @@ namespace PolarisServer
 
             try
             {
-                Socket.Socket.Client.Send(blob);
+                Socket.Write(blob);
             }
             catch (Exception ex)
             {
