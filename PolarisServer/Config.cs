@@ -167,7 +167,11 @@ namespace PolarisServer
 
             // String
             if (field.GetValue(this) is string)
+            {
+                value = value.Replace("\\n", "\n");
                 field.SetValue(this, value);
+            }
+                
 
             // IPAddress
             if (field.GetValue(this).GetType() == typeof(IPAddress))
