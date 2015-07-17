@@ -39,6 +39,9 @@ namespace PolarisServer
         [ConfigComment("Username for logging into the database server")]
         public string DatabaseUsername = "polaris";
 
+        [ConfigComment("Message of the day to display to users upon login.")]
+        public string motd = "";
+
         [ConfigComment("Time in seconds to perform a ping of all connected clients to the server")]
         public double
             PingTime = 60;

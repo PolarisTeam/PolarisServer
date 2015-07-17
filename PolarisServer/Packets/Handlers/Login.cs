@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Text.RegularExpressions;
 using PolarisServer.Database;
+using PolarisServer.Packets.PSOPackets;
 
 namespace PolarisServer.Packets.Handlers
 {
@@ -111,6 +112,11 @@ namespace PolarisServer.Packets.Handlers
 
                 context.User = user;
 
+            }
+
+            if (PolarisApp.Config.motd != "")
+            {
+                context.SendPacket(new SystemMessagePacket(PolarisApp.Config.motd, SystemMessagePacket.MessageType.AdminMessageInstant));
             }
 
             // context.SendPacket(new SystemMessagePacket("I looooooove my Raxxy <3", SystemMessagePacket.MessageType.AdminMessage));
