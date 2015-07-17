@@ -201,7 +201,7 @@ namespace PolarisServer.Models
 
         public override string ToString()
         {
-            return String.Format("Rot: ({1}, {2}, {3}, {4}) Loc: ({5}, {6}, {7}", RotX, RotY, RotZ, RotW, PosX, PosY, PosZ);
+            return String.Format("Rot: ({0}, {1}, {2}, {3}) Loc: ({4}, {5}, {6})", RotX, RotY, RotZ, RotW, PosX, PosY, PosZ);
         }
     }
 }
