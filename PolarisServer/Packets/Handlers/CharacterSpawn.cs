@@ -44,7 +44,7 @@ namespace PolarisServer.Packets.Handlers
             var memSetPacket = File.ReadAllBytes("Resources/setMemoryPacket.bin");
             context.SendPacket(0x23, 0x07, 0, memSetPacket);
 
-            context.SendPacket(File.ReadAllBytes("testbed/237.23-7.210.189.208.30.bin"));
+            //context.SendPacket(File.ReadAllBytes("testbed/237.23-7.210.189.208.30.bin"));
 
             // Give a blank palette
             context.SendPacket(new PalettePacket());
