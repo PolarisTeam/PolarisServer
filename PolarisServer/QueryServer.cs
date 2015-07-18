@@ -5,6 +5,7 @@ using System.Net.Sockets;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading;
+
 using PolarisServer.Models;
 using PolarisServer.Packets;
 
@@ -18,7 +19,10 @@ namespace PolarisServer
 
     public class QueryServer
     {
+        private delegate void OnConnection(Socket server);
+
         public static List<Thread> RunningServers = new List<Thread>();
+
         private readonly QueryMode _mode;
         private readonly int _port;
 
@@ -105,7 +109,5 @@ namespace PolarisServer
             socket.Send(writer.ToArray());
             socket.Close();
         }
-
-        private delegate void OnConnection(Socket server);
     }
 }

@@ -34,7 +34,7 @@ namespace PolarisServer.Packets.Handlers
             }
 
             Map lobbyMap = ZoneManager.Instance.MapFromInstance("lobby", "lobby");
-            lobbyMap.SpawnClient(context, lobbyMap.GetDefaultLoaction());
+            lobbyMap.SpawnClient(context, lobbyMap.GetDefaultLocation());
             
             // Unlock Controls
             context.SendPacket(new NoPayloadPacket(0x03, 0x2B));

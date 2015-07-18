@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+
 using PolarisServer.Packets.PSOPackets;
 
 namespace PolarisServer
@@ -11,6 +12,7 @@ namespace PolarisServer
     public static class Logger
     {
         private static readonly StreamWriter Writer = new StreamWriter("PolarisServer.log");
+
         public static bool VerbosePackets = false;
 
         private static void AddLine(ConsoleColor color, string text)
@@ -102,7 +104,6 @@ namespace PolarisServer
                     hexString += string.Format("{0:X2} ", array[j + (i * 16)]);
                 }
 
-
                 // Spacing
                 while (hexString.Length < 16 * 4)
                     hexString += ' ';
@@ -120,7 +121,6 @@ namespace PolarisServer
 
                     hexString += asciiChar;
                 }
-
 
                 // Strip off unnecessary stuff
                 hexString = hexString.Replace('\a', ' '); // Alert beeps

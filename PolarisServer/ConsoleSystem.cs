@@ -888,7 +888,7 @@ namespace PolarisServer
                 dstMap = ZoneManager.Instance.MapFromInstance("tpmap", String.Format("tpinstance_{0}", Int32.Parse(args[3])));
             }
 
-            dstMap.SpawnClient(context, dstMap.GetDefaultLoaction());
+            dstMap.SpawnClient(context, dstMap.GetDefaultLocation());
 
 
 

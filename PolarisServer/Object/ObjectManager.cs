@@ -1,10 +1,12 @@
-﻿using Newtonsoft.Json;
-using PolarisServer.Database;
-using PolarisServer.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+
+using Newtonsoft.Json;
+
+using PolarisServer.Database;
+using PolarisServer.Models;
 
 namespace PolarisServer.Object
 {
@@ -26,7 +28,7 @@ namespace PolarisServer.Object
             }
         }
 
-        public PSOObject[] getObjectsForZone(string zone)
+        public PSOObject[] GetObjectsForZone(string zone)
         {
             if (zone == "tpmap")
             {
@@ -82,7 +84,7 @@ namespace PolarisServer.Object
                              where n.ZoneName == zone
                              select n;
 
-                foreach(NPC npc in dbNpcs)
+                foreach (NPC npc in dbNpcs)
                 {
                     PSONPC dNpc = new PSONPC();
                     dNpc.Header = new ObjectHeader((uint)npc.EntityID, EntityType.Object);
@@ -99,7 +101,7 @@ namespace PolarisServer.Object
                 }
             }
 
-                return npcs.ToArray();
+            return npcs.ToArray();
         }
 
         internal PSOObject getObjectByID(string zone, uint ID)
