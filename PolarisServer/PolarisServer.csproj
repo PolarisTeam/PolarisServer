@@ -68,6 +68,7 @@
     <Compile Include="Packets\Handlers\CasinoTeleportHandler.cs" />
     <Compile Include="Packets\Handlers\CharacterSpawn.cs" />
     <Compile Include="Packets\Handlers\ObjectInteract.cs" />
+    <Compile Include="Packets\Handlers\QuestCounterHandler.cs" />
     <Compile Include="Packets\Handlers\ReturnToLobbyHandler.cs" />
     <Compile Include="Packets\Handlers\SymbolArtHandler.cs" />
     <Compile Include="Packets\PSOPackets\GuildInfoPacket.cs" />
