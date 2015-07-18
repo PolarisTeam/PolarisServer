@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PolarisServer.Packets.PSOPackets;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -40,6 +41,26 @@ namespace PolarisServer.Packets.Handlers
             writer.Write(1337); // ARKS Ship Grand Prix Boost level
 
             context.SendPacket(0xB, 0x16, 0x0, writer.ToArray());
+        }
+    }
+
+    [PacketHandlerAttr(0xB, 0x17)]
+    class QuestListRequestHandler : PacketHandler
+    {
+        public override void HandlePacket(Client context, byte flags, byte[] data, uint position, uint size)
+        {
+            // What am I doing
+            PSOPackets.QuestListPacket.QuestDefiniton[] defs = new PSOPackets.QuestListPacket.QuestDefiniton[1];
+            for (int i = 0; i < defs.Length; i++)
+            {
+                defs[i].dateOrSomething = "2013/01/25";
+                defs[i].questNameString = 20070;
+                defs[i].needsToBeNonzero = 0x36;
+                defs[i].getsSetToWord = 0xFFFF;
+            }
+
+            context.SendPacket(new QuestListPacket(defs));
+            context.SendPacket(new NoPayloadPacket(0xb, 0x1b));
         }
     }
 }
