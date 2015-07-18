@@ -22,7 +22,7 @@ namespace PolarisServer.Packets.Handlers
             context.SendPacket(0x1E, 0xC, 0x0, BitConverter.GetBytes(101));
 
             Map casinoMap = ZoneManager.Instance.MapFromInstance("casino", "lobby");
-            casinoMap.SpawnClient(context, casinoMap.GetDefaultLoaction());
+            casinoMap.SpawnClient(context, casinoMap.GetDefaultLocation());
 
         }
     }

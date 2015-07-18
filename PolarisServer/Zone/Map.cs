@@ -1,16 +1,16 @@
-﻿using PolarisServer.Models;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+
+using PolarisServer.Models;
 using PolarisServer.Object;
 using PolarisServer.Packets;
 using PolarisServer.Packets.PSOPackets;
-using System;
-using System.Collections.Generic;
-using System.IO;
 
 namespace PolarisServer.Zone
 {
     public class Map
     {
-
         public string Name { get; set; }
         public MapType Type { get; set; }
         public PSOObject[] Objects { get; set; }
@@ -59,13 +59,14 @@ namespace PolarisServer.Zone
             Clients = new List<Client>();
             GenerationArgs = new GenParam();
 
-            Objects = ObjectManager.Instance.getObjectsForZone(Name);
+            Objects = ObjectManager.Instance.GetObjectsForZone(Name);
             NPCs = ObjectManager.Instance.getNPCSForZone(Name);
         }
 
-        public PSOLocation GetDefaultLoaction()
+        public PSOLocation GetDefaultLocation()
         {
             PSOLocation location;
+
             switch (Type)
             {
                 case MapType.Lobby:
@@ -90,8 +91,6 @@ namespace PolarisServer.Zone
             {
                 return;
             }
-
-            
 
             // Set area
             if (Type == MapType.Lobby) // TODO: This is a temporary hack, fix me!

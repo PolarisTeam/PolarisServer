@@ -25,7 +25,7 @@ namespace PolarisServer.Packets.PSOPackets
 
         public override PacketHeader GetHeader()
         {
-            return new PacketHeader(0x4, 0x7, PacketFlags.ENTITY_HEADER);
+            return new PacketHeader(0x4, 0x7, PacketFlags.EntityHeader);
         }
     }
 }

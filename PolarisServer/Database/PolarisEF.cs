@@ -1,10 +1,12 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity;
 using System.IO;
+
 using MySql.Data.Entity;
+
 using PolarisServer.Models;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PolarisServer.Database
 {
@@ -67,13 +69,18 @@ namespace PolarisServer.Database
     [DbConfigurationType(typeof(MySqlEFConfiguration))]
     public class PolarisEf : DbContext
     {
+        public DbSet<ServerInfo> ServerInfos { get; set; }
+        public DbSet<Player> Players { get; set; }
+        public DbSet<Character> Characters { get; set; }
+        public DbSet<Teleport> Teleports { get; set; }
+        public DbSet<NPC> NPCs { get; set; }
+
         public PolarisEf()
             : base(
                 string.Format("server={0};database={1};username={2};password={3}", PolarisApp.Config.DatabaseAddress,
                     PolarisApp.Config.DatabaseName, PolarisApp.Config.DatabaseUsername,
                     PolarisApp.Config.DatabasePassword))
         {
-
         }
 
         public void SetupDB()
@@ -105,11 +112,5 @@ namespace PolarisServer.Database
                 Logger.WriteException("A database exception has occured", ex);
             }
         }
-
-        public DbSet<ServerInfo> ServerInfos { get; set; }
-        public DbSet<Player> Players { get; set; }
-        public DbSet<Character> Characters { get; set; }
-        public DbSet<Teleport> Teleports { get; set; }
-        public DbSet<NPC> NPCs { get; set; }
     }
 }

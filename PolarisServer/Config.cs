@@ -20,7 +20,7 @@ namespace PolarisServer
     public class Config
     {
         private readonly string _configFile = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) +
-                                             Path.DirectorySeparatorChar + "PolarisServer.cfg";
+                                              Path.DirectorySeparatorChar + "PolarisServer.cfg";
 
         // Settings
         [ConfigComment("The address to bind to")]
@@ -43,12 +43,10 @@ namespace PolarisServer
         public string motd = "";
 
         [ConfigComment("Time in seconds to perform a ping of all connected clients to the server")]
-        public double
-            PingTime = 60;
+        public double PingTime = 60;
 
         [ConfigComment("Enable foreground colors for console text (Unstable on linux)")]
-        public bool UseConsoleColors =
-            true;
+        public bool UseConsoleColors = true;
 
         [ConfigComment("Log the data sent and recieved from packets")]
         public bool VerbosePackets = false;
@@ -171,9 +169,8 @@ namespace PolarisServer
                 value = value.Replace("\\n", "\n");
                 field.SetValue(this, value);
             }
-                
 
-            // IPAddress
+            // IP Address
             if (field.GetValue(this).GetType() == typeof(IPAddress))
                 field.SetValue(this, IPAddress.Parse(value));
 
@@ -201,11 +198,13 @@ namespace PolarisServer
                 var str = (string)field.GetValue(this);
                 data.Add(field.Name + " = " + str.Replace("\n", "\\n"));
             }
-            else
-            {// Basic field
+            else // Basic field
+            {
                 data.Add(field.Name + " = " + field.GetValue(this));
             }
-            data.Add(string.Empty); // Leave a blank line between options
+            
+            // Leave a blank line between options
+            data.Add(string.Empty);
 
             // Add more handling for special/custom types as needed
         }

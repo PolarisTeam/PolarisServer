@@ -5,12 +5,13 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Timers;
+using Timer = System.Timers.Timer;
+
 using PolarisServer.Database;
 using PolarisServer.Models;
-using PolarisServer.Packets.PSOPackets;
-using Timer = System.Timers.Timer;
 using PolarisServer.Object;
 using PolarisServer.Packets;
+using PolarisServer.Packets.PSOPackets;
 using PolarisServer.Zone;
 
 namespace PolarisServer
@@ -87,19 +88,23 @@ namespace PolarisServer
             ConsoleKey.Delete
         };
 
-        private readonly List<string> _history = new List<string>();
         private const string Prompt = "Polaris> ";
-        private int _commandIndex;
+
         private string _commandLine = string.Empty;
+        private int _commandIndex;
         private int _commandRowInConsole;
-        public List<ConsoleCommand> Commands = new List<ConsoleCommand>();
+
+        private readonly List<string> _history = new List<string>();
         private int _historyIndex;
-        private string _info = string.Empty;
-        private ConsoleKeyInfo _key;
+
         private int _lastDrawnCommandLineSize;
-        private int _lastDrawnInfoSize;
         private int _maxCommandLineSize = -1;
+
         public Thread Thread;
+
+        public List<ConsoleCommand> Commands = new List<ConsoleCommand>();
+        private ConsoleKeyInfo _key;
+        
         // ReSharper disable once InconsistentNaming
         public Timer timer;
 
@@ -123,7 +128,9 @@ namespace PolarisServer
         {
             Width = width;
             Height = height;
+
             _maxCommandLineSize = width - Prompt.Length;
+
             Console.SetWindowSize(width, height);
         }
 
@@ -131,7 +138,6 @@ namespace PolarisServer
         {
             lock (_consoleLock)
             {
-                BlankDrawnInfoBar();
                 BlankDrawnCommandLine();
 
                 var useColors = PolarisApp.Config.UseConsoleColors;
@@ -145,11 +151,9 @@ namespace PolarisServer
                 if (useColors)
                     Console.ForegroundColor = saveColor;
 
-                // Write one more line to reserve space for the info bar
                 Console.WriteLine();
                 _commandRowInConsole = Console.CursorTop - 1;
 
-                RefreshInfoBar();
                 RefreshCommandLine();
                 FixCursorPosition();
             }
@@ -160,7 +164,8 @@ namespace PolarisServer
             if (_lastDrawnCommandLineSize > 0)
             {
                 Console.SetCursorPosition(0, _commandRowInConsole);
-                for (var i = 0; i < _lastDrawnCommandLineSize; i++)
+
+                for (int i = 0; i < _lastDrawnCommandLineSize; i++)
                     Console.Write(' ');
 
                 _lastDrawnCommandLineSize = 0;
@@ -178,28 +183,6 @@ namespace PolarisServer
             _lastDrawnCommandLineSize = Prompt.Length + _commandLine.Length;
         }
 
-        private void BlankDrawnInfoBar()
-        {
-            if (_lastDrawnInfoSize > 0)
-            {
-                Console.SetCursorPosition(0, _commandRowInConsole + 1);
-                for (var i = 0; i < _lastDrawnInfoSize; i++)
-                    Console.Write(' ');
-
-                _lastDrawnInfoSize = 0;
-            }
-        }
-
-        private void RefreshInfoBar()
-        {
-            BlankDrawnInfoBar();
-
-            Console.SetCursorPosition(0, _commandRowInConsole + 1);
-            Console.Write(_info);
-
-            _lastDrawnInfoSize = _info.Length;
-        }
-
         private void FixCursorPosition()
         {
             Console.SetCursorPosition(Prompt.Length + _commandIndex, _commandRowInConsole);
@@ -210,12 +193,13 @@ namespace PolarisServer
             if (PolarisApp.Instance != null && PolarisApp.Instance.Server != null)
             {
                 var clients = PolarisApp.Instance.Server.Clients.Count;
-                // ReSharper disable once PossibleLossOfFraction
                 float usage = Process.GetCurrentProcess().PrivateMemorySize64 / 1024 / 1024;
+
                 var time = DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToLongTimeString();
 
                 return string.Format("Clients: {0} | Memory: {1} MB | {2}", clients, usage, time);
             }
+
             return "Initializing...";
         }
 
@@ -223,8 +207,8 @@ namespace PolarisServer
         {
             lock (_consoleLock)
             {
-                _info = AssembleInfoBar();
-                RefreshInfoBar();
+                Console.Title = "Polaris - " + AssembleInfoBar();
+
                 FixCursorPosition();
             }
         }
@@ -904,7 +888,7 @@ namespace PolarisServer
                 dstMap = ZoneManager.Instance.MapFromInstance("tpmap", String.Format("tpinstance_{0}", Int32.Parse(args[3])));
             }
 
-            dstMap.SpawnClient(context, dstMap.GetDefaultLoaction());
+            dstMap.SpawnClient(context, dstMap.GetDefaultLocation());
 
 
 
