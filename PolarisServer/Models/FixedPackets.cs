@@ -40,6 +40,7 @@ namespace PolarisServer.Models
         NONE,
         STREAM_PACKED = 0x4,
         FLAG_10 = 0x10,
+        FULL_MOVEMENT = 0x20,
         ENTITY_HEADER = 0x40
     }
 
