@@ -34,7 +34,20 @@ namespace PolarisServer.Packets.PSOPackets
 
         // Hoo boy, this is 468 bytes!
         // TODO: Map out this struct.
-        // Most of this is WRONG!!! Needs serious investigation. 
+        // Most of this is WRONG!!! Needs serious investigation.
+        /*
+            [K873] What I've currently mapped out
+              24  -> Start
+              38  -> Quest Name/Type Index?
+              100 -> Bitfield 1
+              102 -> Estimated Play Time
+              103 -> Party Type
+              104 -> Difficulties Available
+              105 -> Difficulties Completed
+              108 -> Starting Level
+              120 -> Item Data 1?
+              12C -> Item Data 2?
+        */
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
         public unsafe struct QuestDefiniton
         {
@@ -161,32 +174,19 @@ namespace PolarisServer.Packets.PSOPackets
         public enum PartyType
         {
             SoloQuest = 1,
-            SinglePartyQuest = 2,
-            MultiPartyQuest = 3
+            SinglePartyQuest,
+            MultiPartyQuest,
         }
 
         public enum EstimatedTime
         {
             Short = 1,
-            Medium = 2,
-            Long = 3
+            Medium,
+            Long
         }
 
         [Flags]
-        public enum DifficultiesAvailable
-        {
-            Normal = 0x01,
-            hard = 0x02,
-            VeryHard = 0x04,
-            SuperHard = 0x08,
-            ExtraHard = 0x10,
-            Dummy1 = 0x20,
-            Dummy2 = 0x40,
-            Dummy3 = 0x80,
-        }
-
-        [Flags]
-        public enum DifficultiesCompleted
+        public enum Difficulties
         {
             Normal = 0x01,
             hard = 0x02,

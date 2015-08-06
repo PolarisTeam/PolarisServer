@@ -76,6 +76,7 @@
     <Compile Include="Packets\PSOPackets\ObjectActionPacket.cs" />
     <Compile Include="Packets\PSOPackets\PalettePacket.cs" />
     <Compile Include="Packets\PSOPackets\QuestDifficultyPacket.cs" />
+    <Compile Include="Packets\PSOPackets\QuestAvailablePacket.cs" />
     <Compile Include="Packets\PSOPackets\QuestListPacket.cs" />
     <Compile Include="Packets\PSOPackets\SetCurrencyPacket.cs" />
     <Compile Include="Packets\PSOPackets\SetMesetaPacket.cs" />
