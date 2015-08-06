@@ -20,7 +20,7 @@ namespace PolarisServer.Packets.Handlers
     }
 
     [PacketHandlerAttr(0xB, 0x15)]
-    class QuertCounterAckHander : PacketHandler
+    class QuestCounterAckHander : PacketHandler
     {
         public override void HandlePacket(Client context, byte flags, byte[] data, uint position, uint size)
         {
@@ -31,6 +31,7 @@ namespace PolarisServer.Packets.Handlers
             {
                 writer.Write((UInt16)3);
             }
+
             // Only set Extreme Quests as unplayed (Bitfield matches the one below)
             writer.Write((UInt64)2);
             // Turn on all the quests (This is a 36-bit bitfield! TODO: Make an enum)
@@ -60,7 +61,33 @@ namespace PolarisServer.Packets.Handlers
             }
 
             context.SendPacket(new QuestListPacket(defs));
-            context.SendPacket(new NoPayloadPacket(0xb, 0x1b));
+            context.SendPacket(new NoPayloadPacket(0xB, 0x1B));
+        }
+    }
+
+    [PacketHandlerAttr(0xB, 0x19)]
+    class QuestDifficultyRequestHandler : PacketHandler
+    {
+        public override void HandlePacket(Client context, byte flags, byte[] data, uint position, uint size)
+        {
+            // What am I doing
+            PSOPackets.QuestDifficultyPacket.QuestDifficulty[] diffs = new QuestDifficultyPacket.QuestDifficulty[1];
+            for (int i = 0; i < diffs.Length; i++)
+            {
+                diffs[i].dateOrSomething = "2013/01/25";
+                diffs[i].something = 0x20;
+                diffs[i].something2 = 0x0B;
+                diffs[i].something3 = 0x753A;
+
+                // These are likely bitfields
+                diffs[i].something4 = 0x00030301;
+                diffs[i].something5 = 0x0101;
+            }
+
+            context.SendPacket(new QuestDifficultyPacket(diffs));
+
+            // [K873] I believe this is the correct packet, but it causes an infinite send/recieve loop, we're probably just missing something else
+            // context.SendPacket(new NoPayloadPacket(0xB, 0x1C));
         }
     }
 }
