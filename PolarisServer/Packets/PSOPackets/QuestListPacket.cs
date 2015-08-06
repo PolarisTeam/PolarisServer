@@ -32,7 +32,6 @@ namespace PolarisServer.Packets.PSOPackets
             return new PacketHeader(0xB, 0x18, 0x4);
         }
 
-
         // Hoo boy, this is 468 bytes!
         // TODO: Map out this struct.
         // Most of this is WRONG!!! Needs serious investigation. 
@@ -120,7 +119,9 @@ namespace PolarisServer.Packets.PSOPackets
             public UInt16 field_106;
             public int field_108;
             public int field_10C;
-            public int field_110;
+            public short field_110;
+            public byte playtime;
+            public byte partyType;
             public QuestDefThing field_114_1;
             public QuestDefThing field_114_2;
             public QuestDefThing field_114_3;
@@ -146,6 +147,55 @@ namespace PolarisServer.Packets.PSOPackets
             char field_8;
             char field_9;
             UInt16 field_A;
+        }
+
+        [Flags]
+        public enum QuestBitfield1
+        {
+            MatterObjectiveQuest = 0x0001,
+            NewQuest = 0x0100,
+            ClientOrder = 0x0800,
+            UnknownLevel = 0x1000
+        }
+
+        public enum PartyType
+        {
+            SoloQuest = 1,
+            SinglePartyQuest = 2,
+            MultiPartyQuest = 3
+        }
+
+        public enum EstimatedTime
+        {
+            Short = 1,
+            Medium = 2,
+            Long = 3
+        }
+
+        [Flags]
+        public enum DifficultiesAvailable
+        {
+            Normal = 0x01,
+            hard = 0x02,
+            VeryHard = 0x04,
+            SuperHard = 0x08,
+            ExtraHard = 0x10,
+            Dummy1 = 0x20,
+            Dummy2 = 0x40,
+            Dummy3 = 0x80,
+        }
+
+        [Flags]
+        public enum DifficultiesCompleted
+        {
+            Normal = 0x01,
+            hard = 0x02,
+            VeryHard = 0x04,
+            SuperHard = 0x08,
+            ExtraHard = 0x10,
+            Dummy1 = 0x20,
+            Dummy2 = 0x40,
+            Dummy3 = 0x80,
         }
     }
 }

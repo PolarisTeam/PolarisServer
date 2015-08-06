@@ -17,27 +17,19 @@ namespace PolarisServer.Packets.PSOPackets
             for (int i = 0; i < questdiffs.Length; i++)
             {
                 QuestDifficultyEntry difficulty = new QuestDifficultyEntry();
-                difficulty.field_4 = 0x268BCAE6;
-                difficulty.field_8 = 0x02;
-                difficulty.field_C = 0x29E4B5D8;
-                difficulty.field_10 = 0x02;
-                difficulty.field_14 = 0x29FE98B4;
-                difficulty.field_18 = 0x02;
-                difficulty.field_1C = 0x1514;
-
-                QuestDifficultyEntry blankDifficulty = new QuestDifficultyEntry();
-                blankDifficulty.field_4 = 0xFFFFFFFF;
-                blankDifficulty.field_C = 0xFFFFFFFF;
-                blankDifficulty.field_14 = 0xFFFFFFFF;
+                difficulty.unknown1 = 0x0101;
+                difficulty.monster1 = 0xFFFFFFFF;
+                difficulty.monster2 = 0xFFFFFFFF;
+                difficulty.monster3 = 0xFFFFFFFF;
 
                 questdiffs[i].difficulty1 = difficulty;
                 questdiffs[i].difficulty2 = difficulty;
                 questdiffs[i].difficulty3 = difficulty;
                 questdiffs[i].difficulty4 = difficulty;
-                questdiffs[i].difficulty5 = blankDifficulty;
-                questdiffs[i].difficulty6 = blankDifficulty;
-                questdiffs[i].difficulty7 = blankDifficulty;
-                questdiffs[i].difficulty8 = blankDifficulty;
+                questdiffs[i].difficulty5 = difficulty;
+                questdiffs[i].difficulty6 = difficulty;
+                questdiffs[i].difficulty7 = difficulty;
+                questdiffs[i].difficulty8 = difficulty;
             }
 
             this.questdiffs = questdiffs;
@@ -70,9 +62,8 @@ namespace PolarisServer.Packets.PSOPackets
             public int something;
             public int field_30;
             public int something2;
+            public int questNameString;
             public int something3;
-            public int something4;
-            public int something5;
             public QuestDifficultyEntry difficulty1;
             public QuestDifficultyEntry difficulty2;
             public QuestDifficultyEntry difficulty3;
@@ -85,14 +76,14 @@ namespace PolarisServer.Packets.PSOPackets
 
         public struct QuestDifficultyEntry
         {
-            public uint field_0;
-            public uint field_4;
-            public uint field_8;
-            public uint field_C;
-            public uint field_10;
-            public uint field_14;
-            public uint field_18;
-            public uint field_1C;
+            public uint unknown1;
+            public uint unknown2;
+            public uint monster1;
+            public uint monster1flags;
+            public uint monster2;
+            public uint monster2flags;
+            public uint monster3;
+            public uint monster3flags;
         }
     }
 }

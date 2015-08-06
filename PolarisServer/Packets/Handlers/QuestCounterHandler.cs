@@ -77,11 +77,10 @@ namespace PolarisServer.Packets.Handlers
                 diffs[i].dateOrSomething = "2013/01/25";
                 diffs[i].something = 0x20;
                 diffs[i].something2 = 0x0B;
-                diffs[i].something3 = 0x753A;
+                diffs[i].questNameString = 0x753A;
 
                 // These are likely bitfields
-                diffs[i].something4 = 0x00030301;
-                diffs[i].something5 = 0x0101;
+                diffs[i].something3 = 0x00030301;
             }
 
             context.SendPacket(new QuestDifficultyPacket(diffs));
