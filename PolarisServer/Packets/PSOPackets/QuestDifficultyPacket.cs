@@ -39,7 +39,8 @@ namespace PolarisServer.Packets.PSOPackets
         {
             PacketWriter writer = new PacketWriter();
             // TODO: This sub/xor needs to be checked, it's more than likely wrong
-            writer.WriteMagic((uint)questdiffs.Length, 0x1DB0, 0xC5);
+            // writer.WriteMagic((uint)questdiffs.Length, 0x1DB0, 0xC5);
+            writer.Write((int)0x294D); // Just directly write the sub/xor for now
             foreach (QuestDifficulty d in questdiffs)
             {
                 writer.WriteStruct(d);
