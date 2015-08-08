@@ -313,7 +313,6 @@ namespace PolarisServer
             Commands.Add(sendPacketDirectorySlow);
 
             var teleportPlayer = new ConsoleCommand(TeleportPlayer, "teleportplayer", "tp");
-            teleportPlayer.Arguments.Add(new ConsoleCommandArgument("Username", false));
 
             teleportPlayer.Arguments.Add(new ConsoleCommandArgument("RotX", false));
             teleportPlayer.Arguments.Add(new ConsoleCommandArgument("RotY", false));
@@ -324,7 +323,20 @@ namespace PolarisServer
             teleportPlayer.Arguments.Add(new ConsoleCommandArgument("PosY", false));
             teleportPlayer.Arguments.Add(new ConsoleCommandArgument("PosZ", false));
 
-            teleportPlayer.Help = "Teleports a player to the given position. (Only works in lobby.)";
+            teleportPlayer.Arguments.Add(new ConsoleCommandArgument("Username", true));
+
+            teleportPlayer.Help = "Teleports a player to the given position.";
+            Commands.Add(teleportPlayer);
+
+            var teleportPlayer2 = new ConsoleCommand(TeleportPlayer, "teleportplayerpos", "tpp");
+
+            teleportPlayer.Arguments.Add(new ConsoleCommandArgument("PosX", false));
+            teleportPlayer.Arguments.Add(new ConsoleCommandArgument("PosY", false));
+            teleportPlayer.Arguments.Add(new ConsoleCommandArgument("PosZ", false));
+
+            teleportPlayer.Arguments.Add(new ConsoleCommandArgument("Username", true));
+
+            teleportPlayer.Help = "Teleports a player to the given position. (pos only)";
             Commands.Add(teleportPlayer);
 
             var changeThezone = new ConsoleCommand(ChangeArea, "areachange", "map");
@@ -834,23 +846,60 @@ namespace PolarisServer
 
         private void TeleportPlayer(string[] args, int length, string full, Client client)
         {
-            var name = args[1].Trim('\"');
             var foundPlayer = false;
+            var id = 0;
+            if (client != null)
+                id = client.User.PlayerId;
+            else
+            {
+                var name = args[8].Trim('\"');
 
-
-            var id = Helper.FindPlayerByUsername(name);
-            if (id != -1)
-                foundPlayer = true;
+                Helper.FindPlayerByUsername(name);
+                if (id != -1)
+                    foundPlayer = true;
+            }
+            
 
             // Couldn't find the username
             if (!foundPlayer)
             {
-                Logger.WriteError("[CMD] Could not find user " + name);
+                Logger.WriteError("[CMD] Could not find user.");
                 return;
             }
 
-            PSOLocation destination = new PSOLocation(float.Parse(args[2]), float.Parse(args[3]), float.Parse(args[4]), float.Parse(args[5]),
-                float.Parse(args[6]), float.Parse(args[7]), float.Parse(args[8]));
+            PSOLocation destination = new PSOLocation(float.Parse(args[1]), float.Parse(args[2]), float.Parse(args[3]), float.Parse(args[4]),
+                float.Parse(args[5]), float.Parse(args[6]), float.Parse(args[7]));
+
+
+            PolarisApp.Instance.Server.Clients[id].SendPacket(new TeleportTransferPacket(ObjectManager.Instance.getObjectByID("lobby", 443), destination));
+
+        }
+
+        private void TeleportPlayer_POS(string[] args, int length, string full, Client client)
+        {
+            var foundPlayer = false;
+            var id = 0;
+            if (client != null)
+                id = client.User.PlayerId;
+            else
+            {
+                var name = args[4].Trim('\"');
+
+                Helper.FindPlayerByUsername(name);
+                if (id != -1)
+                    foundPlayer = true;
+            }
+
+
+            // Couldn't find the username
+            if (!foundPlayer)
+            {
+                Logger.WriteError("[CMD] Could not find user.");
+                return;
+            }
+
+            PSOLocation destination = new PSOLocation(0f, 1f, 0f, 0f,
+                float.Parse(args[1]), float.Parse(args[2]), float.Parse(args[3]));
 
 
             PolarisApp.Instance.Server.Clients[id].SendPacket(new TeleportTransferPacket(ObjectManager.Instance.getObjectByID("lobby", 443), destination));
