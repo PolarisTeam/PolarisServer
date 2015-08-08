@@ -878,14 +878,14 @@ namespace PolarisServer
 
             Map dstMap = null;
 
-            if (!ZoneManager.Instance.InstanceExists(String.Format("tpinstance_{0}_{1}", Int32.Parse(args[3]), Helper.Timestamp(DateTime.Now))))
+            if (!ZoneManager.Instance.InstanceExists(String.Format("tpinstance_{0}_{1}", Int32.Parse(args[3]), Int32.Parse(args[8]))))
             {
                 dstMap = new Map("tpmap", Int32.Parse(args[3]), Int32.Parse(args[8]), (Map.MapType)Int32.Parse(args[2]), (Map.MapFlags)Int32.Parse(args[4]))
                 { GenerationArgs = new Map.GenParam() { seed = Int32.Parse(args[5]), xsize = Int32.Parse(args[6]), ysize = Int32.Parse(args[7]) } };
                 ZoneManager.Instance.NewInstance(String.Format("tpinstance_{0}", Int32.Parse(args[3])), dstMap);
             } else
             {
-                dstMap = ZoneManager.Instance.MapFromInstance("tpmap", String.Format("tpinstance_{0}", Int32.Parse(args[3])));
+                dstMap = ZoneManager.Instance.MapFromInstance("tpmap", String.Format("tpinstance_{0}_{1}", Int32.Parse(args[3]), Int32.Parse(args[8])));
             }
 
             dstMap.SpawnClient(context, dstMap.GetDefaultLocation());
