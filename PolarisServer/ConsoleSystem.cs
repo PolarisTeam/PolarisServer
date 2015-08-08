@@ -330,14 +330,14 @@ namespace PolarisServer
 
             var teleportPlayer2 = new ConsoleCommand(TeleportPlayer, "teleportplayerpos", "tpp");
 
-            teleportPlayer.Arguments.Add(new ConsoleCommandArgument("PosX", false));
-            teleportPlayer.Arguments.Add(new ConsoleCommandArgument("PosY", false));
-            teleportPlayer.Arguments.Add(new ConsoleCommandArgument("PosZ", false));
+            teleportPlayer2.Arguments.Add(new ConsoleCommandArgument("PosX", false));
+            teleportPlayer2.Arguments.Add(new ConsoleCommandArgument("PosY", false));
+            teleportPlayer2.Arguments.Add(new ConsoleCommandArgument("PosZ", false));
 
-            teleportPlayer.Arguments.Add(new ConsoleCommandArgument("Username", true));
+            teleportPlayer2.Arguments.Add(new ConsoleCommandArgument("Username", true));
 
-            teleportPlayer.Help = "Teleports a player to the given position. (pos only)";
-            Commands.Add(teleportPlayer);
+            teleportPlayer2.Help = "Teleports a player to the given position. (pos only)";
+            Commands.Add(teleportPlayer2);
 
             var changeThezone = new ConsoleCommand(ChangeArea, "areachange", "map");
             changeThezone.Arguments.Add(new ConsoleCommandArgument("username", false));
