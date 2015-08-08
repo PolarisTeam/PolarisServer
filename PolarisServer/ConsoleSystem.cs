@@ -849,7 +849,11 @@ namespace PolarisServer
             var foundPlayer = false;
             var id = 0;
             if (client != null)
+            {
                 id = client.User.PlayerId;
+                foundPlayer = true;
+            }
+                
             else
             {
                 var name = args[8].Trim('\"');
@@ -880,7 +884,10 @@ namespace PolarisServer
             var foundPlayer = false;
             var id = 0;
             if (client != null)
+            {
                 id = client.User.PlayerId;
+                foundPlayer = true;
+            }
             else
             {
                 var name = args[4].Trim('\"');
