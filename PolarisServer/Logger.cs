@@ -11,7 +11,7 @@ namespace PolarisServer
     /// </summary>
     public static class Logger
     {
-        private static readonly StreamWriter Writer = new StreamWriter("PolarisServer.log");
+        private static readonly StreamWriter Writer = new StreamWriter("PolarisServer.log", true);
 
         public static bool VerbosePackets = false;
 
@@ -142,6 +142,14 @@ namespace PolarisServer
 
             // Later we should probably only flush once every PosX amount of lines or on some other condition
             Writer.Flush();
+        }
+
+        public static void WriteHeader()
+        {
+            Writer.WriteLine();
+            Writer.WriteLine("--------------------------------------------------");
+            Writer.WriteLine("\t\t" + DateTime.Now);
+            Writer.WriteLine("--------------------------------------------------");
         }
     }
 }

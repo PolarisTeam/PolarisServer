@@ -104,6 +104,7 @@ namespace PolarisServer
             }
 
             // Fix up startup message [KeyPhact]
+            Logger.WriteHeader();
             Logger.Write(PolarisName + " - " + PolarisVersion + " (" + PolarisVersionName + ")");
             Logger.Write("By " + PolarisAuthor);
             Logger.Write(PolarisLicense);
