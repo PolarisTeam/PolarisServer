@@ -49,14 +49,14 @@ namespace PolarisServer.Object
                     {
                         var newObject = PSOObject.FromDBObject(dbObject);
                         objects.Add(newObject.Header.ID, newObject);
-                        Logger.WriteInternal("[OBJ] Loaded object {1} for zone {2} from the DB.", newObject.Name, zone);
+                        Logger.WriteInternal("[OBJ] Loaded object {0} for zone {1} from the DB.", newObject.Name, zone);
                     }
                 }
 
                 // Fallback
                 if (objects.Count < 1 && Directory.Exists("Resources/objects/" + zone))
                 {
-                    Logger.WriteWarning("[OBJ] No objects defined for zone {1} in the database, falling back to filesystem!", zone);
+                    Logger.WriteWarning("[OBJ] No objects defined for zone {0} in the database, falling back to filesystem!", zone);
                     var objectPaths = Directory.GetFiles("Resources/objects/" + zone);
                     Array.Sort(objectPaths);
                     foreach (var path in objectPaths)
