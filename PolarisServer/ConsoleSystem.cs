@@ -345,7 +345,7 @@ namespace PolarisServer
             changeThezone.Arguments.Add(new ConsoleCommandArgument("seed", false));
             changeThezone.Arguments.Add(new ConsoleCommandArgument("sizeX", false));
             changeThezone.Arguments.Add(new ConsoleCommandArgument("sizeY", false));
-            changeThezone.Arguments.Add(new ConsoleCommandArgument("rngEnable", false));
+            changeThezone.Arguments.Add(new ConsoleCommandArgument("templateNum", false));
 
             teleportPlayer.Help = "Spawns you elsewhere.";
             Commands.Add(changeThezone);

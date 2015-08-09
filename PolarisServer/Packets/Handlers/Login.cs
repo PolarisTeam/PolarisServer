@@ -99,8 +99,8 @@ namespace PolarisServer.Packets.Handlers
 
                 resp.WriteStruct(new ObjectHeader((uint)user.PlayerId, EntityType.Player));
                 resp.WriteFixedLengthUtf16("B001-Polaris", 0x20); // This is right
-                for (var i = 0; i < 0xB8 + 0xC; i++) // Read as two feilds, dunno what these blobs are
-                    resp.Write((byte)0);
+                for (var i = 0; i < 0xB8 + 0xC; i++) // Read as two feilds, dunno what these blobs are. They are needed for SOMETHING to make quests work though!
+                    resp.Write((byte)0x0);
 
                 context.SendPacket(0x11, 1, 4, resp.ToArray());
 
