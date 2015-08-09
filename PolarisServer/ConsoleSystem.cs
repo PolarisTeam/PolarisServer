@@ -208,8 +208,6 @@ namespace PolarisServer
             lock (_consoleLock)
             {
                 Console.Title = "Polaris - " + AssembleInfoBar();
-
-                FixCursorPosition();
             }
         }
 
