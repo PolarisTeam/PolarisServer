@@ -83,6 +83,8 @@
     <Compile Include="Packets\PSOPackets\SetScenePacket.cs" />
     <Compile Include="Packets\PSOPackets\SymbolArtList.cs" />
     <Compile Include="Packets\PSOPackets\TeleportTransferPacket.cs" />
+    <Compile Include="Party\Party.cs" />
+    <Compile Include="Party\PartyManager.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Client.cs" />
