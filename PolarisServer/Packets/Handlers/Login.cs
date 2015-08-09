@@ -3,6 +3,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using PolarisServer.Database;
 using PolarisServer.Packets.PSOPackets;
+using PolarisServer.Models;
 
 namespace PolarisServer.Packets.Handlers
 {
@@ -96,11 +97,9 @@ namespace PolarisServer.Packets.Handlers
                     return;
                 }
 
-                resp.Write((uint)user.PlayerId); // Player ID
-                resp.Write((uint)0); // Unknown
-                resp.Write((uint)0); // Unknown
-                resp.WriteFixedLengthUtf16("B001-DarkFox", 0x20);
-                for (var i = 0; i < 0xBC; i++)
+                resp.WriteStruct(new ObjectHeader((uint)user.PlayerId, EntityType.Player));
+                resp.WriteFixedLengthUtf16("B001-Polaris", 0x20); // This is right
+                for (var i = 0; i < 0xB8 + 0xC; i++) // Read as two feilds, dunno what these blobs are
                     resp.Write((byte)0);
 
                 context.SendPacket(0x11, 1, 4, resp.ToArray());
