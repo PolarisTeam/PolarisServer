@@ -356,6 +356,12 @@ namespace PolarisServer
             ImportNPC.Help = "Imports a folder of NPC spawn packets into the database.";
             Commands.Add(ImportNPC);
 
+            var ImportObject = new ConsoleCommand(ImportObjects, "importobjects");
+            ImportObject.Arguments.Add(new ConsoleCommandArgument("zone", false));
+            ImportObject.Arguments.Add(new ConsoleCommandArgument("objectfolder", false));
+            ImportObject.Help = "Imports a folder of object spawn packets into the database.";
+            Commands.Add(ImportObject);
+
             var tellLoc = new ConsoleCommand(TellPosition, "pos");
             tellLoc.Help = "Tells you your current location. (Need to be a client to use this.)";
             Commands.Add(tellLoc);
@@ -1012,6 +1018,61 @@ namespace PolarisServer
                 db.SaveChanges();
             }
                 
+        }
+
+        private void ImportObjects(string[] args, int length, string full, Client client)
+        {
+            string zone = args[1];
+            string folder = args[2];
+
+            var packetList = Directory.GetFiles(folder);
+            Array.Sort(packetList);
+
+            List<GameObject> newObjects = new List<GameObject>();
+            foreach (var path in packetList)
+            {
+                var data = File.ReadAllBytes(path);
+                PacketReader reader = new PacketReader(data);
+                PacketHeader header = reader.ReadStruct<PacketHeader>();
+                if (header.Type != 0x8 || header.Subtype != 0xB)
+                {
+                    Logger.WriteWarning("[WRN] File {0} not an Object spawn packet, skipping.", path);
+                    continue;
+                }
+
+                GameObject newObj = new GameObject();
+                newObj.ObjectID = (int)reader.ReadStruct<ObjectHeader>().ID;
+                var pos = reader.ReadEntityPosition();
+                newObj.RotX = pos.RotX;
+                newObj.RotY = pos.RotY;
+                newObj.RotZ = pos.RotZ;
+                newObj.RotW = pos.RotW;
+                   
+                newObj.PosX = pos.PosX;
+                newObj.PosY = pos.PosY;
+                newObj.PosZ = pos.PosZ;
+                reader.ReadInt16();
+                newObj.ObjectName = reader.ReadFixedLengthAscii(0x2C);
+                var objHeader = reader.ReadStruct<ObjectHeader>(); // Seems to always be blank...
+                if (objHeader.ID != 0)
+                    Logger.WriteWarning("[OBJ] It seems object {0} has a nonzero objHeader! ({1}) Investigate.", newObj.ObjectName, objHeader.ID);
+                newObj.ZoneName = zone;
+                var thingCount = reader.ReadUInt32();
+                newObj.ObjectFlags = new byte[thingCount * 4];
+                for (int i = 0; i < thingCount; i++)
+                {
+                    Buffer.BlockCopy(BitConverter.GetBytes(reader.ReadUInt32()), 0, newObj.ObjectFlags, i * 4, 4); // This should work
+                }
+                newObjects.Add(newObj);
+                Logger.WriteInternal("[OBJ] Adding new Object {0} to the database for zone {1}", newObj.ObjectName, zone);
+            }
+
+            using (var db = new PolarisEf())
+            {
+                db.GameObjects.AddRange(newObjects);
+                db.SaveChanges();
+            }
+
         }
 
         private void TellPosition(string[] args, int length, string full, Client client)

@@ -49,6 +49,7 @@ namespace PolarisServer.Object
                     {
                         var newObject = PSOObject.FromDBObject(dbObject);
                         objects.Add(newObject.Header.ID, newObject);
+                        allTheObjects.Add(newObject.Header.ID, newObject);
                         Logger.WriteInternal("[OBJ] Loaded object {0} for zone {1} from the DB.", newObject.Name, zone);
                     }
                 }
