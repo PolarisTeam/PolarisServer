@@ -118,7 +118,6 @@ namespace PolarisServer.Packets.Handlers
                 context.SendPacket(new SystemMessagePacket(PolarisApp.Config.motd, SystemMessagePacket.MessageType.AdminMessageInstant));
             }
 
-            // context.SendPacket(new SystemMessagePacket("I looooooove my Raxxy <3", SystemMessagePacket.MessageType.AdminMessage));
         }
 
         #endregion

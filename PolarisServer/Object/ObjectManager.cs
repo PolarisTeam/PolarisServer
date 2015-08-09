@@ -30,49 +30,62 @@ namespace PolarisServer.Object
 
         public PSOObject[] GetObjectsForZone(string zone)
         {
-            if (zone == "tpmap")
+            if (zone == "tpmap") // Return empty object array for an tp'd map for now (We spawn in a teleporter manually)
             {
                 return new PSOObject[0];
             }
             if (!zoneObjects.ContainsKey(zone))
             {
-                //TODO Maybe make some resource management class for this stuff?
-                if (!Directory.Exists("Resources/objects/" + zone))
+                Dictionary<ulong, PSOObject> objects = new Dictionary<ulong, PSOObject>();
+
+                // Collect from db
+                using (var db = new PolarisEf())
                 {
-                    throw new Exception(String.Format("Unable to get objects for Zone {0}, Object folder not present.", zone));
+                    var dbObjects = from dbo in db.GameObjects
+                                    where dbo.ZoneName == zone
+                                    select dbo;
+
+                    foreach(var dbObject in dbObjects)
+                    {
+                        var newObject = PSOObject.FromDBObject(dbObject);
+                        objects.Add(newObject.Header.ID, newObject);
+                        Logger.WriteInternal("[OBJ] Loaded object {1} for zone {2} from the DB.", newObject.Name, zone);
+                    }
                 }
 
-                Dictionary<ulong, PSOObject> objects = new Dictionary<ulong, PSOObject>();
-                var objectPaths = Directory.GetFiles("Resources/objects/" + zone);
-                Array.Sort(objectPaths);
-                foreach (var path in objectPaths)
+                // Fallback
+                if (objects.Count < 1 && Directory.Exists("Resources/objects/" + zone))
                 {
-                    if (Path.GetExtension(path) == ".bin")
+                    Logger.WriteWarning("[OBJ] No objects defined for zone {1} in the database, falling back to filesystem!", zone);
+                    var objectPaths = Directory.GetFiles("Resources/objects/" + zone);
+                    Array.Sort(objectPaths);
+                    foreach (var path in objectPaths)
                     {
-                        var newObject = PSOObject.FromPacketBin(File.ReadAllBytes(path));
-                        objects.Add(newObject.Header.ID, newObject);
-                        allTheObjects.Add(newObject.Header.ID, newObject);
-                        Logger.WriteInternal("[OBJ] Loaded object ID {0} with name {1} pos: ({2}, {3}, {4})", newObject.Header.ID, newObject.Name, newObject.Position.PosX,
-                            newObject.Position.PosY, newObject.Position.PosZ);
-                    }
-                    else if (Path.GetExtension(path) == ".json")
-                    {
-                        var newObject = JsonConvert.DeserializeObject<PSOObject>(File.ReadAllText(path));
-                        objects.Add(newObject.Header.ID, newObject);
-                        allTheObjects.Add(newObject.Header.ID, newObject);
-                        Logger.WriteInternal("[OBJ] Loaded object ID {0} with name {1} pos: ({2}, {3}, {4})", newObject.Header.ID, newObject.Name, newObject.Position.PosX,
-                            newObject.Position.PosY, newObject.Position.PosZ);
-                    }
+                        if (Path.GetExtension(path) == ".bin")
+                        {
+                            var newObject = PSOObject.FromPacketBin(File.ReadAllBytes(path));
+                            objects.Add(newObject.Header.ID, newObject);
+                            allTheObjects.Add(newObject.Header.ID, newObject);
+                            Logger.WriteInternal("[OBJ] Loaded object ID {0} with name {1} pos: ({2}, {3}, {4})", newObject.Header.ID, newObject.Name, newObject.Position.PosX,
+                                newObject.Position.PosY, newObject.Position.PosZ);
+                        }
+                        else if (Path.GetExtension(path) == ".json")
+                        {
+                            var newObject = JsonConvert.DeserializeObject<PSOObject>(File.ReadAllText(path));
+                            objects.Add(newObject.Header.ID, newObject);
+                            allTheObjects.Add(newObject.Header.ID, newObject);
+                            Logger.WriteInternal("[OBJ] Loaded object ID {0} with name {1} pos: ({2}, {3}, {4})", newObject.Header.ID, newObject.Name, newObject.Position.PosX,
+                                newObject.Position.PosY, newObject.Position.PosZ);
+                        }
+                    } 
                 }
 
                 zoneObjects.Add(zone, objects);
-                return objects.Values.ToArray();
 
             }
-            else
-            {
-                return zoneObjects[zone].Values.ToArray();
-            }
+
+            return zoneObjects[zone].Values.ToArray();
+
         }
 
         internal PSONPC[] getNPCSForZone(string zone)
@@ -106,6 +119,7 @@ namespace PolarisServer.Object
 
         internal PSOObject getObjectByID(string zone, uint ID)
         {
+            //FIXME: This has been commented out because we were getting object errors with possible shared objects? That or it was just object 1 which is an edge case.
             //if(!zoneObjects.ContainsKey(zone) || !zoneObjects[zone].ContainsKey(ID))
             //{
             //    throw new Exception(String.Format("Object ID {0} does not exist in {1}!", ID, zone));

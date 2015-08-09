@@ -66,6 +66,27 @@ namespace PolarisServer.Database
         public float PosZ { get; set; }
     }
 
+    public class GameObject
+    {
+        [Key, Column(Order = 1)]
+        public int ObjectID { get; set; }
+        [Key, Column(Order = 2)]
+        public string ZoneName { get; set; }
+
+        public string ObjectName { get; set; }
+
+        public byte[] ObjectFlags { get; set; }
+
+        public float RotX { get; set; }
+        public float RotY { get; set; }
+        public float RotZ { get; set; }
+        public float RotW { get; set; }
+
+        public float PosX { get; set; }
+        public float PosY { get; set; }
+        public float PosZ { get; set; }
+    }
+
     [DbConfigurationType(typeof(MySqlEFConfiguration))]
     public class PolarisEf : DbContext
     {
@@ -74,6 +95,7 @@ namespace PolarisServer.Database
         public DbSet<Character> Characters { get; set; }
         public DbSet<Teleport> Teleports { get; set; }
         public DbSet<NPC> NPCs { get; set; }
+        public DbSet<GameObject> GameObjects { get; set; }
 
         public PolarisEf()
             : base(

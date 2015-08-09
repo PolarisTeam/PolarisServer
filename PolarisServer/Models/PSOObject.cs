@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-
+using PolarisServer.Database;
 using PolarisServer.Packets;
 
 namespace PolarisServer.Models
@@ -13,6 +13,11 @@ namespace PolarisServer.Models
         public struct PSOObjectThing
         {
             public UInt32 Data;
+
+            public PSOObjectThing(UInt32 data)
+            {
+                Data = data;
+            }
         }
 
         public ObjectHeader Header { get; set; }
@@ -57,6 +62,23 @@ namespace PolarisServer.Models
             }
 
             return obj;
+        }
+
+        internal static PSOObject FromDBObject(GameObject dbObject)
+        {
+            PSOObject psoObj = new PSOObject();
+            psoObj.Header = new ObjectHeader((uint)dbObject.ObjectID, EntityType.Object);
+            psoObj.Name = dbObject.ObjectName;
+            psoObj.Position = new PSOLocation(dbObject.RotX, dbObject.RotY, dbObject.RotZ, dbObject.RotW, dbObject.PosX, dbObject.PosY, dbObject.PosZ);
+
+            int thingCount = dbObject.ObjectFlags.Length / 4; // I hope this will work
+            psoObj.Things = new PSOObjectThing[thingCount];
+            for(int i = 0; i < psoObj.Things.Length; i++)
+            {
+                psoObj.Things[i] = new PSOObjectThing(BitConverter.ToUInt32(dbObject.ObjectFlags, 4 * i)); // This should work?
+            }
+
+            return psoObj;
         }
     }
 
