@@ -350,6 +350,22 @@ namespace PolarisServer
             teleportPlayer.Help = "Spawns you elsewhere.";
             Commands.Add(changeThezone);
 
+            var SpawnObjectCommand = new ConsoleCommand(SpawnObject, "spawnobject", "sobj");
+            SpawnObjectCommand.Arguments.Add(new ConsoleCommandArgument("username", true));
+            SpawnObjectCommand.Arguments.Add(new ConsoleCommandArgument("objectName", false));
+            SpawnObjectCommand.Arguments.Add(new ConsoleCommandArgument("entityID", false));
+
+            SpawnObjectCommand.Arguments.Add(new ConsoleCommandArgument("RotX", false));
+            SpawnObjectCommand.Arguments.Add(new ConsoleCommandArgument("RotY", false));
+            SpawnObjectCommand.Arguments.Add(new ConsoleCommandArgument("RotZ", false));
+            SpawnObjectCommand.Arguments.Add(new ConsoleCommandArgument("RotW", false));
+            SpawnObjectCommand.Arguments.Add(new ConsoleCommandArgument("PosX", false));
+            SpawnObjectCommand.Arguments.Add(new ConsoleCommandArgument("PosY", false));
+            SpawnObjectCommand.Arguments.Add(new ConsoleCommandArgument("PosZ", false));
+
+            SpawnObjectCommand.Help = "Spawns an object. (Does not contain object arguments/flags.";
+            Commands.Add(SpawnObjectCommand);
+
             var ImportNPC = new ConsoleCommand(ImportNPCs, "importnpc");
             ImportNPC.Arguments.Add(new ConsoleCommandArgument("zone", false));
             ImportNPC.Arguments.Add(new ConsoleCommandArgument("npcfolder", false));
@@ -972,6 +988,33 @@ namespace PolarisServer
 
             context.SendPacket(new NoPayloadPacket(0x03, 0x2B));
 
+        }
+
+        private void SpawnObject(string[] args, int length, string full, Client client)
+        {
+            if(client == null)
+            {
+                var id = Helper.FindPlayerByUsername(args[1]);
+                if (id == -1)
+                    return;
+
+                client = PolarisApp.Instance.Server.Clients[id];
+            }
+            else
+            {
+                string[] newargs = new string[args.Length + 1];
+                newargs[0] = "";
+                newargs[1] = "";
+                Array.Copy(args, 1, newargs, 2, 9);
+                args = newargs;
+            }
+            PSOObject obj = new PSOObject();
+            obj.Name = args[2];
+            obj.Header = new ObjectHeader((uint)Int32.Parse(args[3]), EntityType.Object);
+            obj.Position = new PSOLocation(float.Parse(args[4]), float.Parse(args[5]), float.Parse(args[6]), float.Parse(args[7]), float.Parse(args[8]), float.Parse(args[9]), float.Parse(args[10]));
+            obj.Things = new PSOObject.PSOObjectThing[0];
+
+            client.SendPacket(0x8, 0xB, 0x0, obj.GenerateSpawnBlob());
         }
 
         private void ImportNPCs(string[] args, int length, string full, Client client)
