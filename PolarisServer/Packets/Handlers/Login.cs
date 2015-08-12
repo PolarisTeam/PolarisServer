@@ -97,10 +97,34 @@ namespace PolarisServer.Packets.Handlers
                     return;
                 }
 
+                // TODO: Explore this data! Some if it seems really important. (May contain level cap setting + more)
+
                 resp.WriteStruct(new ObjectHeader((uint)user.PlayerId, EntityType.Player));
                 resp.WriteFixedLengthUtf16("B001-Polaris", 0x20); // This is right
-                for (var i = 0; i < 0xB8 + 0xC; i++) // Read as two feilds, dunno what these blobs are. They are needed for SOMETHING to make quests work though!
-                    resp.Write((byte)0x0);
+                // Set things to default values; Dunno these purposes yet.
+                resp.Write(0x42700000); //0
+                resp.Write(7);          //4
+                resp.Write(0xA);        //8
+                resp.Write(1);          //C
+                resp.Write(0x41200000); //10
+                resp.Write(0x40A00000); //14
+                resp.Write(11);         //18
+                resp.Write(0x3F800000); //1C
+                resp.Write(0x42960000); //20
+                resp.Write(20);         //24
+                resp.Write(0x41200000); //28
+                resp.Write(0);          //2C? (Not set in ctor)
+
+                // Some array? Let's empty it for now.
+                for(int i = 0; i < 32; i++)
+                {
+                    resp.Write(0); 
+                }
+
+                resp.Write(0x91A2B);    //B0
+                resp.Write(0x91A2B);    //B4
+
+                resp.WriteBytes(0, 0xC);
 
                 context.SendPacket(0x11, 1, 4, resp.ToArray());
 
