@@ -1,8 +1,6 @@
-﻿using PolarisServer.Packets.PSOPackets;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System;
+
+using PolarisServer.Packets.PSOPackets;
 
 namespace PolarisServer.Packets.Handlers
 {
@@ -38,7 +36,7 @@ namespace PolarisServer.Packets.Handlers
         public override void HandlePacket(Client context, byte flags, byte[] data, uint position, uint size)
         {
             // What am I doing
-            PSOPackets.QuestListPacket.QuestDefiniton[] defs = new PSOPackets.QuestListPacket.QuestDefiniton[1];
+            QuestListPacket.QuestDefiniton[] defs = new PSOPackets.QuestListPacket.QuestDefiniton[1];
             for (int i = 0; i < defs.Length; i++)
             {
                 defs[i].dateOrSomething = "2013/01/25";
@@ -57,8 +55,7 @@ namespace PolarisServer.Packets.Handlers
     {
         public override void HandlePacket(Client context, byte flags, byte[] data, uint position, uint size)
         {
-            // What am I doing
-            PSOPackets.QuestDifficultyPacket.QuestDifficulty[] diffs = new QuestDifficultyPacket.QuestDifficulty[1];
+            QuestDifficultyPacket.QuestDifficulty[] diffs = new QuestDifficultyPacket.QuestDifficulty[1];
             for (int i = 0; i < diffs.Length; i++)
             {
                 diffs[i].dateOrSomething = "2013/01/25";

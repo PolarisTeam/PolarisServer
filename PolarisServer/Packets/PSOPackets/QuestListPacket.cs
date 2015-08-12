@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using PolarisServer.Models;
 using System.Runtime.InteropServices;
+
+using PolarisServer.Models;
 
 namespace PolarisServer.Packets.PSOPackets
 {

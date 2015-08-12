@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using PolarisServer.Models;
 using System.Runtime.InteropServices;
+
+using PolarisServer.Models;
 
 namespace PolarisServer.Packets.PSOPackets
 {
@@ -39,8 +37,7 @@ namespace PolarisServer.Packets.PSOPackets
         {
             PacketWriter writer = new PacketWriter();
             // TODO: This sub/xor needs to be checked, it's more than likely wrong
-            // writer.WriteMagic((uint)questdiffs.Length, 0x1DB0, 0xC5);
-            writer.Write((int)0x294D); // Just directly write the sub/xor for now
+            writer.WriteMagic((uint)questdiffs.Length, 0x292C, 0x5B);
             foreach (QuestDifficulty d in questdiffs)
             {
                 writer.WriteStruct(d);
