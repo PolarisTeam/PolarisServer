@@ -28,7 +28,7 @@ In the future we will hopefully have a buildserver, xbuild / msbuild support and
 As the `Polaris Private Server` is a work-in-progress alpha, you can find the latest unstable built version here @ [build.polaris-server.net](http://build.polaris-server.net/job/PolarisServer/lastSuccessfulBuild/artifact/PolarisServer/bin/Debug/PolarisServer-Bundle.zip)
 
 ### Documentation
-All available documentation for the server can be found on the project wiki @ [wiki.polaris-server.net](http://wiki.polaris-server.net)
+All available documentation for the server can be found on the project wiki @ [pso2proxy.cyberkitsune.net/wiki](http://pso2proxy.cyberkitsune.net/wiki)
 
 ## Licensing
 All code is licensed under the
