@@ -83,8 +83,8 @@ namespace PolarisServer
                 };
                 entries.Add(entry);
             }
-            writer.WriteStruct(new PacketHeader(Marshal.SizeOf(typeof(ShipEntry)) * entries.Count + 12, 0x11, 0x3D, 0x4,
-                0x0));
+            PacketHeader header = new PacketHeader(8 + Marshal.SizeOf(typeof(ShipEntry)) * entries.Count + 12, 0x11, 0x3D, 0x4, 0x0);
+            writer.WriteStruct(header);
             writer.WriteMagic((uint)entries.Count, 0xE418, 81);
             foreach (var entry in entries)
                 writer.WriteStruct(entry);
