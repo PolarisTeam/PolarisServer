@@ -62,6 +62,7 @@
     <Compile Include="Config.cs" />
     <Compile Include="ConsoleSystem.cs" />
     <Compile Include="Logger.cs" />
+    <Compile Include="Models\PSO2Item.cs" />
     <Compile Include="Models\PSOData.cs" />
     <Compile Include="Models\PSOObject.cs" />
     <Compile Include="Object\ObjectManager.cs" />
