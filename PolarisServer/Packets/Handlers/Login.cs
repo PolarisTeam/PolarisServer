@@ -111,14 +111,22 @@ namespace PolarisServer.Packets.Handlers
                 resp.Write(11);         //18
                 resp.Write(0x3F800000); //1C
                 resp.Write(0x42960000); //20
-                resp.Write(20);         //24
+                resp.Write(40);         //24
                 resp.Write(0x41200000); //28
                 resp.Write(0);          //2C? (Not set in ctor)
-
-                // Some array? Let's empty it for now.
-                for(int i = 0; i < 32; i++)
+                for(int i = 0; i < 10; i++)
                 {
-                    resp.Write(0); 
+                    resp.Write(1065353216);
+                }
+                // Some array? Let's empty it for now.
+                for(int i = 0; i < 20; i++)
+                {
+                    resp.Write(1120403456); 
+                }
+
+                for(int i = 0; i < 2; i++)
+                {
+                    resp.Write(596523);
                 }
 
                 resp.Write(0x91A2B);    //B0
