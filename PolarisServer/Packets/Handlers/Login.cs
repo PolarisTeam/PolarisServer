@@ -130,9 +130,7 @@ namespace PolarisServer.Packets.Handlers
                 resp.Write(0x91A2B);    //B0
                 resp.Write(0x91A2B);    //B4
 
-                resp.Write(15);
-                resp.Write(5);
-                resp.Write(0);
+                resp.WriteBytes(0, 12);
 
                 context.SendPacket(0x11, 1, 4, resp.ToArray());
 
