@@ -109,11 +109,11 @@ namespace PolarisServer.Packets.Handlers
                 resp.Write(0x41200000); //10
                 resp.Write(0x40A00000); //14
                 resp.Write(11);         //18
-                resp.Write(0x3F800000); //1C
+                resp.Write(0x3F800000); //1C (1 as a float)
                 resp.Write(0x42960000); //20
                 resp.Write(40);         //24
                 resp.Write(0x41200000); //28
-                resp.Write(0);          //2C? (Not set in ctor)
+                resp.Write(1);          //2C?
 
                 //WHAT
                 for(int i = 0; i < 10; i++)
