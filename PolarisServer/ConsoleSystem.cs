@@ -256,6 +256,11 @@ namespace PolarisServer
             echo.Arguments.Add(new ConsoleCommandArgument("text", false));
             Commands.Add(echo);
 
+            var lua = new ConsoleCommand(RunLUA, "lua");
+            lua.Arguments.Add(new ConsoleCommandArgument("user", true));
+            lua.Arguments.Add(new ConsoleCommandArgument("lua", false));
+            Commands.Add(lua);
+
             // Announce
             var announce = new ConsoleCommand(Announce, "announce", "a");
             announce.Arguments.Add(new ConsoleCommandArgument("Message", false));
@@ -1015,6 +1020,33 @@ namespace PolarisServer
             obj.Things = new PSOObject.PSOObjectThing[0];
 
             client.SendPacket(0x8, 0xB, 0x0, obj.GenerateSpawnBlob());
+        }
+
+        private void RunLUA(string[] args, int length, string full, Client client)
+        {
+            if (client == null)
+            {
+                var id = Helper.FindPlayerByUsername(args[1]);
+                if (id == -1)
+                    return;
+
+                client = PolarisApp.Instance.Server.Clients[id];
+            }
+            else
+            {
+                string[] newargs = new string[args.Length + 1];
+                newargs[0] = "";
+                newargs[1] = "";
+                Array.Copy(args, 1, newargs, 2, 9);
+                args = newargs;
+            }
+
+            PacketWriter luaPacket = new PacketWriter();
+            luaPacket.Write((UInt16)1);
+            luaPacket.Write((UInt16)1);
+            luaPacket.WriteAscii(String.Join(" ", args, 2, args.Length - 2), 0xD975, 0x2F);
+
+            client.SendPacket(0x10, 0x3, 0x4, luaPacket.ToArray());
         }
 
         private void ImportNPCs(string[] args, int length, string full, Client client)
