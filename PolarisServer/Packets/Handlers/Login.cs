@@ -114,19 +114,19 @@ namespace PolarisServer.Packets.Handlers
                 resp.Write(40);         //24
                 resp.Write(0x41200000); //28
                 resp.Write(1);          //2C?
-                resp.Write(1120403456);
+                resp.Write(1120403456); //30
 
                 //WHAT
-                for(int i = 0; i < 8; i++)
+                for(int i = 0; i < 10; i++)
                 {
                     resp.Write(1065353216);
                 }
                 //ARE
-                for(int i = 0; i < 24; i++)
+                for(int i = 0; i < 21; i++)
                 {
                     resp.Write(1120403456); 
                 }
-
+                //THESE?
                 resp.Write(0x91A2B);    //B0
                 resp.Write(0x91A2B);    //B4
 
