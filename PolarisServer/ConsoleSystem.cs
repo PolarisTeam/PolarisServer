@@ -1037,7 +1037,7 @@ namespace PolarisServer
                 string[] newargs = new string[args.Length + 1];
                 newargs[0] = "";
                 newargs[1] = "";
-                Array.Copy(args, 1, newargs, 2, 9);
+                Array.Copy(args, 1, newargs, 2, args.Length - 1);
                 args = newargs;
             }
 

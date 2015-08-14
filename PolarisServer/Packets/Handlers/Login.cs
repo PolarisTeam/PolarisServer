@@ -104,7 +104,7 @@ namespace PolarisServer.Packets.Handlers
                 // Set things to default values; Dunno these purposes yet.
                 resp.Write(0x42700000); //0
                 resp.Write(7);          //4
-                resp.Write(0xFF);        //8 - Level Cap!
+                resp.Write(0xFF);       //8 - Level Cap!
                 resp.Write(1);          //C
                 resp.Write(0x41200000); //10
                 resp.Write(0x40A00000); //14
