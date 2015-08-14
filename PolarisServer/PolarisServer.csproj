@@ -73,6 +73,7 @@
     <Compile Include="Packets\Handlers\ReturnToLobbyHandler.cs" />
     <Compile Include="Packets\Handlers\SymbolArtHandler.cs" />
     <Compile Include="Packets\PSOPackets\GuildInfoPacket.cs" />
+    <Compile Include="Packets\PSOPackets\LoginDataPacket.cs" />
     <Compile Include="Packets\PSOPackets\MovementPacket.cs" />
     <Compile Include="Packets\PSOPackets\ObjectActionPacket.cs" />
     <Compile Include="Packets\PSOPackets\PalettePacket.cs" />

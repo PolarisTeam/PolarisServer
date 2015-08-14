@@ -79,60 +79,14 @@ namespace PolarisServer.Packets.Handlers
                     }
                 }
 
-                // Mystery packet
+                /* Mystery packet
                 var mystery = new PacketWriter();
                 mystery.Write((uint)100);
-                // SendPacket(0x11, 0x49, 0, mystery.ToArray());
+                SendPacket(0x11, 0x49, 0, mystery.ToArray()); */
 
                 // Login response packet
-                var resp = new PacketWriter();
-                resp.Write((uint)((user == null) ? 1 : 0)); // Status flag: 0=success, 1=error
-                resp.WriteUtf16(error, 0x8BA4, 0xB6);
-
-                if (user == null)
-                {
-                    for (var i = 0; i < 0xEC; i++)
-                        resp.Write((byte)0);
-                    context.SendPacket(0x11, 1, 4, resp.ToArray());
-                    return;
-                }
-
-                // TODO: Explore this data! Some if it seems really important. (May contain level cap setting + more)
-
-                resp.WriteStruct(new ObjectHeader((uint)user.PlayerId, EntityType.Player));
-                resp.WriteFixedLengthUtf16("B001-Polaris", 0x20); // This is right
-                // Set things to default values; Dunno these purposes yet.
-                resp.Write(0x42700000); //0
-                resp.Write(7);          //4
-                resp.Write(0xFF);       //8 - Level Cap!
-                resp.Write(1);          //C
-                resp.Write(0x41200000); //10
-                resp.Write(0x40A00000); //14
-                resp.Write(11);         //18
-                resp.Write(0x3F800000); //1C (1 as a float)
-                resp.Write(0x42960000); //20
-                resp.Write(40);         //24
-                resp.Write(0x41200000); //28
-                resp.Write(1);          //2C?
-                resp.Write(1120403456); //30
-
-                //WHAT
-                for(int i = 0; i < 10; i++)
-                {
-                    resp.Write(1065353216);
-                }
-                //ARE
-                for(int i = 0; i < 21; i++)
-                {
-                    resp.Write(1120403456); 
-                }
-                //THESE?
-                resp.Write(0x91A2B);    //B0
-                resp.Write(0x91A2B);    //B4
-
-                resp.WriteBytes(0, 12);
-
-                context.SendPacket(0x11, 1, 4, resp.ToArray());
+               
+                context.SendPacket(new LoginDataPacket("Polaris Block 1", error, (user == null) ? (uint)0 : (uint)user.PlayerId));
 
                 // Settings packet
                 var settings = new PacketWriter();
