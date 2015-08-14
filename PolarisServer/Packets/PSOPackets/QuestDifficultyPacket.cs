@@ -36,7 +36,7 @@ namespace PolarisServer.Packets.PSOPackets
         public override byte[] Build()
         {
             PacketWriter writer = new PacketWriter();
-            // TODO: This sub/xor needs to be checked, it's more than likely wrong
+            
             writer.WriteMagic((uint)questdiffs.Length, 0x292C, 0x5B);
             foreach (QuestDifficulty d in questdiffs)
             {
