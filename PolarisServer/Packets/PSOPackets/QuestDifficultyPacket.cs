@@ -50,10 +50,11 @@ namespace PolarisServer.Packets.PSOPackets
             return new PacketHeader(0xB, 0x1A, 0x4);
         }
 
+        //Size: 308 bytes, confirmed in unpacker
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
         public unsafe struct QuestDifficulty
         {
-            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32 - 8)]
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 24)]
             public string dateOrSomething;
             public int field_24;
             public int field_28;
@@ -72,6 +73,7 @@ namespace PolarisServer.Packets.PSOPackets
             public QuestDifficultyEntry difficulty8;
         }
 
+        //Size: 32, confirmed in ctor
         public struct QuestDifficultyEntry
         {
             public uint unknown1;
