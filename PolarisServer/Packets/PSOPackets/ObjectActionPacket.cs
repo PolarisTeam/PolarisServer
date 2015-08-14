@@ -40,7 +40,7 @@ namespace PolarisServer.Packets.PSOPackets
 
         public override PacketHeader GetHeader()
         {
-            return new PacketHeader(0x4, 0x15, (PacketFlags.EntityHeader | PacketFlags.StreamPacked));
+            return new PacketHeader(0x4, 0x15, (PacketFlags.OBJECT_RELATED | PacketFlags.PACKED));
         }
     }
 }

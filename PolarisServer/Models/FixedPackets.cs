@@ -37,10 +37,10 @@ namespace PolarisServer.Models
     public enum PacketFlags : byte
     {
         None,
-        StreamPacked = 0x4,
-        Flag10 = 0x10,
-        FullMovement = 0x20,
-        EntityHeader = 0x40
+        PACKED = 0x4,
+        FLAG_10 = 0x10,
+        FULL_MOVEMENT = 0x20,
+        OBJECT_RELATED = 0x40
     }
 }
 
