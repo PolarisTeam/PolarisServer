@@ -81,8 +81,7 @@ namespace PolarisServer.Packets.Handlers
         }
     }
 
-    // TODO: Attach the right packethandler
-    // [PacketHandlerAttr(0xB, 0x..)]
+    [PacketHandlerAttr(0xE, 0xC)]
     class QuestDifficultyStartHandler : PacketHandler
     {
         // Go go maximum code duplication (for now)

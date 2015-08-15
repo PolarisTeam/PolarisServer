@@ -20,8 +20,8 @@ namespace PolarisServer.Packets.PSOPackets
         {
             PacketWriter writer = new PacketWriter();
 
-            writer.Write(0x753A); // Magic, needs proper sub/xor
-            writer.Write((int)0);
+            writer.Write(0x753A); // Unknown
+            writer.Write((int)0); // Unknown
             writer.WriteStruct<QuestListPacket.QuestDefiniton>(data);
             writer.WriteStruct<QuestDifficultyPacket.QuestDifficulty>(difficulty);
 
@@ -30,7 +30,7 @@ namespace PolarisServer.Packets.PSOPackets
 
         public override PacketHeader GetHeader()
         {
-            return new PacketHeader(0xB, 0x31, 0x4);
+            return new PacketHeader(0xE, 0x31);
         }
     }
 }
