@@ -40,9 +40,13 @@ namespace PolarisServer.Packets.Handlers
             for (int i = 0; i < defs.Length; i++)
             {
                 defs[i].dateOrSomething = "2013/01/25";
-                defs[i].questNameString = 20070;
-                defs[i].needsToBeNonzero = 0x36;
-                defs[i].getsSetToWord = 0xFFFF;
+                defs[i].needsToBeNonzero = 0x00000020;
+                defs[i].getsSetToWord = 0x0000000B;
+                defs[i].questNameString = 30010;
+                defs[i].playTime = (byte)QuestListPacket.EstimatedTime.Short;
+                defs[i].partyType = (byte)QuestListPacket.PartyType.SinglePartyQuest;
+                defs[i].difficulties = (byte)QuestListPacket.Difficulties.Normal | (byte)QuestListPacket.Difficulties.hard | (byte)QuestListPacket.Difficulties.VeryHard | (byte)QuestListPacket.Difficulties.SuperHard;
+                defs[i].requiredLevel = 1;
             }
 
             context.SendPacket(new QuestListPacket(defs));
@@ -61,7 +65,7 @@ namespace PolarisServer.Packets.Handlers
                 diffs[i].dateOrSomething = "2013/01/25";
                 diffs[i].something = 0x20;
                 diffs[i].something2 = 0x0B;
-                diffs[i].questNameString = 0x753A;
+                diffs[i].questNameString = 30010;
 
                 // These are likely bitfields
                 diffs[i].something3 = 0x00030301;
@@ -70,7 +74,7 @@ namespace PolarisServer.Packets.Handlers
             context.SendPacket(new QuestDifficultyPacket(diffs));
 
             // [K873] I believe this is the correct packet, but it causes an infinite send/recieve loop, we're probably just missing something else
-            // context.SendPacket(new NoPayloadPacket(0xB, 0x1C));
+            context.SendPacket(new NoPayloadPacket(0xB, 0x1C));
         }
     }
 }

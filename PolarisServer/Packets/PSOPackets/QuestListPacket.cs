@@ -110,13 +110,13 @@ namespace PolarisServer.Packets.PSOPackets
             public int field_EC;
             public UInt16 field_F0;
             public UInt16 field_F2;
-            public UInt16 field_F4;
-            public char field_F6;
-            public char field_F7;
-            public char field_F8;
-            public char field_F9;
+            public UInt16 questBitfield1;
+            public byte playTime;
+            public byte partyType;
+            public byte difficulties;
+            public byte difficultiesCompleted;
             public char field_FA;
-            public char field_FB;
+            public byte requiredLevel;
             public char field_FC;
             public char field_FD;
             public char field_FE;
@@ -131,8 +131,8 @@ namespace PolarisServer.Packets.PSOPackets
             public int field_108;
             public int field_10C;
             public short field_110;
-            public byte playtime;
-            public byte partyType;
+            public byte field_112;
+            public byte field_113;
             public QuestDefThing field_114_1;
             public QuestDefThing field_114_2;
             public QuestDefThing field_114_3;
@@ -153,11 +153,11 @@ namespace PolarisServer.Packets.PSOPackets
 
         public struct QuestDefThing
         {
-            int field_0;
-            int field_4;
-            char field_8;
-            char field_9;
-            UInt16 field_A;
+            public int field_0;
+            public int field_4;
+            public char field_8;
+            public char field_9;
+            public UInt16 field_A;
         }
 
         [Flags]
@@ -171,7 +171,7 @@ namespace PolarisServer.Packets.PSOPackets
 
         public enum PartyType
         {
-            SoloQuest = 1,
+            SoloQuest,
             SinglePartyQuest,
             MultiPartyQuest,
         }
