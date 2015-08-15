@@ -88,6 +88,9 @@ namespace PolarisServer.Packets.Handlers
                
                 context.SendPacket(new LoginDataPacket("Polaris Block 1", error, (user == null) ? (uint)0 : (uint)user.PlayerId));
 
+                if (user == null)
+                    return;
+
                 // Settings packet
                 var settings = new PacketWriter();
                 settings.WriteAscii(user.SettingsIni, 0x54AF, 0x100);
