@@ -30,6 +30,9 @@ namespace PolarisServer.Packets.Handlers
 
             }
 
+            // Initialize you in an empty party
+            context.SendPacket(new PartyInitPacket(new Models.Character[1] { context.Character }));
+
             // Transition to the loading screen
             context.SendPacket(new NoPayloadPacket(0x3, 0x4));
 
