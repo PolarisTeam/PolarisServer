@@ -39,7 +39,7 @@ namespace PolarisServer.Packets.Handlers
             QuestListPacket.QuestDefiniton[] defs = new PSOPackets.QuestListPacket.QuestDefiniton[1];
             for (int i = 0; i < defs.Length; i++)
             {
-                defs[i].dateOrSomething = "2013/01/25";
+                defs[i].dateOrSomething = "2012/01/05";
                 defs[i].needsToBeNonzero = 0x00000020;
                 defs[i].getsSetToWord = 0x0000000B;
                 defs[i].questNameString = 30010;
@@ -47,6 +47,9 @@ namespace PolarisServer.Packets.Handlers
                 defs[i].partyType = (byte)QuestListPacket.PartyType.SinglePartyQuest;
                 defs[i].difficulties = (byte)QuestListPacket.Difficulties.Normal | (byte)QuestListPacket.Difficulties.hard | (byte)QuestListPacket.Difficulties.VeryHard | (byte)QuestListPacket.Difficulties.SuperHard;
                 defs[i].requiredLevel = 1;
+                // Not sure why but these need to be set for the quest to be enabled
+                defs[i].field_FF = 0xF1;
+                defs[i].field_101 = 1;
             }
 
             context.SendPacket(new QuestListPacket(defs));
@@ -62,7 +65,7 @@ namespace PolarisServer.Packets.Handlers
             QuestDifficultyPacket.QuestDifficulty[] diffs = new QuestDifficultyPacket.QuestDifficulty[1];
             for (int i = 0; i < diffs.Length; i++)
             {
-                diffs[i].dateOrSomething = "2013/01/25";
+                diffs[i].dateOrSomething = "2012/01/05";
                 diffs[i].something = 0x20;
                 diffs[i].something2 = 0x0B;
                 diffs[i].questNameString = 30010;

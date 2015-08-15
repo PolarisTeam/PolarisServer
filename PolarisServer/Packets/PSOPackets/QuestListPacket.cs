@@ -86,8 +86,8 @@ namespace PolarisServer.Packets.PSOPackets
             public int field_94;
             public int field_98;
             public UInt16 field_9C;
-            public char field_9E;
-            public char field_9F;
+            public byte field_9E;
+            public byte field_9F;
             public int field_A0;
             public int field_A4;
             public int field_A8;
@@ -106,7 +106,7 @@ namespace PolarisServer.Packets.PSOPackets
             public int field_DC;
             public int field_E0;
             public int field_E4;
-            public int field_E8;
+            public int field_E8; // Maybe a flags
             public int field_EC;
             public UInt16 field_F0;
             public UInt16 field_F2;
@@ -115,18 +115,18 @@ namespace PolarisServer.Packets.PSOPackets
             public byte partyType;
             public byte difficulties;
             public byte difficultiesCompleted;
-            public char field_FA;
+            public byte field_FA;
+            public byte field_FB;
             public byte requiredLevel;
-            public char field_FC;
-            public char field_FD;
-            public char field_FE;
-            public char field_FF;
-            public char field_100;
-            public char field_101;
-            public char field_102;
-            public char field_103;
-            public char field_104;
-            public char field_105;
+            public byte field_FD;
+            public byte field_FE;
+            public byte field_FF;
+            public byte field_100;
+            public byte field_101;
+            public byte field_102;
+            public byte field_103;
+            public byte field_104;
+            public byte field_105;
             public UInt16 field_106;
             public int field_108;
             public int field_10C;
@@ -155,15 +155,16 @@ namespace PolarisServer.Packets.PSOPackets
         {
             public int field_0;
             public int field_4;
-            public char field_8;
-            public char field_9;
+            public byte field_8;
+            public byte field_9;
             public UInt16 field_A;
         }
 
         [Flags]
-        public enum QuestBitfield1
+        public enum QuestBitfield1 : ushort
         {
             MatterObjectiveQuest = 0x0001,
+            ClientOrderOnQuest = 0x0008,
             NewQuest = 0x0100,
             ClientOrder = 0x0800,
             UnknownLevel = 0x1000
