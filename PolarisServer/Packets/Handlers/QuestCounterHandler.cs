@@ -110,6 +110,7 @@ namespace PolarisServer.Packets.Handlers
             // These are likely bitfields
             diff.something3 = 0x00030301;
 
+            context.SendPacket(new SetQuestPacket(def, context.User));
             context.SendPacket(new QuestStartPacket(def, diff));
         }
     }

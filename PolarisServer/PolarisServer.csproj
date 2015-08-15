@@ -84,6 +84,7 @@
     <Compile Include="Packets\PSOPackets\QuestListPacket.cs" />
     <Compile Include="Packets\PSOPackets\SetCurrencyPacket.cs" />
     <Compile Include="Packets\PSOPackets\SetMesetaPacket.cs" />
+    <Compile Include="Packets\PSOPackets\SetQuestPacket.cs" />
     <Compile Include="Packets\PSOPackets\SetScenePacket.cs" />
     <Compile Include="Packets\PSOPackets\SymbolArtList.cs" />
     <Compile Include="Packets\PSOPackets\TeleportTransferPacket.cs" />
