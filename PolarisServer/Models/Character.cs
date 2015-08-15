@@ -85,7 +85,7 @@ namespace PolarisServer.Models
             public fixed byte uknown_8[2];
             public byte padding0;
 
-            public Entries entries;
+            public Entries entries; //TODO: Make this a fixed array
 
             public ushort unknown_48, unknown_4A;
             public uint unknown_4C;
