@@ -91,7 +91,7 @@ namespace PolarisServer.Packets.PSOPackets
         }
 
         public short[] amount = new short[Enum.GetValues(typeof(QuestType)).Length];
-        QuestTypeAvailable available = QuestTypeAvailable.All;
+        QuestTypeAvailable available = QuestTypeAvailable.Arks;
 
         public override byte[] Build()
         {
@@ -103,7 +103,7 @@ namespace PolarisServer.Packets.PSOPackets
             // Amounts
             for (int i = 0; i < amount.Length; i++)
             {
-                amount[i] = (short)(i + 1); // Just for testing
+                amount[i] = 1; // Just for testing
                 writer.Write(amount[i]);
             }
 
