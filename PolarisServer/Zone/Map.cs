@@ -85,7 +85,13 @@ namespace PolarisServer.Zone
             return location;
         }
 
-        public void SpawnClient(Client c, PSOLocation location)
+        /// <summary>
+        /// Spawns a client into a map at a given location
+        /// </summary>
+        /// <param name="c">Client to spawn into map</param>
+        /// <param name="location">Location to spawn client at</param>
+        /// <param name="questOveride">If this also sets the quest data, specify the quest name here to load the spawn from the bin rather then generate it.</param>
+        public void SpawnClient(Client c, PSOLocation location, string questOveride = "")
         {
             if (Clients.Contains(c))
             {
@@ -93,9 +99,9 @@ namespace PolarisServer.Zone
             }
 
             // Set area
-            if (Type == MapType.Lobby) // TODO: This is a temporary hack, fix me!
+            if (questOveride != "") // TODO: This is a temporary hack, fix me!!
             {
-                var setAreaPacket = File.ReadAllBytes("Resources/testSetAreaPacket.bin");
+                var setAreaPacket = File.ReadAllBytes("Resources/quests/" + questOveride + ".bin");
                 c.SendPacket(0x03, 0x24, 4, setAreaPacket);
             }
             else

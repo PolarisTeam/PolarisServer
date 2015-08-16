@@ -57,5 +57,12 @@ namespace PolarisServer.Zone
         {
             return instances.ContainsKey(instanceName);
         }
+
+        public void AddMapToInstance(string instance, Map m)
+        {
+            List<Map> maps = instances[instance];
+            if (!maps.Contains(m))
+                maps.Add(m);
+        }
     }
 }

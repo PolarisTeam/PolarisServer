@@ -34,7 +34,7 @@ namespace PolarisServer.Packets.Handlers
                 destination = new PSOLocation(0f, 1f, 0f, 20f, 0.20f, 1.23f, -175.25f);
             }
             Map lobbyMap = ZoneManager.Instance.MapFromInstance("lobby", "lobby");
-            lobbyMap.SpawnClient(context, destination);
+            lobbyMap.SpawnClient(context, destination, "lobby");
             
         }
     }
