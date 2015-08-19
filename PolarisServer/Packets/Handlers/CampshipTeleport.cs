@@ -21,7 +21,7 @@ namespace PolarisServer.Packets.Handlers
 
             Map campship = ZoneManager.Instance.MapFromInstance("campship", instanceName);
 
-            campship.SpawnClient(context, new PSOLocation(0, 1, 0, 0, 0, 0, 0));
+            campship.SpawnClient(context, new PSOLocation(0, 1, 0, 0, 0, 0, 0), context.currentParty.currentQuest.name);
         }
     }
 }
