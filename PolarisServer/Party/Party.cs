@@ -23,7 +23,7 @@ namespace PolarisServer.Party
 
         public void addClientToParty(Client c)
         {
-            if (!members.Any())
+            if (members.Count < 1)
             {
                 c.SendPacket(new PartyInitPacket(new Models.Character[1] { c.Character }));
             }
