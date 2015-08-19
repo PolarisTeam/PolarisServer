@@ -18,7 +18,7 @@ namespace PolarisServer.Packets.Handlers
             var instanceName = String.Format("{0}-{1}", context.currentParty.currentQuest.name, context.User.Nickname);
             ZoneManager.Instance.NewInstance(instanceName, new Map("campship", 150, 0, Map.MapType.Campship, 0));
             // todo: add next map
-
+            ZoneManager.Instance.AddMapToInstance(instanceName, new Map("area1", 311, -1, Map.MapType.Other, (Map.MapFlags)0x6) { GenerationArgs = new Map.GenParam((uint)new Random().Next(), 2, 3)});
             Map campship = ZoneManager.Instance.MapFromInstance("campship", instanceName);
 
             campship.SpawnClient(context, new PSOLocation(0, 1, 0, 0, 0, 0, 0), context.currentParty.currentQuest.name);
@@ -37,10 +37,9 @@ namespace PolarisServer.Packets.Handlers
             if (context.CurrentLocation.PosZ >= 20)
             {
                 var instanceName = String.Format("{0}-{1}", context.currentParty.currentQuest.name, context.User.Nickname);
-                ZoneManager.Instance.NewInstance(instanceName, new Map("forest", 310, 0, Map.MapType.Quest, Map.MapFlags.EnableMap));
 
-                Map forest = ZoneManager.Instance.MapFromInstance("campship", instanceName);
-                forest.SpawnClient(context, new PSOLocation(0, 1, 0, 0, 0, 0, 0));
+                Map forest = ZoneManager.Instance.MapFromInstance("area1", instanceName);
+                forest.SpawnClient(context, new PSOLocation(0, 1, 0, -0, -37, 0.314f, 145.5f));
             }
         }
     }

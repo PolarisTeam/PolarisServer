@@ -41,7 +41,7 @@ namespace PolarisServer.Zone
         };
 
         [Flags]
-        public enum MapFlags
+        public enum MapFlags : uint
         {
             None = 0,
             MultiPartyArea = 1,
@@ -107,9 +107,9 @@ namespace PolarisServer.Zone
             else
             {
                 PacketWriter writer = new PacketWriter();
-                writer.WriteStruct(new ObjectHeader(1, EntityType.Map));
+                writer.WriteStruct(new ObjectHeader(3, EntityType.Map));
                 writer.WriteStruct(new ObjectHeader((uint)c.User.PlayerId, EntityType.Player));
-                writer.Write(0x34f9); // 8 Zeros
+                writer.Write(0x1); // 8 Zeros
                 writer.Write(0); // 8 Zeros
                 writer.Write(~(uint)Type); // F4 FF FF FF
                 writer.Write(MapID); // Map ID maybe
@@ -118,10 +118,10 @@ namespace PolarisServer.Zone
                 writer.Write(VariantID); // Randomgen enable / disable maybe
                 writer.Write(GenerationArgs.xsize); // X Size
                 writer.Write(GenerationArgs.ysize); // Y Size
-                writer.Write(0);
-                writer.Write(0);
+                writer.Write(1);
+                writer.Write(1);
                 writer.Write(~0); // FF FF FF FF FF FF FF FF
-                writer.Write(0x0c01);
+                writer.Write(0x301);
 
                 c.SendPacket(0x3, 0x0, 0x0, writer.ToArray());
             }
@@ -203,7 +203,17 @@ namespace PolarisServer.Zone
 
         public class GenParam
         {
-            public int seed, xsize, ysize;
+            public GenParam()
+            {
+            }
+
+            public GenParam(uint seed, uint x, uint y)
+            {
+                this.seed = seed;
+                this.xsize = x;
+                this.ysize = y;
+            }
+            public uint seed, xsize, ysize;
         }
     }
 }
