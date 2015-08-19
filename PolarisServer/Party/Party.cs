@@ -18,6 +18,7 @@ namespace PolarisServer.Party
         {
             this.name = name;
             this.host = host;
+            this.members = new List<Client>();
             addClientToParty(host);
         }
 
