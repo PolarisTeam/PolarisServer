@@ -109,8 +109,12 @@ namespace PolarisServer.Packets.Handlers
             // These are likely bitfields
             diff.something3 = 0x00030301;
 
+            var quest = new Quest("arks_010120");
+            quest.questDef = def;
+            context.currentParty.currentQuest = quest;
             context.SendPacket(new SetQuestPacket(def, context.User));
             context.SendPacket(new QuestStartPacket(def, diff));
+            
         }
     }
 }

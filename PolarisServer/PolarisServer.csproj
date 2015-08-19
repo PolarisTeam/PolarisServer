@@ -67,6 +67,7 @@
     <Compile Include="Models\PSOObject.cs" />
     <Compile Include="Models\Quest.cs" />
     <Compile Include="Object\ObjectManager.cs" />
+    <Compile Include="Packets\Handlers\CampshipTeleport.cs" />
     <Compile Include="Packets\Handlers\CasinoTeleportHandler.cs" />
     <Compile Include="Packets\Handlers\CharacterSpawn.cs" />
     <Compile Include="Packets\Handlers\ObjectInteract.cs" />
