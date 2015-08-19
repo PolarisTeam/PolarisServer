@@ -1,15 +1,18 @@
-﻿using System;
+﻿using PolarisServer.Models;
+using PolarisServer.Packets.PSOPackets;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
 namespace PolarisServer.Party
 {
-    class Party
+    public class Party
     {
         public string name;
         private List<Client> members;
         private Client host;
+        public Quest currentQuest;
 
         public Party(string name, Client host)
         {
@@ -20,8 +23,16 @@ namespace PolarisServer.Party
 
         public void addClientToParty(Client c)
         {
+            if (!members.Any())
+            {
+                c.SendPacket(new PartyInitPacket(new Models.Character[1] { c.Character }));
+            }
+            else
+            {
+                // ???
+            }
             members.Add(c);
-            //TODO do stuff like send the "add to party" packet.
+            c.currentParty = this;
         }
 
         public void removeClientFromParty(Client c)

@@ -8,10 +8,10 @@ namespace PolarisServer.Packets.PSOPackets
 {
     class SetQuestPacket : Packet
     {
-        QuestListPacket.QuestDefiniton questdef;
+        QuestDefiniton questdef;
         Database.Player p;
 
-        public SetQuestPacket(QuestListPacket.QuestDefiniton questdef, Database.Player p)
+        public SetQuestPacket(QuestDefiniton questdef, Database.Player p)
         {
             this.questdef = questdef;
             this.p = p;

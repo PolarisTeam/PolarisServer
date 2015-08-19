@@ -50,6 +50,7 @@ namespace PolarisServer
         //public Zone.Zone CurrentZone { get; set; }
         public Map CurrentZone;
         public uint MovementTimestamp { get; internal set; }
+        public Party.Party currentParty;
 
         public PSOLocation CurrentLocation;
         public PSOLocation LastLocation;

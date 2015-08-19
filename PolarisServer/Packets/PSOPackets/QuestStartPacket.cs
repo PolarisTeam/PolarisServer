@@ -7,10 +7,10 @@ namespace PolarisServer.Packets.PSOPackets
 {
     class QuestStartPacket : Packet
     {
-        QuestListPacket.QuestDefiniton data;
+        QuestDefiniton data;
         QuestDifficultyPacket.QuestDifficulty difficulty;
 
-        public QuestStartPacket(QuestListPacket.QuestDefiniton data, QuestDifficultyPacket.QuestDifficulty difficulty)
+        public QuestStartPacket(QuestDefiniton data, QuestDifficultyPacket.QuestDifficulty difficulty)
         {
             this.data = data;
             this.difficulty = difficulty;
@@ -22,7 +22,7 @@ namespace PolarisServer.Packets.PSOPackets
 
             writer.Write(0x753A); // Unknown
             writer.Write((int)0); // Unknown
-            writer.WriteStruct<QuestListPacket.QuestDefiniton>(data);
+            writer.WriteStruct<QuestDefiniton>(data);
             writer.WriteStruct<QuestDifficultyPacket.QuestDifficulty>(difficulty);
 
             return writer.ToArray();

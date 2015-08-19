@@ -1,5 +1,5 @@
 ﻿using System;
-
+using PolarisServer.Models;
 using PolarisServer.Packets.PSOPackets;
 
 namespace PolarisServer.Packets.Handlers
@@ -36,7 +36,7 @@ namespace PolarisServer.Packets.Handlers
         public override void HandlePacket(Client context, byte flags, byte[] data, uint position, uint size)
         {
             // What am I doing
-            QuestListPacket.QuestDefiniton[] defs = new PSOPackets.QuestListPacket.QuestDefiniton[1];
+            QuestDefiniton[] defs = new QuestDefiniton[1];
             for (int i = 0; i < defs.Length; i++)
             {
                 defs[i].dateOrSomething = "2012/01/05";
@@ -87,7 +87,7 @@ namespace PolarisServer.Packets.Handlers
         // Go go maximum code duplication (for now)
         public override void HandlePacket(Client context, byte flags, byte[] data, uint position, uint size)
         {
-            QuestListPacket.QuestDefiniton def = new QuestListPacket.QuestDefiniton();
+            QuestDefiniton def = new QuestDefiniton();
             def.dateOrSomething = "2012/01/05";
             def.needsToBeNonzero = 0x00000020;
             def.getsSetToWord = 0x0000000B;

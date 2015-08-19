@@ -1,5 +1,6 @@
 ﻿using PolarisServer.Database;
 using PolarisServer.Packets.PSOPackets;
+using PolarisServer.Party;
 
 namespace PolarisServer.Packets.Handlers
 {
@@ -31,7 +32,7 @@ namespace PolarisServer.Packets.Handlers
             }
 
             // Initialize you in an empty party
-            context.SendPacket(new PartyInitPacket(new Models.Character[1] { context.Character }));
+            PartyManager.Instance.CreateNewParty(context);
 
             // Transition to the loading screen
             context.SendPacket(new NoPayloadPacket(0x3, 0x4));
