@@ -21,7 +21,7 @@ namespace PolarisServer.Packets.Handlers
             var macCount = reader.ReadMagic(0x5E6, 107);
             reader.BaseStream.Seek(0x1C * macCount, SeekOrigin.Current);
 
-            reader.BaseStream.Seek(0x114, SeekOrigin.Current);
+			reader.BaseStream.Seek(0x138, SeekOrigin.Current);
 
             var username = reader.ReadFixedLengthAscii(64);
             var password = reader.ReadFixedLengthAscii(64);
