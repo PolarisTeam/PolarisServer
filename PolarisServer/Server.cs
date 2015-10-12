@@ -61,7 +61,7 @@ namespace PolarisServer
             // TODO: Disconnect a client if we don't get a response in a certain amount of time
             foreach (var client in Clients)
             {
-                if (client != null)
+                if (client != null && client.User != null)
                 {
                     Logger.Write("[HEY] Pinging " + client.User.Username);
                     client.SendPacket(new NoPayloadPacket(0x03, 0x0B));
