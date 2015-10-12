@@ -77,7 +77,7 @@ namespace PolarisServer
                 {
                     order = (ushort)i,
                     number = (uint)i,
-                    status = ShipStatus.Online,
+                    status = i == 2 ? ShipStatus.Online : ShipStatus.Offline, // Maybe move to Config?
                     name = String.Format("Ship{0:0#}", i),
                     ip = PolarisApp.BindAddress.GetAddressBytes()
                 };

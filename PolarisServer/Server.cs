@@ -29,7 +29,7 @@ namespace PolarisServer
             PingTimer.Elapsed += PingClients;
             PingTimer.Start();
 
-            new QueryServer(QueryMode.BlockBalance, 12200);
+            new QueryServer(QueryMode.BlockBalance, 12200); // Ship 2
         }
 
         public void Run()
