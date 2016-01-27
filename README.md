@@ -27,7 +27,7 @@ After installing MD / Xamarin and setting up the Mono runtime, open the solution
 In the future we will hopefully have a buildserver, xbuild / msbuild support and other fancy things.
 
 ### Downloading The Latest Version
-As the `Polaris Private Server` is a work-in-progress alpha, you can find the latest unstable built version here @ [build.polaris-server.net](http://build.polaris-server.net/job/PolarisServer/lastSuccessfulBuild/artifact/PolarisServer/bin/Debug/PolarisServer-Bundle.zip)
+As the `Polaris Private Server` is a work-in-progress alpha, you can find the latest unstable built version here @ [AppVeyor](https://ci.appveyor.com/project/cyberkitsune/polarisserver/build/artifacts)
 
 ### Documentation
 All available documentation for the server can be found on the project wiki @ [pso2proxy.cyberkitsune.net/wiki](http://pso2proxy.cyberkitsune.net/wiki)
