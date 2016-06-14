@@ -58,7 +58,7 @@ Currently, you can contribute to the Polaris Private Server project by:
 * Submitting a detailed [issue](https://github.com/PolarisTeam/PolarisServer/issues/new).
 * [Forking the project](https://github.com/PolarisTeam/PolarisServer/fork), and sending a pull request back to for review.
 
-There is an IRC channel `#pso2` on BadnikNET (irc.rustedlogic.net:6667), for talking directly
+There is an IRC channel `#pso2` on BadnikZone (irc.badnik.zone:6667), for talking directly
 with testers and developers (when awake and present, etc.). However any questions pertaining to the release dates or asking for hacks will be ignored, and you may be banned from the channel.
 
 ### Core Maintainers
