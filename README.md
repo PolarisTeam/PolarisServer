@@ -64,6 +64,7 @@ with testers and developers (when awake and present, etc.). However any question
 ### Core Maintainers
 
 * "cyberkitsune" <https://github.com/cyberkitsune>
+* "VariantXYZ" <https://github.com/VariantXYZ>
 * "KeyPhact" <https://github.com/KeyPhact>
 * "Kyle873" <https://github.com/Kyle873>
 * "LightningDragon" <https://github.com/LightningDragon>
