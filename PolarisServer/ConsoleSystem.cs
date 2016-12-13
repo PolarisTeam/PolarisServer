@@ -113,7 +113,10 @@ namespace PolarisServer
             Console.Title = "Polaris";
             Console.CursorVisible = true;
             Console.Clear();
-            SetSize(80, 24);
+
+            Width = Console.WindowWidth;
+            Height = Console.WindowHeight;
+            _maxCommandLineSize = Width - Prompt.Length;
 
             timer = new Timer(1000);
             timer.Elapsed += TimerRefresh;
