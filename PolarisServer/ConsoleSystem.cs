@@ -112,6 +112,7 @@ namespace PolarisServer
         {
             Console.Title = "Polaris";
             Console.CursorVisible = true;
+            Console.Clear();
             SetSize(80, 24);
 
             timer = new Timer(1000);
