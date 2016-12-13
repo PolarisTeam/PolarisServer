@@ -130,12 +130,18 @@ namespace PolarisServer
 
         public void SetSize(int width, int height)
         {
-            Width = width;
-            Height = height;
+            try
+            {
+                Console.SetWindowSize(width, height);
 
-            _maxCommandLineSize = width - Prompt.Length;
-
-            Console.SetWindowSize(width, height);
+                Width = width;
+                Height = height;
+                _maxCommandLineSize = width - Prompt.Length;
+            }
+            catch (Exception)
+            {
+                Logger.WriteWarning("[WRN] Failed to set console size to ({0},{1}).", width, height);
+            }
         }
 
         public void AddLine(ConsoleColor color, string text)
