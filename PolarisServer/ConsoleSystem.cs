@@ -153,7 +153,6 @@ namespace PolarisServer
                 var useColors = PolarisApp.Config.UseConsoleColors;
                 var saveColor = Console.ForegroundColor;
 
-                Console.SetCursorPosition(0, _commandRowInConsole);
                 if (useColors)
                     Console.ForegroundColor = color;
                 Console.WriteLine(text);
@@ -161,8 +160,7 @@ namespace PolarisServer
                 if (useColors)
                     Console.ForegroundColor = saveColor;
 
-                Console.WriteLine();
-                _commandRowInConsole = Console.CursorTop - 1;
+                _commandRowInConsole = Console.CursorTop;
 
                 RefreshCommandLine();
                 FixCursorPosition();
@@ -179,6 +177,8 @@ namespace PolarisServer
                     Console.Write(' ');
 
                 _lastDrawnCommandLineSize = 0;
+
+                Console.CursorLeft = 0;
             }
         }
 
@@ -186,7 +186,6 @@ namespace PolarisServer
         {
             BlankDrawnCommandLine();
 
-            Console.SetCursorPosition(0, _commandRowInConsole);
             Console.Write(Prompt);
             Console.Write(_commandLine);
 
