@@ -85,7 +85,8 @@ namespace PolarisServer
             ConsoleKey.RightArrow,
             ConsoleKey.Home,
             ConsoleKey.End,
-            ConsoleKey.Delete
+            ConsoleKey.Delete,
+            ConsoleKey.Escape
         };
 
         private const string Prompt = "Polaris> ";
@@ -421,6 +422,13 @@ namespace PolarisServer
             {
                 _commandLine = _commandLine.Remove(_commandIndex - 1, 1);
                 _commandIndex--;
+            }
+
+            // Escape
+            if (_key.Key == ConsoleKey.Escape)
+            {
+                _commandLine = string.Empty;
+                _commandIndex = 0;
             }
 
             // Cursor movement
