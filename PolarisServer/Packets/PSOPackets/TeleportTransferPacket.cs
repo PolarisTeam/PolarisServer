@@ -19,7 +19,7 @@ namespace PolarisServer.Packets.PSOPackets
             PacketWriter writer = new PacketWriter();
             writer.Write(new byte[12]);
             writer.WriteStruct(src.Header);
-            writer.WritePosition(dst);
+            writer.Write(dst);
             writer.Write(new byte[2]);
             return writer.ToArray();
         }

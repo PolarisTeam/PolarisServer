@@ -88,7 +88,7 @@ namespace PolarisServer.Models
         {
             PacketWriter writer = new PacketWriter();
             writer.WriteStruct(Header);
-            writer.WritePosition(Position);
+            writer.Write(Position);
             writer.Write((UInt16)0);
             writer.WriteFixedLengthASCII(Name, 0x20);
 
