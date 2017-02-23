@@ -1,3 +1,12 @@
+MOVED TO POLARISCORE https://github.com/PolarisTeam/PolarisCore
+
+
+
+
+
+
+
+
 [![AGPL License](http://img.shields.io/badge/license-AGPL%20v3-red.svg?style=flat-square)](http://opensource.org/licenses/AGPL-3.0) 
 [![Build status](https://ci.appveyor.com/api/projects/status/3ltwll4bck12ey0t?svg=true)](https://ci.appveyor.com/project/cyberkitsune/polarisserver)
 
