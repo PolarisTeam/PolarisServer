@@ -10,9 +10,6 @@ MOVED TO POLARISCORE https://github.com/PolarisTeam/PolarisCore
 [![AGPL License](http://img.shields.io/badge/license-AGPL%20v3-red.svg?style=flat-square)](http://opensource.org/licenses/AGPL-3.0) 
 [![Build status](https://ci.appveyor.com/api/projects/status/3ltwll4bck12ey0t?svg=true)](https://ci.appveyor.com/project/cyberkitsune/polarisserver)
 
-`Current PSO2 Version: 4.0201.0`
-
-
 ## Table of Contents
 
 * [What is it?](#what-is-it)
@@ -26,7 +23,7 @@ MOVED TO POLARISCORE https://github.com/PolarisTeam/PolarisCore
   * [Core Maintainers](#core-maintainers)
 
 ## What is it?
-`Polaris Private Server` is an open source game private server for the Japanese MMORPG Phantasy Star Online 2. It is currently work-in-progress alpha, under heavy development and is not yet recommended for production use.
+`Polaris Private Server` is an open source game private server. It is currently work-in-progress alpha, under heavy development and is not yet recommended for production use.
 
 ## Installation
 As `Polaris Private Server` is a work-in-progress there is no set way of installaing and running, in future releases we hope to have this information stored in an INSTALL file. Until then you can either build or download and run the latest version.
@@ -73,7 +70,6 @@ with testers and developers (when awake and present, etc.). However any question
 ### Core Maintainers
 
 * "cyberkitsune" <https://github.com/cyberkitsune>
-* "VariantXYZ" <https://github.com/VariantXYZ>
 * "KeyPhact" <https://github.com/KeyPhact>
 * "Kyle873" <https://github.com/Kyle873>
 * "LightningDragon" <https://github.com/LightningDragon>
