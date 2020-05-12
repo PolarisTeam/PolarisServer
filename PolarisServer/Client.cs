@@ -223,8 +223,7 @@ namespace PolarisServer
             var packet = new byte[size];
             Array.Copy(data, position, packet, 0, size);
             LogPacket(true, typeA, typeB, flags1, flags2, packet);
-
-            
+       
             if (handler != null)
                 handler.HandlePacket(this, flags1, packet, 0, size);
             else
