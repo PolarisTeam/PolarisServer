@@ -136,11 +136,11 @@ namespace PolarisServer
             var typeB = blob[5];
             var flags1 = blob[6];
             var flags2 = blob[7];
-            string sendName = "";
+            string sendName;
 
             if (name != null)
             {
-                sendName = string.Format("{0} ({1:X}-{2:X})", name, typeA, typeB);
+                sendName = $"{name} ({typeA:X}-{typeB:X})";
             }
             else
             {
