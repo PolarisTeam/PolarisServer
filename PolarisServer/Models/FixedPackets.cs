@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Runtime.InteropServices;
-using PolarisServer.Models;
 
 namespace PolarisServer.Models
 {
@@ -37,11 +36,11 @@ namespace PolarisServer.Models
     [Flags]
     public enum PacketFlags : byte
     {
-        NONE,
-        STREAM_PACKED = 0x4,
+        None,
+        PACKED = 0x4,
         FLAG_10 = 0x10,
-        ENTITY_HEADER = 0x40
+        FULL_MOVEMENT = 0x20,
+        OBJECT_RELATED = 0x40
     }
-
 }
 

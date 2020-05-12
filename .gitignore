@@ -9,3 +9,4 @@ PolarisTests/obj
 .DS_Store
 .vagrant
 .coverage
+.vs/*

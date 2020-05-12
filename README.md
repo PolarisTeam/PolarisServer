@@ -1,4 +1,14 @@
-[![AGPL License](http://img.shields.io/badge/license-AGPL%20v3-red.svg?style=flat-square)](http://opensource.org/licenses/AGPL-3.0) [![Build Status](https://img.shields.io/jenkins/s/http/build.polaris-server.net/PolarisServer.svg?style=flat-square)](http://build.polaris-server.net)
+MOVED TO POLARISCORE https://github.com/PolarisTeam/PolarisCore
+
+
+
+
+
+
+
+
+[![AGPL License](http://img.shields.io/badge/license-AGPL%20v3-red.svg?style=flat-square)](http://opensource.org/licenses/AGPL-3.0) 
+[![Build status](https://ci.appveyor.com/api/projects/status/3ltwll4bck12ey0t?svg=true)](https://ci.appveyor.com/project/cyberkitsune/polarisserver)
 
 ## Table of Contents
 
@@ -13,7 +23,7 @@
   * [Core Maintainers](#core-maintainers)
 
 ## What is it?
-`Polaris Private Server` is an open source game private server for the Japanese MMORPG Phantasy Star Online 2. It is currently work-in-progress alpha, under heavy development and is not yet recommended for production use.
+`Polaris Private Server` is an open source game private server. It is currently work-in-progress alpha, under heavy development and is not yet recommended for production use.
 
 ## Installation
 As `Polaris Private Server` is a work-in-progress there is no set way of installaing and running, in future releases we hope to have this information stored in an INSTALL file. Until then you can either build or download and run the latest version.
@@ -25,10 +35,10 @@ After installing MD / Xamarin and setting up the Mono runtime, open the solution
 In the future we will hopefully have a buildserver, xbuild / msbuild support and other fancy things.
 
 ### Downloading The Latest Version
-As the `Polaris Private Server` is a work-in-progress alpha, you can find the latest unstable built version here @ [build.polaris-server.net](http://build.polaris-server.net/job/PolarisServer/lastSuccessfulBuild/artifact/PolarisServer/bin/Debug/PolarisServer-Bundle.zip)
+As the `Polaris Private Server` is a work-in-progress alpha, you can find the latest unstable built version here @ [AppVeyor](https://ci.appveyor.com/project/cyberkitsune/polarisserver/build/artifacts)
 
 ### Documentation
-All available documentation for the server can be found on the project wiki @ [wiki.polaris-server.net](http://wiki.polaris-server.net)
+All available documentation for the server can be found on the project wiki @ [pso2proxy.cyberkitsune.net/wiki](http://pso2proxy.cyberkitsune.net/wiki)
 
 ## Licensing
 All code is licensed under the
@@ -54,7 +64,7 @@ Currently, you can contribute to the Polaris Private Server project by:
 * Submitting a detailed [issue](https://github.com/PolarisTeam/PolarisServer/issues/new).
 * [Forking the project](https://github.com/PolarisTeam/PolarisServer/fork), and sending a pull request back to for review.
 
-There is an IRC channel `#pso2` on BadnikNET (irc.badnik.net:6667), for talking directly
+There is an IRC channel `#pso2` on BadnikZone (irc.badnik.zone:6667), for talking directly
 with testers and developers (when awake and present, etc.). However any questions pertaining to the release dates or asking for hacks will be ignored, and you may be banned from the channel.
 
 ### Core Maintainers

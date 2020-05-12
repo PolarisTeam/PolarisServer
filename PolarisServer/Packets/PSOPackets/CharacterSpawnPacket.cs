@@ -14,6 +14,13 @@ namespace PolarisServer.Packets.PSOPackets
             Position = locatiion;
         }
 
+        public CharacterSpawnPacket(Character character, PSOLocation locatiion, bool isme)
+        {
+            _character = character;
+            IsItMe = isme;
+            Position = locatiion;
+        }
+
         #region implemented abstract members of Packet
 
         public override byte[] Build()

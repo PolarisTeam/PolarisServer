@@ -4,6 +4,7 @@ using System.IO;
 using System.Net;
 using System.Threading;
 using System.Security.Cryptography;
+
 using PolarisServer.Database;
 using PolarisServer.Packets.Handlers;
 
@@ -11,6 +12,8 @@ namespace PolarisServer
 {
     internal class PolarisApp
     {
+        public static PolarisApp Instance { get; private set; }
+        
         // Will be using these around the app later [KeyPhact]
         public const string PolarisName = "Polaris Server";
         public const string PolarisShortName = "Polaris";
@@ -19,18 +22,19 @@ namespace PolarisServer
         public const string PolarisLicense = "All licenced under AGPL.";
         public const string PolarisVersion = "v0.1.0-pre";
         public const string PolarisVersionName = "Corsac Fox";
+
         public static IPAddress BindAddress = IPAddress.Parse("127.0.0.1");
         public static Config Config;
         public static ConsoleSystem ConsoleSystem;
+
         public List<QueryServer> QueryServers = new List<QueryServer>();
         public Server Server;
-        public static PolarisApp Instance { get; private set; }
 
         public static void Main(string[] args)
         {
             Config = new Config();
 
-            ConsoleSystem = new ConsoleSystem {Thread = new Thread(ConsoleSystem.StartThread)};
+            ConsoleSystem = new ConsoleSystem { Thread = new Thread(ConsoleSystem.StartThread) };
             ConsoleSystem.Thread.Start();
 
             // Setup function exit handlers to guarentee Exit() is run before closing
@@ -100,6 +104,7 @@ namespace PolarisServer
             }
 
             // Fix up startup message [KeyPhact]
+            Logger.WriteHeader();
             Logger.Write(PolarisName + " - " + PolarisVersion + " (" + PolarisVersionName + ")");
             Logger.Write("By " + PolarisAuthor);
             Logger.Write(PolarisLicense);
@@ -122,12 +127,13 @@ namespace PolarisServer
 
             Logger.WriteInternal("[DB ] Loading database...");
             using (var db = new PolarisEf())
-            { 
+            {
+
                 db.SetupDB();
             }
 
             for (var i = 0; i < 10; i++)
-                QueryServers.Add(new QueryServer(QueryMode.ShipList, 12099 + (100*i)));
+                QueryServers.Add(new QueryServer(QueryMode.ShipList, 12099 + (100 * i)));
 
             Server.Run();
         }

@@ -9,20 +9,18 @@ namespace PolarisServer.Models
     public enum EntityType : UInt16
     {
         Player = 0x4,
+        Map = 0x5,
         Object = 0x6
     }
 
-    [StructLayout(LayoutKind.Explicit, Size = 12)]
-    public struct EntityHeader
+    public struct ObjectHeader
     {
-        [FieldOffset(0x0)]
-        public UInt64 ID;
-        [FieldOffset(0x8)]
+        public UInt32 ID;
+        public UInt32 padding; // Always is padding
         public EntityType EntityType; // Maybe...
-        [FieldOffset(0xA)]
         public UInt16 Unknown_A;
 
-        public EntityHeader(ulong id, EntityType type) : this()
+        public ObjectHeader(uint id, EntityType type) : this()
         {
             this.ID = id;
             this.EntityType = type;

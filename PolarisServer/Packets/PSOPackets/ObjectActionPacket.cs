@@ -8,13 +8,13 @@ namespace PolarisServer.Packets.PSOPackets
 {
     class ObjectActionPacket : Packet
     {
-        private EntityHeader headerA; // Destination player / object?
-        private EntityHeader headerB; // Calling player / object?
-        private EntityHeader headerC; // Maybe argument player / object?
-        private EntityHeader headerD; // Probably another arg I guess?
+        private ObjectHeader headerA; // Destination player / object?
+        private ObjectHeader headerB; // Calling player / object?
+        private ObjectHeader headerC; // Maybe argument player / object?
+        private ObjectHeader headerD; // Probably another arg I guess?
         private string command;       // ASCII command
 
-        public ObjectActionPacket(EntityHeader headerA, EntityHeader headerB, EntityHeader headerC, EntityHeader headerD, string command)
+        public ObjectActionPacket(ObjectHeader headerA, ObjectHeader headerB, ObjectHeader headerC, ObjectHeader headerD, string command)
         {
             this.headerA = headerA;
             this.headerB = headerB;
@@ -40,7 +40,7 @@ namespace PolarisServer.Packets.PSOPackets
 
         public override PacketHeader GetHeader()
         {
-            return new PacketHeader(0x4, 0x15, (PacketFlags.ENTITY_HEADER | PacketFlags.STREAM_PACKED));
+            return new PacketHeader(0x4, 0x15, (PacketFlags.OBJECT_RELATED | PacketFlags.PACKED));
         }
     }
 }

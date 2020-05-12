@@ -12,6 +12,7 @@ namespace PolarisServer.Network
         private readonly List<SocketClient> _clients = new List<SocketClient>();
         private readonly TcpListener _listener;
         private readonly List<Socket> _readableSockets = new List<Socket>();
+        private readonly List<Socket> _writableSockets = new List<Socket>();
         private readonly Dictionary<Socket, SocketClient> _socketMap = new Dictionary<Socket, SocketClient>();
         private int _port;
 
@@ -37,11 +38,16 @@ namespace PolarisServer.Network
                 // Compile a list of possibly-readable sockets
                 _readableSockets.Clear();
                 _readableSockets.Add(_listener.Server);
+                _writableSockets.Clear();
 
                 foreach (var client in _clients)
+                {
                     _readableSockets.Add(client.Socket.Client);
+                    if (client.NeedsToWrite)
+                        _writableSockets.Add(client.Socket.Client);
+                }
 
-                Socket.Select(_readableSockets, null, null, 1000000);
+                Socket.Select(_readableSockets, _writableSockets, null, 1000000);
 
                 foreach (var socket in _readableSockets)
                 {
@@ -64,6 +70,10 @@ namespace PolarisServer.Network
                             _socketMap[socket].OnReadable();
                     }
                 }
+
+                foreach (var socket in _writableSockets)
+                    if (socket.Connected)
+                        _socketMap[socket].OnWritable();
             }
             catch (Exception ex)
             {

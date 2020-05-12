@@ -1,5 +1,6 @@
 ﻿using PolarisServer.Database;
 using PolarisServer.Packets.PSOPackets;
+using PolarisServer.Party;
 
 namespace PolarisServer.Packets.Handlers
 {
@@ -8,7 +9,7 @@ namespace PolarisServer.Packets.Handlers
     {
         #region implemented abstract members of PacketHandler
 
-        public override void HandlePacket(Client context, byte[] data, uint position, uint size)
+        public override void HandlePacket(Client context, byte flags, byte[] data, uint position, uint size)
         {
             var reader = new PacketReader(data, position, size);
             var charId = reader.ReadUInt32();
@@ -29,6 +30,9 @@ namespace PolarisServer.Packets.Handlers
                 }
 
             }
+
+            // Initialize you in an empty party
+            PartyManager.Instance.CreateNewParty(context);
 
             // Transition to the loading screen
             context.SendPacket(new NoPayloadPacket(0x3, 0x4));
@@ -54,7 +58,7 @@ namespace PolarisServer.Packets.Handlers
 
         #region implemented abstract members of PacketHandler
 
-        public override void HandlePacket(Client context, byte[] data, uint position, uint size)
+        public override void HandlePacket(Client context, byte flags, byte[] data, uint position, uint size)
         {
             // Set Player ID
             var setPlayerId = new PacketWriter();
@@ -62,7 +66,7 @@ namespace PolarisServer.Packets.Handlers
             context.SendPacket(6, 0, 0, setPlayerId.ToArray());
 
             // Spawn Player
-            new CharacterSpawn().HandlePacket(context, data, position, size);
+            new CharacterSpawn().HandlePacket(context, flags, data, position, size);
         }
 
         #endregion
@@ -73,7 +77,7 @@ namespace PolarisServer.Packets.Handlers
     {
         #region implemented abstract members of PacketHandler
 
-        public override void HandlePacket(Client context, byte[] data, uint position, uint size)
+        public override void HandlePacket(Client context, byte flags, byte[] data, uint position, uint size)
         {
             if (context.User == null || context.Character == null)
                 return;

@@ -34,7 +34,7 @@ namespace PolarisServer.Models
             Braver,
             Bouncer,
         }
-        
+
         [Flags]
         public enum ClassTypeField : byte
         {
@@ -85,7 +85,7 @@ namespace PolarisServer.Models
             public fixed byte uknown_8[2];
             public byte padding0;
 
-            public Entries entries;
+            public Entries entries; //TODO: Make this a fixed array
 
             public ushort unknown_48, unknown_4A;
             public uint unknown_4C;
@@ -144,7 +144,7 @@ namespace PolarisServer.Models
         public int CharacterId { get; set; }
 
         public virtual Player Player { get; set; }
-        public string Name { get; set; } 
+        public string Name { get; set; }
 
         public byte[] LooksBinary
         {
@@ -177,7 +177,7 @@ namespace PolarisServer.Models
             }
 
         }
-            
+
         public LooksParam Looks { get; set; }
         public JobParam Jobs { get; set; }
     }
@@ -197,6 +197,11 @@ namespace PolarisServer.Models
             this.PosX = PosX;
             this.PosY = PosY;
             this.PosZ = PosZ;
+        }
+
+        public override string ToString()
+        {
+            return String.Format("Rot: ({0}, {1}, {2}, {3}) Loc: ({4}, {5}, {6})", RotX, RotY, RotZ, RotW, PosX, PosY, PosZ);
         }
     }
 }

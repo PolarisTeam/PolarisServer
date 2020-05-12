@@ -2,6 +2,8 @@
 using System.Linq;
 using System.Text.RegularExpressions;
 using PolarisServer.Database;
+using PolarisServer.Packets.PSOPackets;
+using PolarisServer.Models;
 
 namespace PolarisServer.Packets.Handlers
 {
@@ -10,7 +12,7 @@ namespace PolarisServer.Packets.Handlers
     {
         #region implemented abstract members of PacketHandler
 
-        public override void HandlePacket(Client context, byte[] data, uint position, uint size)
+        public override void HandlePacket(Client context, byte flags, byte[] data, uint position, uint size)
         {
             var reader = new PacketReader(data, position, size);
 
@@ -19,7 +21,7 @@ namespace PolarisServer.Packets.Handlers
             var macCount = reader.ReadMagic(0x5E6, 107);
             reader.BaseStream.Seek(0x1C * macCount, SeekOrigin.Current);
 
-            reader.BaseStream.Seek(0x114, SeekOrigin.Current);
+			reader.BaseStream.Seek(0x154, SeekOrigin.Current);
 
             var username = reader.ReadFixedLengthAscii(64);
             var password = reader.ReadFixedLengthAscii(64);
@@ -77,32 +79,17 @@ namespace PolarisServer.Packets.Handlers
                     }
                 }
 
-                // Mystery packet
+                /* Mystery packet
                 var mystery = new PacketWriter();
                 mystery.Write((uint)100);
-                // SendPacket(0x11, 0x49, 0, mystery.ToArray());
+                SendPacket(0x11, 0x49, 0, mystery.ToArray()); */
 
                 // Login response packet
-                var resp = new PacketWriter();
-                resp.Write((uint)((user == null) ? 1 : 0)); // Status flag: 0=success, 1=error
-                resp.WriteUtf16(error, 0x8BA4, 0xB6);
+               
+                context.SendPacket(new LoginDataPacket("Polaris Block 1", error, (user == null) ? (uint)0 : (uint)user.PlayerId));
 
                 if (user == null)
-                {
-                    for (var i = 0; i < 0xEC; i++)
-                        resp.Write((byte)0);
-                    context.SendPacket(0x11, 1, 4, resp.ToArray());
                     return;
-                }
-
-                resp.Write((uint)user.PlayerId); // Player ID
-                resp.Write((uint)0); // Unknown
-                resp.Write((uint)0); // Unknown
-                resp.WriteFixedLengthUtf16("B001-DarkFox", 0x20);
-                for (var i = 0; i < 0xBC; i++)
-                    resp.Write((byte)0);
-
-                context.SendPacket(0x11, 1, 4, resp.ToArray());
 
                 // Settings packet
                 var settings = new PacketWriter();
@@ -113,7 +100,11 @@ namespace PolarisServer.Packets.Handlers
 
             }
 
-            // context.SendPacket(new SystemMessagePacket("I looooooove my Raxxy <3", SystemMessagePacket.MessageType.AdminMessage));
+            if (PolarisApp.Config.motd != "")
+            {
+                context.SendPacket(new SystemMessagePacket(PolarisApp.Config.motd, SystemMessagePacket.MessageType.AdminMessageInstant));
+            }
+
         }
 
         #endregion

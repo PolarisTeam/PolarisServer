@@ -150,5 +150,13 @@ namespace PolarisServer.Packets
             var ms = (MemoryStream) BaseStream;
             return ms.ToArray();
         }
+
+        internal void WriteBytes(byte b, uint count)
+        {
+            for(int i = 0; i < count; i++)
+            {
+                Write(b);
+            }
+        }
     }
 }

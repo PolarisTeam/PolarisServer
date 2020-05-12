@@ -21,6 +21,7 @@
     <Externalconsole>true</Externalconsole>
     <PlatformTarget>x86</PlatformTarget>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <LangVersion>5</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <DebugType>full</DebugType>
@@ -61,19 +62,36 @@
     <Compile Include="Config.cs" />
     <Compile Include="ConsoleSystem.cs" />
     <Compile Include="Logger.cs" />
+    <Compile Include="Models\PSO2Item.cs" />
     <Compile Include="Models\PSOData.cs" />
     <Compile Include="Models\PSOObject.cs" />
+    <Compile Include="Models\Quest.cs" />
     <Compile Include="Object\ObjectManager.cs" />
+    <Compile Include="Packets\Handlers\CampshipTeleport.cs" />
     <Compile Include="Packets\Handlers\CasinoTeleportHandler.cs" />
     <Compile Include="Packets\Handlers\CharacterSpawn.cs" />
     <Compile Include="Packets\Handlers\ObjectInteract.cs" />
+    <Compile Include="Packets\Handlers\QuestCounterHandler.cs" />
+    <Compile Include="Packets\Handlers\ReturnToLobbyHandler.cs" />
+    <Compile Include="Packets\Handlers\SymbolArtHandler.cs" />
     <Compile Include="Packets\PSOPackets\GuildInfoPacket.cs" />
+    <Compile Include="Packets\PSOPackets\LoginDataPacket.cs" />
     <Compile Include="Packets\PSOPackets\MovementPacket.cs" />
     <Compile Include="Packets\PSOPackets\ObjectActionPacket.cs" />
     <Compile Include="Packets\PSOPackets\PalettePacket.cs" />
+    <Compile Include="Packets\PSOPackets\PartyInitPacket.cs" />
+    <Compile Include="Packets\PSOPackets\QuestStartPacket.cs" />
+    <Compile Include="Packets\PSOPackets\QuestDifficultyPacket.cs" />
+    <Compile Include="Packets\PSOPackets\QuestAvailablePacket.cs" />
+    <Compile Include="Packets\PSOPackets\QuestListPacket.cs" />
     <Compile Include="Packets\PSOPackets\SetCurrencyPacket.cs" />
     <Compile Include="Packets\PSOPackets\SetMesetaPacket.cs" />
+    <Compile Include="Packets\PSOPackets\SetQuestPacket.cs" />
+    <Compile Include="Packets\PSOPackets\SetScenePacket.cs" />
+    <Compile Include="Packets\PSOPackets\SymbolArtList.cs" />
     <Compile Include="Packets\PSOPackets\TeleportTransferPacket.cs" />
+    <Compile Include="Party\Party.cs" />
+    <Compile Include="Party\PartyManager.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Client.cs" />
@@ -89,7 +107,6 @@
     <Compile Include="Models\FixedPackets.cs" />
     <Compile Include="QueryServer.cs" />
     <Compile Include="Models\ShipData.cs" />
-    <Compile Include="Packets\Handlers\ClientDebug.cs" />
     <Compile Include="Database\PolarisEF.cs" />
     <Compile Include="Crypto\RC4.cs" />
     <Compile Include="Crypto\ARC4Managed.cs" />
@@ -104,7 +121,7 @@
     <Compile Include="Packets\PSOPackets\CharacterSpawnPacket.cs" />
     <Compile Include="Packets\Handlers\MovementHandlers.cs" />
     <Compile Include="Packets\Handlers\ChatHandler.cs" />
-    <Compile Include="Zone\Zone.cs" />
+    <Compile Include="Zone\Map.cs" />
     <Compile Include="Zone\ZoneManager.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

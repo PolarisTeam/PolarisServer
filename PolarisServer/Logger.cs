@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+
 using PolarisServer.Packets.PSOPackets;
 
 namespace PolarisServer
@@ -10,7 +11,8 @@ namespace PolarisServer
     /// </summary>
     public static class Logger
     {
-        private static readonly StreamWriter Writer = new StreamWriter("PolarisServer.log");
+        private static readonly StreamWriter Writer = new StreamWriter("PolarisServer.log", true);
+
         public static bool VerbosePackets = false;
 
         private static void AddLine(ConsoleColor color, string text)
@@ -69,14 +71,9 @@ namespace PolarisServer
 
             text += string.Format("[ERR] {0} - {1}: {2}", message, ex.GetType(), ex);
             if (ex.InnerException != null)
-                text += string.Format("[ERR] Inner Exception: {0}", ex.InnerException);
+                text += string.Format("\n[ERR] Inner Exception: {0}", ex.InnerException);
 
             WriteFile(text);
-
-            // Strip the crap out of the exception so that the line splitting works properly on it
-            text = text.Replace('\r', ' ');
-            text = text.Replace('\n', ' ');
-            text = text.Replace("     ", " ");
 
             AddLine(ConsoleColor.Red, text);
         }
@@ -88,7 +85,7 @@ namespace PolarisServer
             // Calculate lines
             var lines = 0;
             for (var i = 0; i < array.Length; i++)
-                if ((i%16) == 0)
+                if ((i % 16) == 0)
                     lines++;
 
             for (var i = 0; i < lines; i++)
@@ -96,36 +93,34 @@ namespace PolarisServer
                 var hexString = string.Empty;
 
                 // Address
-                hexString += string.Format("{0:X8} ", i*16);
+                hexString += string.Format("{0:X8} ", i * 16);
 
                 // Bytes
                 for (var j = 0; j < 16; j++)
                 {
-                    if (j + (i*16) >= array.Length)
+                    if (j + (i * 16) >= array.Length)
                         break;
 
-                    hexString += string.Format("{0:X2} ", array[j + (i*16)]);
+                    hexString += string.Format("{0:X2} ", array[j + (i * 16)]);
                 }
-                
 
                 // Spacing
-                while (hexString.Length < 16*4)
+                while (hexString.Length < 16 * 4)
                     hexString += ' ';
 
                 // ASCII
                 for (var j = 0; j < 16; j++)
                 {
-                    if (j + (i*16) >= array.Length)
+                    if (j + (i * 16) >= array.Length)
                         break;
 
-                    var asciiChar = (char) array[j + (i*16)];
+                    var asciiChar = (char)array[j + (i * 16)];
 
-                    if (asciiChar == (char) 0x00)
+                    if (asciiChar == (char)0x00)
                         asciiChar = '.';
 
                     hexString += asciiChar;
                 }
-                
 
                 // Strip off unnecessary stuff
                 hexString = hexString.Replace('\a', ' '); // Alert beeps
@@ -147,6 +142,14 @@ namespace PolarisServer
 
             // Later we should probably only flush once every PosX amount of lines or on some other condition
             Writer.Flush();
+        }
+
+        public static void WriteHeader()
+        {
+            Writer.WriteLine();
+            Writer.WriteLine("--------------------------------------------------");
+            Writer.WriteLine("\t\t" + DateTime.Now);
+            Writer.WriteLine("--------------------------------------------------");
         }
     }
 }
