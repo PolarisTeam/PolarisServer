@@ -85,7 +85,8 @@ namespace PolarisServer
             ConsoleKey.RightArrow,
             ConsoleKey.Home,
             ConsoleKey.End,
-            ConsoleKey.Delete
+            ConsoleKey.Delete,
+            ConsoleKey.Escape
         };
 
         private const string Prompt = "Polaris> ";
@@ -112,7 +113,11 @@ namespace PolarisServer
         {
             Console.Title = "Polaris";
             Console.CursorVisible = true;
-            SetSize(80, 24);
+            Console.Clear();
+
+            Width = Console.WindowWidth;
+            Height = Console.WindowHeight;
+            _maxCommandLineSize = Width - Prompt.Length;
 
             timer = new Timer(1000);
             timer.Elapsed += TimerRefresh;
@@ -126,12 +131,18 @@ namespace PolarisServer
 
         public void SetSize(int width, int height)
         {
-            Width = width;
-            Height = height;
+            try
+            {
+                Console.SetWindowSize(width, height);
 
-            _maxCommandLineSize = width - Prompt.Length;
-
-            Console.SetWindowSize(width, height);
+                Width = width;
+                Height = height;
+                _maxCommandLineSize = width - Prompt.Length;
+            }
+            catch (Exception)
+            {
+                Logger.WriteWarning("[WRN] Failed to set console size to ({0},{1}).", width, height);
+            }
         }
 
         public void AddLine(ConsoleColor color, string text)
@@ -143,7 +154,6 @@ namespace PolarisServer
                 var useColors = PolarisApp.Config.UseConsoleColors;
                 var saveColor = Console.ForegroundColor;
 
-                Console.SetCursorPosition(0, _commandRowInConsole);
                 if (useColors)
                     Console.ForegroundColor = color;
                 Console.WriteLine(text);
@@ -151,8 +161,7 @@ namespace PolarisServer
                 if (useColors)
                     Console.ForegroundColor = saveColor;
 
-                Console.WriteLine();
-                _commandRowInConsole = Console.CursorTop - 1;
+                _commandRowInConsole = Console.CursorTop;
 
                 RefreshCommandLine();
                 FixCursorPosition();
@@ -169,6 +178,8 @@ namespace PolarisServer
                     Console.Write(' ');
 
                 _lastDrawnCommandLineSize = 0;
+
+                Console.CursorLeft = 0;
             }
         }
 
@@ -176,7 +187,6 @@ namespace PolarisServer
         {
             BlankDrawnCommandLine();
 
-            Console.SetCursorPosition(0, _commandRowInConsole);
             Console.Write(Prompt);
             Console.Write(_commandLine);
 
@@ -412,6 +422,13 @@ namespace PolarisServer
             {
                 _commandLine = _commandLine.Remove(_commandIndex - 1, 1);
                 _commandIndex--;
+            }
+
+            // Escape
+            if (_key.Key == ConsoleKey.Escape)
+            {
+                _commandLine = string.Empty;
+                _commandIndex = 0;
             }
 
             // Cursor movement

@@ -56,19 +56,20 @@ namespace PolarisServer
                         case "-s":
                         case "--size":
                             var splitArgs = args[++i].Split(',');
-                            var width = int.Parse(splitArgs[0]);
-                            var height = int.Parse(splitArgs[1]);
-                            if (width < ConsoleSystem.Width)
+                            int width;
+                            int height;
+                            try
                             {
-                                Logger.WriteWarning("[ARG] Capping console width to {0} columns", ConsoleSystem.Width);
-                                width = ConsoleSystem.Width;
+                                width = int.Parse(splitArgs[0]);
+                                height = int.Parse(splitArgs[1]);
+                                Logger.WriteWarning("[ARG] Setting console width to {0} columns", width);
+                                Logger.WriteWarning("[ARG] Setting console height to {0} rows", height);
+                                ConsoleSystem.SetSize(width, height);
                             }
-                            if (height < ConsoleSystem.Height)
+                            catch (Exception)
                             {
-                                Logger.WriteWarning("[ARG] Capping console height to {0} rows", ConsoleSystem.Height);
-                                height = ConsoleSystem.Height;
+                                Logger.WriteWarning("[WRN] Failed to set console size to ({0}).", args[i]);
                             }
-                            ConsoleSystem.SetSize(width, height);
                             break;
                     }
                 }

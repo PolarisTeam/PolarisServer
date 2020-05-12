@@ -44,17 +44,6 @@ namespace PolarisServer.Packets
             }
         }
 
-        internal void WritePosition(PSOLocation location)
-        {
-            Write(Helper.FloatToHalfPrecision(location.RotX));
-            Write(Helper.FloatToHalfPrecision(location.RotY));
-            Write(Helper.FloatToHalfPrecision(location.RotZ));
-            Write(Helper.FloatToHalfPrecision(location.RotW));
-            Write(Helper.FloatToHalfPrecision(location.PosX));
-            Write(Helper.FloatToHalfPrecision(location.PosY));
-            Write(Helper.FloatToHalfPrecision(location.PosZ));
-        }
-
         public void WriteUtf16(string str, uint xor, uint sub)
         {
             if (str.Length == 0)
