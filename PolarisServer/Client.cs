@@ -130,14 +130,24 @@ namespace PolarisServer
             IsClosed = true;
         }
 
-        public void SendPacket(byte[] blob)
+        public void SendPacket(byte[] blob, string name = null)
         {
             var typeA = blob[4];
             var typeB = blob[5];
             var flags1 = blob[6];
             var flags2 = blob[7];
+            string sendName = "";
 
-            Logger.Write("[<--] Packet {0:X}-{1:X} (flags {2}) ({3} bytes)", typeA, typeB, (PacketFlags)flags1,
+            if (name != null)
+            {
+                sendName = string.Format("{0} ({1:X}-{2:X})", name, typeA, typeB);
+            }
+            else
+            {
+                sendName = string.Format("{0:X}-{1:X}", typeA, typeB);
+            }
+
+            Logger.Write("[<--] Packet {0} (flags {1}) ({2} bytes)", sendName, (PacketFlags)flags1,
                 blob.Length);
             LogPacket(false, typeA, typeB, flags1, flags2, blob);
 
@@ -160,7 +170,7 @@ namespace PolarisServer
             }
         }
 
-        public void SendPacket(byte typeA, byte typeB, byte flags, byte[] data)
+        public void SendPacket(byte typeA, byte typeB, byte flags, byte[] data, string name = null)
         {
             var packet = new byte[8 + data.Length];
 
@@ -177,19 +187,29 @@ namespace PolarisServer
 
             Array.Copy(data, 0, packet, 8, data.Length);
 
-            SendPacket(packet);
+            SendPacket(packet, name);
         }
 
         public void SendPacket(Packet packet)
         {
             var h = packet.GetHeader();
-            SendPacket(h.Type, h.Subtype, h.Flags1, packet.Build());
+            SendPacket(h.Type, h.Subtype, h.Flags1, packet.Build(), packet.GetType().Name);
         }
 
         private void HandlePacket(byte typeA, byte typeB, byte flags1, byte flags2, byte[] data, uint position,
             uint size)
         {
-            Logger.Write("[-->] Packet {0:X}-{1:X} (flags {2}) ({3} bytes)", typeA, typeB, (PacketFlags)flags1, size + 8);
+            var handler = PacketHandlers.GetHandlerFor(typeA, typeB);
+            string packetName = "";
+            if (handler != null)
+            {
+                packetName = string.Format("{0} ({1:X}-{2:X})", handler.GetType().Name, typeA, typeB);
+            }
+            else
+            {
+                packetName = string.Format("{0:X}-{1:X}", typeA, typeB);
+            }
+            Logger.Write("[-->] Packet {0} (flags {1}) ({2} bytes)", packetName, (PacketFlags)flags1, size + 8);
             if (Logger.VerbosePackets && size > 0) // TODO: This is trimming too far?
             {
                 var dataTrimmed = new byte[size];
@@ -204,7 +224,7 @@ namespace PolarisServer
             Array.Copy(data, position, packet, 0, size);
             LogPacket(true, typeA, typeB, flags1, flags2, packet);
 
-            var handler = PacketHandlers.GetHandlerFor(typeA, typeB);
+            
             if (handler != null)
                 handler.HandlePacket(this, flags1, packet, 0, size);
             else

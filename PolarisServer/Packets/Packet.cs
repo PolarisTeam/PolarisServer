@@ -6,5 +6,6 @@ namespace PolarisServer.Packets
     {
         public abstract byte[] Build();
         public abstract PacketHeader GetHeader();
+
     }
 }
