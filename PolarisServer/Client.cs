@@ -144,11 +144,10 @@ namespace PolarisServer
             }
             else
             {
-                sendName = string.Format("{0:X}-{1:X}", typeA, typeB);
+                sendName = $"{typeA:X}-{typeB:X}";
             }
 
-            Logger.Write("[<--] Packet {0} (flags {1}) ({2} bytes)", sendName, (PacketFlags)flags1,
-                blob.Length);
+            Logger.Write($"[<--] Packet {sendName} (flags {(PacketFlags)flags1}) ({blob.Length} bytes)");
             LogPacket(false, typeA, typeB, flags1, flags2, blob);
 
             if (Logger.VerbosePackets)
@@ -200,16 +199,16 @@ namespace PolarisServer
             uint size)
         {
             var handler = PacketHandlers.GetHandlerFor(typeA, typeB);
-            string packetName = "";
+            string packetName;
             if (handler != null)
             {
-                packetName = string.Format("{0} ({1:X}-{2:X})", handler.GetType().Name, typeA, typeB);
+                packetName = $"{handler.GetType().Name} ({typeA:X}-{typeB:X})";
             }
             else
             {
-                packetName = string.Format("{0:X}-{1:X}", typeA, typeB);
+                packetName = $"{typeA:X}-{typeB:X}";
             }
-            Logger.Write("[-->] Packet {0} (flags {1}) ({2} bytes)", packetName, (PacketFlags)flags1, size + 8);
+            Logger.Write($"[-->] Packet {packetName} (flags {(PacketFlags)flags1}) ({size + 8} bytes)");
             if (Logger.VerbosePackets && size > 0) // TODO: This is trimming too far?
             {
                 var dataTrimmed = new byte[size];
