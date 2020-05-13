@@ -76,19 +76,18 @@ namespace PolarisServer.Packets.Handlers
                 mystery.Write((uint)100);
                 SendPacket(0x11, 0x49, 0, mystery.ToArray()); */
 
-                // Login response packet
-               
-                context.SendPacket(new LoginDataPacket("Polaris Block 1", error, (user == null) ? (uint)0 : (uint)user.PlayerId));
-
-                if (user == null)
-                    return;
-
                 // Settings packet
                 var settings = new PacketWriter();
                 settings.WriteAscii(user.SettingsIni, 0x54AF, 0x100);
                 context.SendPacket(0x2B, 2, 4, settings.ToArray());
 
+                if (user == null)
+                    return;
+
                 context.User = user;
+
+                // Login response packet
+                context.SendPacket(new LoginDataPacket("Polaris Block 1", error, (user == null) ? (uint)0 : (uint)user.PlayerId));
 
             }
 
