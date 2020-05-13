@@ -15,17 +15,9 @@ namespace PolarisServer.Packets.Handlers
         public override void HandlePacket(Client context, byte flags, byte[] data, uint position, uint size)
         {
             var reader = new PacketReader(data, position, size);
-
-            reader.BaseStream.Seek(0x2C, SeekOrigin.Current);
-
-            var macCount = reader.ReadMagic(0x5E6, 107);
-            reader.BaseStream.Seek(0x1C * macCount, SeekOrigin.Current);
-
-			reader.BaseStream.Seek(0x154, SeekOrigin.Current);
-
-            var username = reader.ReadFixedLengthAscii(64);
-            var password = reader.ReadFixedLengthAscii(64);
-
+            reader.BaseStream.Seek(0x2E0, SeekOrigin.Current);
+            var username = reader.ReadFixedLengthAscii(0x60);
+            var password = reader.ReadFixedLengthAscii(0x60);
 
             // What am I doing here even
             using (var db = new PolarisEf())
