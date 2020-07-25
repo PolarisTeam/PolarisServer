@@ -1,12 +1,3 @@
-MOVED TO POLARISCORE https://github.com/PolarisTeam/PolarisCore
-
-
-
-
-
-
-
-
 [![AGPL License](http://img.shields.io/badge/license-AGPL%20v3-red.svg?style=flat-square)](http://opensource.org/licenses/AGPL-3.0) 
 [![Build status](https://ci.appveyor.com/api/projects/status/3ltwll4bck12ey0t?svg=true)](https://ci.appveyor.com/project/cyberkitsune/polarisserver)
 
@@ -38,7 +29,7 @@ In the future we will hopefully have a buildserver, xbuild / msbuild support and
 As the `Polaris Private Server` is a work-in-progress alpha, you can find the latest unstable built version here @ [AppVeyor](https://ci.appveyor.com/project/cyberkitsune/polarisserver/build/artifacts)
 
 ### Documentation
-All available documentation for the server can be found on the project wiki @ [pso2proxy.cyberkitsune.net/wiki](http://pso2proxy.cyberkitsune.net/wiki)
+Any documentation will be on the project's github wiki or inline code documentation for now.
 
 ## Licensing
 All code is licensed under the
